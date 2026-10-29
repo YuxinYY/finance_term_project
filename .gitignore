@@ -1,1 +1,18 @@
-data/train-2025.csv
+# Raw source data and experiment artifacts are local inputs/outputs.  Keep only
+# the small demo subset under version control.
+data/raw/train-2025.csv
+data/interim/*
+!data/interim/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+models/*
+!models/.gitkeep
+reports/metrics/*
+!reports/metrics/.gitkeep
+reports/figures/*
+!reports/figures/.gitkeep
+
+__pycache__/
+.pytest_cache/
+.venv/
+*.py[cod]
