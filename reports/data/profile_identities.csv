@@ -1,0 +1,16 @@
+identity,rows_testable,share_within_1pct
+asst_tot = intang + tang + fin fixed + current,1023238,0.7933862894067656
+asst_tot = eqty_tot + debt_st + debt_lt + liab_lt + liab_lt_emp,1023170,0.8005346130164098
+debt_st = debt_bank_st + debt_fin_st + AP_st,900735,0.04265516494862529
+debt_lt = debt_bank_lt + debt_fin_lt + AP_lt,931261,0.6185430292903923
+margin_fin = eqty_tot - (intang + tang + fin fixed),982500,0.9999124681933842
+wc_net = asst_current - debt_st,1023546,0.9999794830911362
+prof_operations = rev_operating - COGS,1023375,0.9999843654574325
+roa = 100 * prof_operations / asst_tot,1023525,1.0
+roa = 100 * profit / asst_tot,1023524,0.42545949093523944
+roe = 100 * profit / eqty_tot,950614,0.9999915843865123
+cf_operations = profit + (ebitda - prof_operations),1023464,0.9991323583438206
+prof_financing = inc_financing - exp_financing,1022786,0.008996994483694537
+profit = prof_operations + inc_financing + inc_extraord - taxes,1023232,0.0017904053039779835
+days_rec = 365 * AR / rev_operating,283341,0.011925559661326812
+ebitda <= goodwill (test of 'goodwill' = value added),1023471,0.9999013162072985
