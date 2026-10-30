@@ -1,0 +1,11 @@
+candidate,auc,missing_rate,closest_kept,spearman_with_kept,reason
+tax_to_assets (taxes / asst_tot),0.2588123260415837,6.304361988063167e-05,roa_net,0.9593788933071362,"`taxes` equals profit before tax (= prof_operations + inc_financing + inc_extraord + prof_financing on 99.7% of rows), so this is pre-tax ROA: duplicate of roa_net"
+"roe_recomputed (profit / eqty_tot, equity > 0)",0.36203968083333593,0.03789551991022588,roa_net,0.8924059871065586,undefined for negative equity (the riskiest rows); explodes as equity → 0; replaced by roa_net + equity_ratio + neg_equity
+roe (file field),0.4073840571265971,0.06811863128098328,roa_net,0.8833536050368733,truncated at ±150% and blanked when equity ≤ 0 (01_profile §5): missingness = negative equity
+days_rec (file field),0.508065419741208,0.7045628870615579,ar_days,0.20625255631436243,"72% missing, negative on 7% of rows, inconsistent with AR/revenue; replaced by ar_days"
+margin_fin / asst_tot,0.4080860305927956,0.0006409434687860704,equity_ratio,0.3684294170593166,equity minus fixed assets: mixes leverage and asset structure already covered by equity_ratio and tangible_ratio
+net_fin_result_to_assets (inc_financing / asst_tot),0.3605470859321197,4.623198791242622e-05,interest_to_assets,-0.9204075858603449,field meaning is a data-derived hypothesis (net financial result); exp_financing is unambiguous and used instead (M9)
+value_added_to_assets (goodwill / asst_tot),0.3769014044211142,3.9927625924418564e-05,roa_oper,0.6269092358589556,`goodwill` behaves like value added (D-010 hypothesis); cannot be explained to a credit officer under its file name
+log_revenue,0.5059069527936388,0.03283521868781014,log_assets,0.4808271781026237,second size measure; size enters once (log_assets)
+employee_fund_to_assets (liab_lt_emp / asst_tot),0.5096121084072309,0.0003320297313711418,log_assets,0.026675636568973305,"no clear expected sign (labour intensity), negligible power"
+lt_debt_ratio (debt_lt / asst_tot),0.4674839522132913,0.00030891373741492867,equity_ratio,-0.2794709169731545,sign ambiguous (long-term debt is safer than short-term but still leverage); weak power; maturity captured by st_debt_ratio / st_debt_share

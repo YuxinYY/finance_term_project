@@ -29,7 +29,7 @@ What happens in transform, in order
    fallback). The missing flag stays in X so the model can price the missingness itself.
 
 Nothing in this module reads labels at transform time, nor any row other than the current one.
-Growth / lagged features are deliberately absent (D-019): the current record has no prior-year
+Growth / lagged features are deliberately absent (D-020): the current record has no prior-year
 fields and the harness may not use a firm's other holdout rows.
 """
 from __future__ import annotations
@@ -148,7 +148,7 @@ FEATURES: list[dict[str, Any]] = [
          formula="rev_operating / asst_tot",
          reason="Sales per euro of assets. A priori '-' (idle or impaired assets), but high "
                 "turnover also marks thin-margin trading firms; training data show an inverted U "
-                "(D-021), so no monotone constraint.",
+                "(D-022), so no monotone constraint.",
          zero_rule="denominator is total assets (> 0)"),
     dict(name="ar_days", slog=True, family="activity", sign=+1, core=True,
          formula="slog(365 * AR / rev_operating)  (replaces the file's days_rec)",

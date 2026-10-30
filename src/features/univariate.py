@@ -383,13 +383,13 @@ signs  = B.expected_signs()                       # {{feature: +1/-1/0}} for mon
 Refit `params` inside every fold (bounds, medians, category levels all come from training rows).
 The feature *set* is fixed by this spec for every fold (Roger M12); only parameters change.
 
-## Design principles (each defended in DECISION_LOG D-017..D-024)
+## Design principles (each defended in DECISION_LOG D-018..D-025)
 
 1. **Ratios, size once.** Every feature is scale-free except `log_assets`. Raw euro amounts
    (exp_financing, inc_financing, cash flow) are never used directly (Roger M9).
 2. **Seven families** following RiskCalc v3.1 (R-01 Sec. 3.1, p. 13: profitability, leverage,
    debt coverage, growth, liquidity, activity, size; one ratio per family at least, too many ratios
-   overfit). Growth is not available (D-019). We add "asset structure" (collateral) as an eighth.
+   overfit). Growth is not available (D-020). We add "asset structure" (collateral) as an eighth.
 3. **Expected sign for every feature** (table below); `sign = none` means no monotone constraint.
 4. **Ratio pathologies handled explicitly** (column "zero/negative-denominator rule"): total
    assets is ≥ EUR 1.5MM by construction, so most ratios divide by it; where the natural ratio has
@@ -414,7 +414,7 @@ Machine-readable expected signs (`build.expected_signs()`): `{signs}`
 
 - Univariate (train 2007-2009): {contra_txt}.
 - Multivariate core logit (in-sample diagnostic): {mcontra_txt}.
-See the decision log (D-021) for how each is handled.
+See the decision log (D-022) for how each is handled.
 
 ## Core set (probit / logit) vs full set (GBM)
 
@@ -435,7 +435,7 @@ See the decision log (D-021) for how each is handled.
 
 {rejected}
 
-Also rejected without a data test: **growth / lagged ratios** (D-019: the current record has no
+Also rejected without a data test: **growth / lagged ratios** (D-020: the current record has no
 prior-year fields and the harness may not use a firm's other holdout rows; a frozen training
 lookup is OPEN pending email Q4), **NLP features** (D-003: no text fields), **external macro
 variables** (D-004: not cleared; cycle handled in calibration), raw euro amounts (M9),

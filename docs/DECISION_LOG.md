@@ -237,3 +237,174 @@ This file is the backbone of the final report's "defence of choices" and "what d
 - Risks / what would change our mind: none. R-15 remains in REFERENCES.md and may be cited only
   where it genuinely supports a choice (e.g. the 0.03% PD floor in the harness).
 - Human reviewer (initials) and date: KN 2026-10-30
+
+---
+
+## Session 2026-10-30 (Phase 2, feature-architect)
+
+All numbers below come from files written by `python -m src.features.univariate`,
+`-m src.features.core_selection` and `-m src.features.history_tradeoff` (training rows fs_year
+2007-2009 only; fs_year 2010 never read). Spec: `docs/FEATURE_SPEC.md`; evidence:
+`reports/features/univariate.md` and CSVs.
+
+### D-018 Feature library v1: ratio families, core set vs full set
+- Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
+- Status: ADOPTED
+- Decision: `src/features/build.py` (`fit` / `transform` / `design_matrix` / `expected_signs`),
+  23 numeric features + flags and 3 categoricals in 8 families (size, leverage, liquidity,
+  profitability, coverage, activity, asset structure, + flags). Ratios only; size enters once as
+  `log_assets`. **Core set for probit/logit (10 + 3 categoricals):** log_assets, equity_ratio,
+  st_debt_ratio, cash_ratio, roa_net, interest_coverage, interest_to_assets, ar_days,
+  tangible_ratio, neg_equity + ateco_group, legal_group, macro_area. **Full set (26)** for GBM.
+  The feature set is fixed for every fold; only parameters are refitted per fold (Roger M12).
+- Alternatives considered: 10 core variants on an inner split (fit 2007-08, score 2009):
+  A (coverage only) AUC 0.7968 / LL 0.06965 with log_assets flipped; B (cfo_to_debt) 0.7950 with
+  cfo_to_debt flipped (+0.231); E (coverage + interest_to_assets, ADOPTED) 0.8006 / 0.06940, no
+  flips; J (E + bank debt + flag) 0.8010 / 0.06937 but bank_debt_ratio flipped → not adopted.
+- Business reason: one or two interpretable ratios per family give a credit officer a reason
+  code per family (leverage, profitability, liquidity, debt service) and serve both ranking
+  (approve/decline) and pricing (level, via the challengers' calibration step).
+- Evidence: `reports/features/core_selection.csv`; univariate AUCs `univariate_stats.csv`
+  (e.g. cfo_to_debt 0.248, roa_net 0.256, equity_ratio 0.267, interest_coverage 0.276,
+  st_debt_ratio 0.706; AUC < 0.5 = PD falls as the ratio rises).
+- Source(s): R-01 Sec. 3.1 p. 13 (families incl. growth; one per family; too many ratios
+  overfit), Sec. 3.1 p. 14 (industry indicators in the probit); R-05 p. 9 (ratios + size into a
+  probit).
+- Risks / what would change our mind: a challenger's within-fold selection repeatedly
+  dropping a core feature; a core sign flip in the tournament models.
+- Human reviewer (initials) and date:
+
+### D-019 Ratio pathologies: safe division rules, winsorisation, signed log
+- Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
+- Status: ADOPTED
+- Decision: (1) most ratios divide by total assets (≥ EUR 1.5MM by construction); (2) bounded
+  alternatives instead of fragile ratios: equity/assets (not debt/equity), profit/assets (not
+  ROE); (3) where a denominator can be zero, the economically correct limit is assigned and
+  documented per feature: no interest expense → coverage = +inf if EBITDA > 0, 0 if EBITDA ≤ 0;
+  no debt → cfo_to_debt = +inf if cash flow > 0 else 0; zero revenue with receivables →
+  ar_days = +inf; debt_st = 0 → current ratio +inf; negative denominators that are data errors
+  (debt < 0, revenue < 0, COGS ≤ 0) → NaN; (4) winsorise at the training-window p1/p99 (params),
+  ±inf land on the bound; (5) ratios with unbounded denominators (current_ratio,
+  ebitda_margin, interest_coverage, ar_days, ap_days) are put on a signed-log scale after
+  winsorising (monotone: AUC and tree splits unchanged, linear models not dominated by tails;
+  e.g. the interest_coverage p1/p99 bounds are about −364 and 5,782).
+- Alternatives considered: dropping rows with bad denominators (not allowed: a PD for every
+  row); NaN for every zero denominator (loses the meaning "no interest to pay").
+- Evidence: bounds in `reports/features/params_fold3_example.json`; unit tests
+  `src/features/test_build.py::test_infinite_and_zero_denominators`, `test_messy_row`.
+- Source(s): assumption (standard practice); R-01 Sec. 3.1 fn. 8 (transforms reduce the impact
+  of noisy ratios) supports bounding outliers in general.
+- Human reviewer (initials) and date:
+
+### D-020 Growth / lagged (firm-history) features
+- Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
+- Status: REJECTED for v1 (re-open only if Roger/TA answer email Q4 "yes" AND Day-2 time allows)
+- Decision: no growth or lag features. The current record has no prior-year fields, and the
+  harness may not use a firm's other holdout rows (CLAUDE.md §2.2). The only permissible route
+  is a frozen lookup of training-data statements (email Q4, unanswered).
+- Evidence (inner split inside the training window, `reports/features/history_tradeoff.csv`):
+  core logit vs core + 4 lag deltas (equity_ratio, roa_net, st_debt_ratio, log_assets) from a
+  frozen prior-year lookup, fit on 2008 (2007 lookup), scored on 2009 (2008 lookup): AUC all
+  rows 0.7992 → 0.8012, log loss 0.06896 → 0.06831; seen firms (148,279 rows) AUC 0.8075 →
+  0.8096; new firms (22,107 rows) 0.7390 → 0.7379. Gain ≈ +0.002 AUC on seen firms only,
+  inconsistent treatment of new firms, and a dependence on an unanswered rule question.
+- Side finding for H5: even without history features, new-firm AUC (0.739) is well below
+  seen-firm AUC (0.807) on this inner split.
+- Source(s): R-01 Sec. 3.1 p. 13 lists growth as a family (two-sided sign); we cannot build it
+  under the harness rules without approval.
+- Risks: leaves a small amount of power unused for seen firms.
+
+### D-021 Missing-data treatment per field (Roger G2)
+- Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
+- Status: ADOPTED
+- Decision: (a) **identity reconstruction first** (`_reconstruct`, row-wise): debt_st =
+  asst_current − wc_net; eqty_tot = margin_fin + fixed assets; prof_operations = rev − COGS or
+  roa·assets/100; profit / ebitda / cf_operations from the cf identity; asst_tot ≤ 0 or missing →
+  sum of asset components. (b) **Debt-split block** (bank/fin/AP, missing as a block): flag
+  `debt_split_missing` + identity-bounded imputation, component = train sector-median share of
+  the total × the firm's own debt_st / debt_lt (component ≤ total). (c) **NaN left for trees**
+  in `transform(impute=False)`; `impute=True` fills residual NaN with the train sector median.
+  `roe`, `margin_fin` (blank exactly when equity ≤ 0), `days_rec` (72% missing, inconsistent) and
+  `eqty_corp_family_tot` (100% empty) are not used; information carried by equity_ratio,
+  neg_equity, roa_net, ar_days instead.
+- Alternatives considered: plain sector-median imputation of the ratio; dropping block-missing rows.
+- Evidence (`reports/features/missing_treatment.csv`, `univariate.md` §3, §7): block missing on
+  15.67% of 2007-09 training rows, default rate 1.39% vs 1.29% present (weak). AUC on the
+  block-missing rows themselves: bank_debt_ratio 0.553 (share × total) vs 0.462 (sector median);
+  ap_days 0.612 vs 0.538. All rows: bank_debt_ratio 0.574 vs 0.568; ap_days 0.595 vs 0.584. The
+  share-based rebuild carries real information from the firm's own totals; the median does not.
+  neg_equity flag: 3.78% of rows, default rate 9.74% vs 0.97%.
+- Source(s): D-016 (data-auditor evidence); R-27 (abbreviated statements, plausible cause; unproven).
+- Risks: holdout missing rate for the block may differ (vintage effect, D-016); the GBM
+  challenger should compare native NaN vs imputed.
+
+### D-022 Where the data contradict the expected sign
+- Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
+- Status: ADOPTED (handling) / OPEN for log_assets (watch in tournament)
+- Findings (train 2007-09, `univariate_stats.csv`, `core_logit_signs.csv`, `deciles.csv`):
+  1. `asset_turnover`: a priori − (idle assets), data inverted-U (decile default rates 1.48%,
+     0.72%, … 1.71%, … 1.22%; AUC 0.504) → expected sign set to **none** (no monotone constraint),
+     not in core. Reason: high turnover also marks thin-margin trading firms.
+  2. `log_assets`: univariate − as expected (D1 1.57% → D10 1.08%, AUC 0.477), but its
+     conditional coefficient in the core logit is ≈ 0 and its sign varies (+0.013 standardised on
+     2007-09; − on the 2007-08 inner fit, set E). Kept with sign −: size is a RiskCalc family
+     and the constraint costs nothing if the true conditional effect is ≈ 0. Challengers report
+     it if their fitted effect is positive.
+  3. `cfo_to_debt` (best univariate, AUC 0.248) flips to + next to roa_net (Spearman 0.80) →
+     full set only, not core.
+  4. `debt_split_missing`: + but tiny (AUC 0.505) → full set / variant, not core.
+  5. `extraord_to_assets`: two-sided (U-shape: D1 2.80%, D10 2.01%) → sign none, as expected.
+- Source(s): R-01 Sec. 3.1 p. 13 (expected signs; growth two-sided).
+
+### D-023 Categorical encoding (Roger M7) and code-table spot check
+- Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
+- Status: ADOPTED
+- Decision: `ateco_group` = ATECO 2007 section (codes.py) with sections having < 30 training
+  defaults pooled into OTHER, learned per fold in `fit`; `legal_group` = legal_struct with the
+  same rule; `macro_area` = HQ_city → region → 5 NUTS-1 areas; missing / unseen / unparsable
+  codes → OTHER. One-hot in `design_matrix` with the largest training level as reference
+  (C, SRL, North-West in fold 3). Never numeric codes.
+- Evidence (fold-3 training window, `categorical_rates.csv`): pooled sections B (20 defaults),
+  D (23), O (1), P (8), Q (26), S (22), U (7); legal forms SAA (1), SRS (0); HQ_city missing (6).
+  Pooling is fold-dependent: fold 1 (2007 only) pools more sections.
+- Spot check of `src/data/codes.py`: all 110 province codes and the 21 NACE/ATECO section
+  division ranges match the standard ISTAT 2009-2016 province list (incl. 93 Pordenone,
+  94 Isernia, 95 Oristano, 96 Biella, 97 Lecco, 98 Lodi, 99 Rimini, 100 Prato, 101 Crotone,
+  102 Vibo Valentia, 103 VCO, 104-107 Sardinian provinces, 108 Monza-Brianza, 109 Fermo,
+  110 BAT) and the NACE Rev. 2 section ranges. **No errors found.** This check is from
+  the agent's own knowledge, not a document read in this session, so the tables remain
+  [UNVERIFIED] until literature-scout checks an ISTAT / Eurostat source.
+- Alternatives: region (20 levels; several < 30 defaults); raw division one-hot (36 of 83 < 30 defaults).
+- Risks: OTHER mixes low-risk (D, Q) and high-risk (U) sections; small share of rows.
+
+### D-024 Rejected features, and the `taxes` field is pre-tax profit (D-010 addendum)
+- Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
+- Status: REJECTED (features); finding ADOPTED as a data-derived hypothesis
+- Finding: `taxes` = prof_operations + inc_financing + inc_extraord + prof_financing on 99.7%
+  of 2007-09 rows, i.e. **profit before tax**, not the tax charge; Spearman with profit 0.95.
+  It is consistent with D-010: `inc_financing` enters EBT as the net financial result.
+- Rejected (evidence `reports/features/rejected_candidates.csv`): tax_to_assets (AUC 0.259,
+  Spearman 0.96 with roa_net: duplicate); recomputed ROE (undefined for negative equity;
+  0.89 with roa_net); file `roe` (truncated, missingness = negative equity); file `days_rec`
+  (AUC 0.508, 72% missing); margin_fin/assets; inc_financing/assets (Spearman −0.92 with
+  interest_to_assets; meaning is a hypothesis); goodwill(=value added)/assets (cannot be
+  explained under its file name); log_revenue (second size measure); liab_lt_emp/assets
+  (no expected sign, AUC 0.510); debt_lt/assets (ambiguous sign, AUC 0.467).
+- Raw euro amounts (Roger M9): exp_financing enters only as interest_coverage and
+  interest_to_assets; cf_operations only as cfo_to_debt; inc_financing dropped.
+- D-003 (NLP) re-confirmed REJECTED: no text fields in the data. D-004: no macro features; the
+  cycle is left to the calibration-specialist.
+
+### D-025 Collinearity rule (Roger M8)
+- Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
+- Status: ADOPTED
+- Decision: core set must have every pairwise |Spearman| < 0.70 and every VIF < 5 (VIF = diag of
+  the inverse correlation matrix of winsorised, imputed features); a violating feature is dropped
+  from the core (kept in the full set). In the full GBM set high VIF is tolerated (trees do not
+  invert the design) but redundancy is reported and SHAP explanations are reported by family.
+- Evidence (`vif.csv`, `univariate.md` §6): core max |rho| 0.67, max VIF 1.98. Full set: st_debt_ratio
+  12.5, roa_net 6.6, st_debt_share 6.5, roa_oper 6.3, wc_ratio 5.7, equity_ratio 5.2. Pairs ≥ 0.70:
+  wc_ratio–current_ratio 0.91, roa_net–cfo_to_debt 0.80, interest_coverage–cfo_to_debt 0.76,
+  roa_net–roa_oper 0.76. Actions: tax_to_assets dropped (Spearman 0.96 with roa_net, `rejected_candidates.csv`);
+  cfo_to_debt, roa_oper, current_ratio kept out of core.
+- Source(s): R-01 Sec. 4.2 p. 26 (VIFs used to limit collinearity).
