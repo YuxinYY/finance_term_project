@@ -229,7 +229,7 @@ def main() -> None:
         "roe_recomputed (profit / eqty_tot, equity > 0)": (r["profit"] / r["eqty_tot"].where(r["eqty_tot"] > 0), X["roa_net"],
             "undefined for negative equity (the riskiest rows); explodes as equity → 0; replaced by roa_net + equity_ratio + neg_equity"),
         "roe (file field)": (r["roe"], X["roa_net"], "truncated at ±150% and blanked when equity ≤ 0 (01_profile §5): missingness = negative equity"),
-        "days_rec (file field)": (r["days_rec"], X["ar_days"], "72% missing, negative on 7% of rows, inconsistent with AR/revenue; replaced by ar_days"),
+        "days_rec (file field)": (pd.to_numeric(tr["days_rec"], errors="coerce"), X["ar_days"], "72% missing, negative on 7% of rows, inconsistent with AR/revenue; replaced by ar_days"),
         "margin_fin / asst_tot": ((r["eqty_tot"] - r["asst_intang_fixed"] - r["asst_tang_fixed"] - r["asst_fixed_fin"]) / ta, X["equity_ratio"],
             "equity minus fixed assets: mixes leverage and asset structure already covered by equity_ratio and tangible_ratio"),
         "net_fin_result_to_assets (inc_financing / asst_tot)": (r["inc_financing"] / ta, X["interest_to_assets"],

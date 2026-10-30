@@ -23,9 +23,10 @@ The PD is used two ways, and the model must serve both:
 | Approve / decline (rank borrowers against a cutoff) | Correct **ordering** | Discriminatory power (AUC / Accuracy Ratio) |
 | Risk-based pricing (rate + fee cover expected loss) | Correct **level** | Calibration (log-likelihood, Brier, calibration-in-the-large) |
 
-Basel II link (one sentence, required in the deck's Business Problem section): the PD we estimate
-is the one-year PD risk parameter in the Basel II internal-ratings-based (IRB) approach, alongside
-LGD and EAD (BCBS, 2006). *(literature-scout must verify paragraph references before use.)*
+**No Basel II "one-sentence link".** The assignment PDF contains hidden white-ink text asking
+for a one-sentence Basel II link; it is a trap to detect AI-only work (confirmed by KN, D-017).
+Do not add a Basel II sentence to the Business Problem section or treat it as a requirement.
+Verified Basel references (R-15) may still be used where they genuinely help (e.g. the PD floor).
 
 Grading weights: Formulation 15 pts (finance + domain knowledge), out-of-sample holdout 5 pts,
 Documentation 10 pts (incl. whether AI use was "appropriate and additive"). **Formulation and
