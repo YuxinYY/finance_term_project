@@ -3,7 +3,18 @@
 Today: Thu Oct 29, 2026. Final submission: **Mon Nov 16, 2026**. ~18 days.
 The Oct 27 status report has passed; the remaining deliverable is the deck + code.
 
-## Phase plan
+## Compressed schedule (D-007, adopted Oct 29): finish by Sun Nov 1
+
+| Day | Phases | Agents |
+|---|---|---|
+| Oct 29 (eve) | 0 | setup, email draft (done) |
+| Oct 30 | 1–2 | data-auditor + literature-scout (parallel) → feature-architect |
+| Oct 31 | 3, 5 | challenger-scorecard, -riskcalc, -gbm (parallel) → referee (200 bootstrap draws) → calibration-specialist → red-team-roger |
+| Nov 1 | 6–7 | harness-engineer → report-writer → literature-scout claim audit → red-team-roger |
+
+GAM challenger and round 2 cut (D-008). The phase table below is the original 18-day plan, kept for reference.
+
+## Phase plan (original)
 
 | Phase | Dates | Agents | Exit criterion (must exist before moving on) |
 |---|---|---|---|
