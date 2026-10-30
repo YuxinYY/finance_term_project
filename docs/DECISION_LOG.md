@@ -1121,3 +1121,57 @@ orchestrator should render it from these entries and the CSVs.
   (3) email Q3 holdout period (sets the horizon h); (4) new-firm over-dispersion (slope 0.89) needs a shape
   fix in a later round, not a level fix.
 - Human reviewer (initials) and date:
+
+---
+
+## Glass-box challenger round (challenger-gam, 2026-10-30)
+
+All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,config.json,train_log.md}`, `experiments/gam/paired_bootstrap.csv` (referee's fast firm-weight bootstrap, 200 draws, seed 0, via `experiments/gam/compare_gam.py`) and `experiments/gam/GAM-01/explain.md`. Pooled = test years 2008-2010. "+CAL" = own calibration followed by the D-072 prior shift to rule e (D-071), same taus as CAL-01.
+
+### D-080 EBM / GAM challenger reinstated (supersedes D-008)
+- Date / phase / agent: 2026-10-30 / tournament round 2 / challenger-gam (team request)
+- Status: ADOPTED (supersedes D-008, which was REJECTED for time, not on evidence)
+- Decision: run `ExplainableBoostingClassifier` (interpret 0.7.8) as a glass-box challenger to GB-01. Pre-declared experiments: GAM-01 (main effects), GAM-02 (+10 pairs). GAM-03 (pygam) NOT run (time box; coordinator allowed skipping).
+- Business reason: every driver is a readable curve; RiskCalc v3.1 is "closely related to a GAM" (R-01 p. 14 fn. 11).
+- Source(s): R-01. EBM / GA2M method papers R-24 (Lou et al. 2012), R-25 (Nori et al. 2019) are NOT verified: any method claim from them is [UNVERIFIED].
+- Human reviewer (initials) and date:
+
+### D-081 GAM-01: EBM main effects, monotone constraints from the expected-sign table
+- Date / phase / agent: 2026-10-30 / round 2 / challenger-gam
+- Status: ADOPTED as the glass-box entry; promotion is the referee's call
+- Decision: 26 features (same as GB-01), categoricals as categorical, NaN native (own missing bin), `monotone_constraints = B.expected_signs()` (0 for asset_turnover, extraord_to_assets, rev_nonpositive, categoricals), learning rate 0.03, 128 bins, no class weighting. Tuning on the inner time split (as GB-01, D-052): folds 2-3 inner-train = earlier years, validation A = half of the last year (by firm), B = other half for the Platt slope; pre-declared grid max_leaves {2,3} x min_samples_leaf {200,1000}; fold 1 (one year) pre-declared default (2 leaves, 500). Chosen: fold 1 default; fold 2 and fold 3 3 leaves (min_samples_leaf had no effect: identical A log loss). Final EBM refit on all training rows, 8 outer bags; per bag a different firm-level 15% validation slice for early stopping, all from training rows (passed through `bags`). Own calibration as D-053 (Platt slope from B 1.02 / 0.99 / 0.96, intercept anchored to the training rate).
+- Evidence: pooled AUC 0.8254 (AR 0.651), per year 0.8348 / 0.8233 / 0.8177, log loss 0.06517, Brier 0.01379, mean PD 1.13% vs observed 1.54% (obs/pred 1.36), slope 0.964. New firms AUC 0.774 vs seen 0.832. +CAL: log loss 0.06451, mean PD 1.40% (obs/pred 1.10), slope 0.963; per-year AUC unchanged. Gap to GB-01 (200-draw bootstrap): dAUC -0.0120 [-0.0140, -0.0104], d log loss +0.00102 [+0.00088, +0.00116]; +CAL vs CAL-01 (0.06352): dAUC -0.0119 [-0.0139, -0.0103], d log loss +0.00098 [+0.00085, +0.00113]. So the glass box gives up about 0.012 AUC (the sign constraints explain only part of it, GB-02 unconstrained being +0.0065 AUC above GB-01; the rest is the additive form, i.e. no interactions). The gap is about 2/3 of the GB-01 vs RC-02 gap (D-074: 0.0016 log loss).
+- Business reason: ranking quality is the price of full readability; credit officers can read every curve.
+- Source(s): R-01 p. 14 fn. 11; assumption elsewhere.
+- Risks: the interaction-free form cannot capture sector-conditional effects (see D-083). Single seed.
+- Human reviewer (initials) and date:
+
+### D-082 Missing-bin reset rule (found by inspecting the shapes)
+- Date / phase / agent: 2026-10-30 / round 2 / challenger-gam
+- Status: ADOPTED
+- Finding (data artefact, not economics): the EBM gives each feature's "missing" bin its own score. In the first GAM-01 run asset_turnover missing (19 training rows, 0 defaults in fold 3) got -5.10 log-odds, cash_ratio missing (15 rows, 0 defaults) -0.90: a messy-input row would get a PD about 150x too low, and the harness must score such rows. Other missing bins with rich data are meaningful (ar_days missing: 1,109 rows, 6.6% default rate, score +0.48).
+- Decision: after the final fit, reset to 0 (= average firm) every missing-bin score (main and pair terms) whose training rows hold fewer than 30 defaults (same threshold as the categorical pooling rule in FEATURE_SPEC), then anchor the level. Implemented in `gam_lib.reset_sparse_missing`. Test rows are unaffected in practice (asset_turnover and cash_ratio have 0 missing test rows): pooled AUC 0.82504 -> 0.82545 (run 1 vs final, rest is re-anchoring), log loss unchanged to 4 digits. Run 1 outputs kept in `GAM-01/metrics_run1_before_missing_reset.md`, `train_log_grid_search_run1.md`. The final GAM-01 run reused the grid choice of run 1 (`--fixed-from`), to save 20 minutes.
+- Source(s): assumption.
+- Human reviewer (initials) and date:
+
+### D-083 GAM-02: ten pairwise terms give a statistically detectable but economically small gain; not adopted over GAM-01
+- Date / phase / agent: 2026-10-30 / round 2 / challenger-gam
+- Status: GAM-02 REJECTED for submission as the glass-box entry (kept as evidence); GAM-01 preferred
+- Decision: 10 FAST-selected pairs inside the training window (interaction bins 32), same config as GAM-01 per fold. Inner validation gain (A log loss, GAM-02 vs GAM-01): fold 1 0.04917 vs 0.04929, fold 2 0.05318 vs 0.05319, fold 3 0.06773 vs 0.06775.
+- Evidence: OOT pooled AUC 0.8262 (+0.0008 [+0.0004, +0.0012]), log loss 0.06510 (-0.00008 [-0.00011, -0.00005]); +CAL 0.06443; 2010 AUC 0.8193. Still -0.0112 AUC vs GB-01 (and -0.0111 vs CAL-01). Gain is about 7% of the gap to GB-01. The 10 selected pairs (fold 3) all involve unconstrained features only: asset_turnover x ateco_group / extraord_to_assets / legal_group / macro_area, ateco x macro_area, extraord x ateco / macro / legal, legal x macro; largest mean |contribution| 0.046 (asset_turnover x ateco). No pair involves a feature with an expected sign, so the sign constraints cannot be violated by interactions (`explain_interaction_face_validity.csv` is empty for this reason). Cost: 10 more heat maps to read, fit time x1.5-2.
+- Business reason: the 0.0008 AUC does not buy back the readability; the sector-conditional asset-turnover effect is the only economically meaningful pair (turnover norms differ by industry).
+- Source(s): assumption; GA2M idea from R-24 [UNVERIFIED].
+- Human reviewer (initials) and date:
+
+### D-084 Face validity of the EBM shape functions
+- Date / phase / agent: 2026-10-30 / round 2 / challenger-gam
+- Status: ADOPTED (finding)
+- Evidence (`GAM-01/explain.md`, `explain_shapes.csv`, fold-3 model; folds 1-2 overlaid in `shape_functions.png`): all 20 sign-expected features are monotone in the expected direction (constraints; against_share 0). Unconstrained: asset_turnover rises from very low turnover (-0.47, mostly near-zero revenue) to a peak at about 0.5-1 (+0.2), dips, and rises again: consistent with high-turnover thin-margin traders and with low-revenue holding/real-estate firms being safer after controlling for the rest; extraord_to_assets is V-shaped around 0 (no extraordinary items = safest, any large item of either sign raises PD, +0.3 to +0.4); rev_nonpositive = 1 LOWERS the score (-0.19), against intuition: it is a flag mostly overlapping with asset_turnover = 0 (-0.47) and industry, so the two partly offset (read together; reason codes for such firms say "favourable no revenue", which is not credible to an officer: wording must be fixed before any use); macro_area OTHER +0.65 and legal_group OTHER -0.87 are pooled thin levels (unseen levels also map to OTHER in `B.transform`, so a new region or legal form gets these scores: flag for the harness); log_assets has almost no effect (importance 0.016), negative-equity jump +0.8, tangible_ratio the largest driver. Shape stability across folds is good for the large effects; st_debt_share, intangible_ratio and the staircase tails differ between training windows. No data artefact other than D-082. No true non-monotonicity of the "very high liquidity = distress" type appears: current_ratio, cash_ratio, wc_ratio are flat after the knee.
+- Human reviewer (initials) and date:
+
+### D-085 Reusable estimation and cost
+- Date / phase / agent: 2026-10-30 / round 2 / challenger-gam
+- Status: ADOPTED
+- Decision: `experiments/gam/gam_lib.py`: `fit_pd_model(train_df, "GAM-01")`, `save_model` / `load_model` (ebm.pkl, feature_params.json, calibrator.json, meta.json), `predict_pd(art, df, delta=0.0)` frozen, row-wise, clipped to [0.0003, 0.99]; `delta` = D-072 prior-shift constant (fold-wise rule-e values are in config.json; the harness would use the `harness_level_params.json` delta). Models for all three folds are saved under `GAM-0x/model_fold{k}/`.
+- Evidence: fit time per fold (feature params + inner model(s) + final fit; GAM-01 wall incl. prediction, final fit alone): fold 1 106 s (55 s), fold 2 198 s (114 s; rerun without grid), fold 3 305 s (174 s); the original grid run took 112 / 403 s / about 11 min. GAM-02 final fit 70 / 143 / 264 s. Prediction: 0.8-0.9 s per 100,000 rows (0.8 s of it is the shared feature transform), 8 threads, laptop; about 67 ms for one row (fixed pandas overhead). Complexity O(n x (F + T)) table lookups. Dependency: `interpret` 0.7.8 (pickle); an export of the term tables to JSON would remove it if GAM-01 wins.
+- Human reviewer (initials) and date:

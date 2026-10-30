@@ -1,0 +1,27 @@
+feature,expected,importance,shape,against_share,verdict
+tangible_ratio,-,0.27169665983009084,2nd pct +0.44 / median -0.03 / 98th pct -0.61 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+ateco_group,none (categorical),0.17811425641155956,"levels: I -0.46, OTHER -0.42, A -0.37, L -0.23, J -0.12, F -0.07, R -0.05, H -0.02, M -0.02, G +0.05, N +0.05, E +0.08, C +0.31",,n/a
+st_debt_ratio,+,0.17322082274831668,2nd pct -0.27 / median -0.02 / 98th pct +0.42 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+asset_turnover,none,0.16285391330896237,2nd pct -0.47 / median +0.19 / 98th pct +0.18 log-odds; missing-bin +0.00,,no expectation
+ar_days,+,0.1484757454206974,2nd pct -0.20 / median -0.06 / 98th pct +0.28 log-odds; missing-bin +0.48,0.0,agrees (monotone)
+equity_ratio,-,0.1442817311173187,2nd pct +0.34 / median -0.04 / 98th pct -0.18 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+cfo_to_debt,-,0.14412749408574996,2nd pct +0.47 / median -0.06 / 98th pct -0.17 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+ebitda_margin,-,0.1364045913114016,2nd pct +0.29 / median -0.04 / 98th pct -0.20 log-odds; missing-bin +0.29,0.0,agrees (monotone)
+extraord_to_assets,none,0.12820231420451592,2nd pct +0.40 / median -0.12 / 98th pct +0.30 log-odds; missing-bin +0.00,,no expectation
+ap_days,+,0.1253107670201403,2nd pct -0.17 / median -0.08 / 98th pct +0.30 log-odds; missing-bin +0.01,0.0,agrees (monotone)
+interest_to_assets,+,0.1236168255250236,2nd pct -0.15 / median -0.08 / 98th pct +0.66 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+roa_net,-,0.10413590135767435,2nd pct +0.35 / median -0.05 / 98th pct -0.13 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+interest_coverage,-,0.09321968330040367,2nd pct +0.25 / median -0.04 / 98th pct -0.10 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+roa_oper,-,0.08798922906652797,2nd pct +0.35 / median -0.05 / 98th pct -0.10 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+cash_ratio,-,0.0684680911457986,2nd pct +0.09 / median +0.01 / 98th pct -0.12 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+st_debt_share,+,0.06772872810462573,2nd pct -0.22 / median +0.05 / 98th pct +0.06 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+neg_equity,+,0.06026724905350072,2nd pct -0.03 / median -0.03 / 98th pct +0.82 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+current_ratio,-,0.05699201227388524,2nd pct +0.08 / median -0.01 / 98th pct -0.10 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+debt_split_missing,+,0.04460008915140471,2nd pct -0.03 / median -0.03 / 98th pct +0.14 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+legal_group,none (categorical),0.03754903175584274,"levels: OTHER -0.87, SAU -0.48, SPA -0.06, SRL +0.02, SRU +0.05",,n/a
+wc_ratio,-,0.03462548616986567,2nd pct +0.11 / median -0.01 / 98th pct -0.05 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+bank_debt_ratio,+,0.030575823035865562,2nd pct -0.03 / median -0.01 / 98th pct +0.09 log-odds; missing-bin -0.02,0.0,agrees (monotone)
+intangible_ratio,+,0.026310869812638644,2nd pct -0.02 / median -0.02 / 98th pct +0.09 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+macro_area,none (categorical),0.019320634191733747,"levels: North-East -0.04, Centre -0.00, North-West +0.01, South +0.03, Islands +0.06, OTHER +0.65",,n/a
+log_assets,-,0.01615006373179536,2nd pct +0.10 / median -0.00 / 98th pct -0.12 log-odds; missing-bin +0.00,0.0,agrees (monotone)
+rev_nonpositive,none,0.012950811206834,2nd pct +0.01 / median +0.01 / 98th pct -0.19 log-odds; missing-bin +0.00,,no expectation

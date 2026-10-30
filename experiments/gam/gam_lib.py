@@ -128,6 +128,30 @@ def _anchor(z, b, rate):
     return (lo + hi) / 2
 
 
+MIN_MISSING_DEFAULTS = 30   # same threshold as the categorical pooling rule in FEATURE_SPEC
+
+
+def reset_sparse_missing(ebm, X, y):
+    """Post-fit rule (D-08x): the EBM gives the 'missing' bin of a feature its own score. When fewer than
+    MIN_MISSING_DEFAULTS training defaults sit in that bin, the score is noise (e.g. asset_turnover: 19 rows,
+    0 defaults -> score -5.1, i.e. PD x 0.006 for any messy input row). Reset that bin to 0 (= average
+    firm) in main and interaction terms. Done inside the training window, before the level is anchored."""
+    done = []
+    names = list(ebm.feature_names_in_)
+    for ti, feats_idx in enumerate(ebm.term_features_):
+        for ax, fi in enumerate(feats_idx):
+            f = names[fi]
+            miss = X[f].isna().to_numpy()
+            if miss.sum() and y[miss].sum() < MIN_MISSING_DEFAULTS:
+                sc = ebm.term_scores_[ti]
+                if len(feats_idx) == 1:
+                    sc[0] = 0.0
+                else:
+                    np.moveaxis(sc, ax, 0)[0] = 0.0
+                done.append(f"{ebm.term_names_[ti]}: {f} missing bin ({int(miss.sum())} rows, {int(y[miss].sum())} defaults)")
+    return done
+
+
 def fit_pd_model(train_df, exp="GAM-01", fixed_cfg=None, log=print):
     spec = EXPERIMENTS[exp]
     feats = list(B.ALL_FEATURES)
@@ -180,6 +204,7 @@ def fit_pd_model(train_df, exp="GAM-01", fixed_cfg=None, log=print):
     t0 = time.time()
     ebm = _fit_ebm(Xall, y, _bags_final(n, u, FINAL_BAGS, SEED + 1), best["cfg"], mono, inter)
     rec["final_fit_secs"] = round(time.time() - t0, 1)
+    rec["sparse_missing_reset"] = reset_sparse_missing(ebm, Xall, y)
     z_all = _logit(_p(ebm, Xall))
     a_anchor = _anchor(z_all, b_b, y.mean())
     cal = {"method": "platt_slope_from_B_intercept_anchored_to_train_rate", "a": a_anchor, "b": b_b,

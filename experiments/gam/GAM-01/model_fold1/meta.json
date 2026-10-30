@@ -106,7 +106,7 @@
     },
     "A_log_loss": 0.04929025804553056,
     "A_auc": 0.813150477215337,
-    "secs": 36.7
+    "secs": 35.6
    }
   ],
   "chosen_cfg": {
@@ -119,10 +119,24 @@
   },
   "B_log_loss_raw": 0.045009409025887764,
   "B_log_loss_platt": 0.04500569306175143,
-  "final_fit_secs": 59.0,
+  "final_fit_secs": 54.9,
+  "sparse_missing_reset": [
+   "st_debt_share: st_debt_share missing bin (49 rows, 0 defaults)",
+   "current_ratio: current_ratio missing bin (55 rows, 0 defaults)",
+   "roa_net: roa_net missing bin (10 rows, 0 defaults)",
+   "roa_oper: roa_oper missing bin (10 rows, 0 defaults)",
+   "interest_coverage: interest_coverage missing bin (67 rows, 1 defaults)",
+   "cfo_to_debt: cfo_to_debt missing bin (44 rows, 1 defaults)",
+   "interest_to_assets: interest_to_assets missing bin (62 rows, 0 defaults)",
+   "asset_turnover: asset_turnover missing bin (10 rows, 0 defaults)",
+   "ar_days: ar_days missing bin (276 rows, 11 defaults)",
+   "tangible_ratio: tangible_ratio missing bin (19 rows, 0 defaults)",
+   "intangible_ratio: intangible_ratio missing bin (19 rows, 0 defaults)",
+   "extraord_to_assets: extraord_to_assets missing bin (15 rows, 0 defaults)"
+  ],
   "calibrator": {
    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
-   "a": 0.08206923839128366,
+   "a": 0.0836384887921271,
    "b": 1.0217012362821252,
    "target_rate": 0.00956217842927871
   },
@@ -131,10 +145,10 @@
   "tau_rule_e": 0.011651539618019,
   "r_w": 0.00956217842927871,
   "delta_prior_shift": 0.19973451817418564,
-  "predict_secs_test": 1.44,
-  "predict_secs_per_100k": 0.89,
-  "wall_secs": 112.0,
-  "fit_secs_total_incl_features_and_grid": 110.5
+  "predict_secs_test": 1.35,
+  "predict_secs_per_100k": 0.84,
+  "wall_secs": 105.5,
+  "fit_secs_total_incl_features_and_grid": 104.1
  },
  "interpret_version": "0.7.8",
  "feature_version": "features-v1 (2026-10-30)"
