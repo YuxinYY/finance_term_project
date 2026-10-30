@@ -1,0 +1,279 @@
+exp,fold,feature,expected,evidence,value,violates,z,partial
+SC-01,1,roa_net,-1,logit coef,-14.85431644567246,False,,
+SC-01,2,roa_net,-1,logit coef,-14.658845576832865,False,,
+SC-01,3,roa_net,-1,logit coef,-14.021272734502796,False,,
+SC-02,1,log_assets,-1,logit coef,0.048570291688315594,True,,
+SC-02,1,equity_ratio,-1,logit coef,-0.22990273719191118,False,,
+SC-02,1,st_debt_ratio,1,logit coef,1.1160912123873399,False,,
+SC-02,1,cash_ratio,-1,logit coef,-0.091301482359901,False,,
+SC-02,1,roa_net,-1,logit coef,-9.299908600056146,False,,
+SC-02,1,interest_coverage,-1,logit coef,-0.061743092653682975,False,,
+SC-02,1,interest_to_assets,1,logit coef,18.160999257473456,False,,
+SC-02,1,ar_days,1,logit coef,0.09704151388778247,False,,
+SC-02,1,tangible_ratio,-1,logit coef,-1.398467853446729,False,,
+SC-02,1,neg_equity,1,logit coef,0.8923857991990239,False,,
+SC-02,2,log_assets,-1,logit coef,-0.006119574780102794,False,,
+SC-02,2,equity_ratio,-1,logit coef,-0.196488121558019,False,,
+SC-02,2,st_debt_ratio,1,logit coef,1.213319026663527,False,,
+SC-02,2,cash_ratio,-1,logit coef,-0.5590296881536965,False,,
+SC-02,2,roa_net,-1,logit coef,-9.507894111306287,False,,
+SC-02,2,interest_coverage,-1,logit coef,-0.0715067146457153,False,,
+SC-02,2,interest_to_assets,1,logit coef,15.455701672746708,False,,
+SC-02,2,ar_days,1,logit coef,0.0767283074600373,False,,
+SC-02,2,tangible_ratio,-1,logit coef,-1.1228937011550104,False,,
+SC-02,2,neg_equity,1,logit coef,0.8206280649966864,False,,
+SC-02,3,log_assets,-1,logit coef,0.012428226426215255,True,,
+SC-02,3,equity_ratio,-1,logit coef,-0.35196041504917,False,,
+SC-02,3,st_debt_ratio,1,logit coef,1.17987813315577,False,,
+SC-02,3,cash_ratio,-1,logit coef,-0.3172555821866608,False,,
+SC-02,3,roa_net,-1,logit coef,-9.216174327913453,False,,
+SC-02,3,interest_coverage,-1,logit coef,-0.06497370761872116,False,,
+SC-02,3,interest_to_assets,1,logit coef,15.078031786864473,False,,
+SC-02,3,ar_days,1,logit coef,0.08183423509758726,False,,
+SC-02,3,tangible_ratio,-1,logit coef,-1.0058765388135777,False,,
+SC-02,3,neg_equity,1,logit coef,0.8348885928977556,False,,
+SC-04,1,wc_ratio,-1,logit coef,-0.15577028068338467,False,,
+SC-04,1,equity_ratio,-1,logit coef,-2.8270312422208286,False,,
+SC-04,1,roa_oper,-1,logit coef,-11.20295345371606,False,,
+SC-04,2,wc_ratio,-1,logit coef,-0.31278475010239903,False,,
+SC-04,2,equity_ratio,-1,logit coef,-2.8569921646432825,False,,
+SC-04,2,roa_oper,-1,logit coef,-11.544764362150378,False,,
+SC-04,3,wc_ratio,-1,logit coef,-0.31786783395809537,False,,
+SC-04,3,equity_ratio,-1,logit coef,-2.9701239766671845,False,,
+SC-04,3,roa_oper,-1,logit coef,-11.080747055565691,False,,
+SC-03,1,log_assets,-1,beta on WoE (must be > 0),0.25468328088111303,False,,
+SC-03,1,equity_ratio,-1,beta on WoE (must be > 0),0.2322212069994071,False,,
+SC-03,1,st_debt_ratio,1,beta on WoE (must be > 0),0.4168663812190723,False,,
+SC-03,1,cash_ratio,-1,beta on WoE (must be > 0),0.16430699390991824,False,,
+SC-03,1,roa_net,-1,beta on WoE (must be > 0),0.6138528853367021,False,,
+SC-03,1,interest_coverage,-1,beta on WoE (must be > 0),0.27212035459325506,False,,
+SC-03,1,interest_to_assets,1,beta on WoE (must be > 0),0.571157000517781,False,,
+SC-03,1,ar_days,1,beta on WoE (must be > 0),0.6278025773326853,False,,
+SC-03,1,tangible_ratio,-1,beta on WoE (must be > 0),0.7468269873301071,False,,
+SC-03,1,neg_equity,1,beta on WoE (must be > 0),0.153548411223573,False,,
+SC-03,2,log_assets,-1,beta on WoE (must be > 0),0.5997460846752679,False,,
+SC-03,2,equity_ratio,-1,beta on WoE (must be > 0),0.20437615896510786,False,,
+SC-03,2,st_debt_ratio,1,beta on WoE (must be > 0),0.4251417970957369,False,,
+SC-03,2,cash_ratio,-1,beta on WoE (must be > 0),0.3730458255474216,False,,
+SC-03,2,roa_net,-1,beta on WoE (must be > 0),0.6082663129724822,False,,
+SC-03,2,interest_coverage,-1,beta on WoE (must be > 0),0.2859104868457694,False,,
+SC-03,2,interest_to_assets,1,beta on WoE (must be > 0),0.4809031930970529,False,,
+SC-03,2,ar_days,1,beta on WoE (must be > 0),0.5311898818648747,False,,
+SC-03,2,tangible_ratio,-1,beta on WoE (must be > 0),0.6341323154363411,False,,
+SC-03,2,neg_equity,1,beta on WoE (must be > 0),0.1490926308666718,False,,
+SC-03,3,log_assets,-1,beta on WoE (must be > 0),0.4268241851461435,False,,
+SC-03,3,equity_ratio,-1,beta on WoE (must be > 0),0.2460935127884022,False,,
+SC-03,3,st_debt_ratio,1,beta on WoE (must be > 0),0.42222181905149747,False,,
+SC-03,3,cash_ratio,-1,beta on WoE (must be > 0),0.2799914291817752,False,,
+SC-03,3,roa_net,-1,beta on WoE (must be > 0),0.6032402384286157,False,,
+SC-03,3,interest_coverage,-1,beta on WoE (must be > 0),0.28145783106338135,False,,
+SC-03,3,interest_to_assets,1,beta on WoE (must be > 0),0.47182752974478065,False,,
+SC-03,3,ar_days,1,beta on WoE (must be > 0),0.5340386916931197,False,,
+SC-03,3,tangible_ratio,-1,beta on WoE (must be > 0),0.5630063219488253,False,,
+SC-03,3,neg_equity,1,beta on WoE (must be > 0),0.13592290778217764,False,,
+RC-01,1,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.786594747963462,False,1.5226032085751704,
+RC-01,1,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4908319884467146,False,7.040008506001652,
+RC-01,1,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.3551849287460561,False,7.381969846734973,
+RC-01,1,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2378504385698806,False,1.4478447813840445,
+RC-01,1,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.666025864905832,False,14.872117405158525,
+RC-01,1,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2166381176528511,False,3.739370779103773,
+RC-01,1,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.6097822106908711,False,10.963807376164135,
+RC-01,1,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.7648574047824245,False,7.590478280107825,
+RC-01,1,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),1.063272285775466,False,11.935984730522886,
+RC-01,1,neg_equity,1,probit coef on Phi^-1(T_i) (must be > 0),-0.0797422666478538,True,-1.141447578555956,
+RC-01,2,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.9137581453110696,False,5.720286297221248,
+RC-01,2,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4387369300326123,False,11.36223553007067,
+RC-01,2,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.3359150314132402,False,12.318337324933394,
+RC-01,2,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4372043589899144,False,4.920548399625547,
+RC-01,2,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6397832256535582,False,25.14051589249748,
+RC-01,2,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2503790824422601,False,7.62996714624372,
+RC-01,2,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.4747516447057723,False,14.67034809817458,
+RC-01,2,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.585749369028648,False,8.592940178797583,
+RC-01,2,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.8926062224914688,False,15.82020807566868,
+RC-01,2,neg_equity,1,probit coef on Phi^-1(T_i) (must be > 0),-0.0772106884932455,True,-1.9434762412182285,
+RC-01,3,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.7166705230920771,False,5.083799114161428,
+RC-01,3,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4636443320355068,False,16.728906560123615,
+RC-01,3,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.3310259185029089,False,16.59896440334225,
+RC-01,3,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.3428801873339346,False,5.010469091342662,
+RC-01,3,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6214411008629206,False,33.03900562614624,
+RC-01,3,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2446141427164026,False,10.28168318735577,
+RC-01,3,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.4403400823321624,False,17.640749748015573,
+RC-01,3,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.57156855494719,False,12.529359745359647,
+RC-01,3,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.7768654075838389,False,19.11208807995976,
+RC-01,3,neg_equity,1,probit coef on Phi^-1(T_i) (must be > 0),-0.0759513619625856,True,-2.665087396260459,
+RC-02,1,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6929683280692275,False,1.3428461062460728,
+RC-02,1,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4742381006801646,False,6.681451131922183,
+RC-02,1,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.3253304254098793,False,6.668774804962151,
+RC-02,1,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2890987631567375,False,1.733472720769569,
+RC-02,1,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6798441672438895,False,15.060915531966987,
+RC-02,1,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2088804558995385,False,3.60683860441684,
+RC-02,1,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.67590139674892,False,11.03763607765308,
+RC-02,1,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.5925572601136642,False,5.587527113725033,
+RC-02,1,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),1.0736994184146855,False,12.018560092077346,
+RC-02,1,neg_equity,1,probit coef on Phi^-1(T_i) (must be > 0),-0.0640186956908944,True,-0.910184107932302,
+RC-02,1,bank_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),-0.1814429649854675,True,-1.2356608099576245,
+RC-02,1,ap_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.6243475679196487,False,5.2276778193801885,
+RC-02,2,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.877622912160593,False,5.480409773182391,
+RC-02,2,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4293171015094665,False,10.926832929979522,
+RC-02,2,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.3113127784776692,False,11.280875596223868,
+RC-02,2,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4761963357467263,False,5.306846598589635,
+RC-02,2,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6502137589865459,False,25.368547380684983,
+RC-02,2,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2463280114161601,False,7.517723341824791,
+RC-02,2,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.5504058674427588,False,15.439625132925435,
+RC-02,2,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.4302088962650444,False,6.050393786688727,
+RC-02,2,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.8968699145375888,False,15.85632212605447,
+RC-02,2,neg_equity,1,probit coef on Phi^-1(T_i) (must be > 0),-0.0647679481158526,True,-1.621196814742359,
+RC-02,2,bank_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),-0.2573095787962366,True,-3.172007501010988,
+RC-02,2,ap_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.6141612592393275,False,7.928560296854244,
+RC-02,3,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6656130118322802,False,4.700816276756956,
+RC-02,3,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4391301323868626,False,15.55025661860772,
+RC-02,3,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.303506500448885,False,15.01994408288327,
+RC-02,3,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.3534490980763611,False,5.119900447243282,
+RC-02,3,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6398816223438324,False,33.709377985980225,
+RC-02,3,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2408852494984956,False,10.114313660383472,
+RC-02,3,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.5004877790526175,False,18.27227024514897,
+RC-02,3,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.4040887619758074,False,8.469966812403998,
+RC-02,3,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.7889500680227637,False,19.343829296505696,
+RC-02,3,neg_equity,1,probit coef on Phi^-1(T_i) (must be > 0),-0.0550565087307945,True,-1.9249688385650396,
+RC-02,3,bank_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),-0.1495826783929366,True,-2.560303293650093,
+RC-02,3,ap_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.6543479347601201,False,13.13811893082114,
+RC-03,1,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6904829498621962,False,1.3366621424785108,
+RC-03,1,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4164712391271463,False,9.34025620715412,
+RC-03,1,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.3337914290152462,False,6.898332354925727,
+RC-03,1,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2650100512083173,False,1.6150511237267644,
+RC-03,1,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6833274456732993,False,15.197653032534626,
+RC-03,1,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2040782750954693,False,3.5209486995225707,
+RC-03,1,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.6484767374232321,False,11.608428901942377,
+RC-03,1,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.5936260899309838,False,5.607737378156247,
+RC-03,1,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),1.0850865689628302,False,12.186665979856857,
+RC-03,1,ap_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.63998423448394,False,5.378651580408153,
+RC-03,2,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.884353272841365,False,5.512933568869187,
+RC-03,2,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.3690624170578467,False,14.279689965167009,
+RC-03,2,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.3164456069360997,False,11.513359070746356,
+RC-03,2,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.4488006147621425,False,5.053852381779307,
+RC-03,2,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6552116236545368,False,25.63136302949996,
+RC-03,2,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2421284689719224,False,7.380158135290621,
+RC-03,2,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.5061530377745127,False,15.57170779355614,
+RC-03,2,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.4275656205362009,False,6.022123940762011,
+RC-03,2,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.9126448070112702,False,16.205691216164812,
+RC-03,2,ap_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.642870730403008,False,8.340839771983173,
+RC-03,3,log_assets,-1,probit coef on Phi^-1(T_i) (must be > 0),0.672264327778312,False,4.743819246186697,
+RC-03,3,equity_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.3909583782747474,False,20.86815469328985,
+RC-03,3,st_debt_ratio,1,probit coef on Phi^-1(T_i) (must be > 0),0.307970249011396,False,15.304549153410866,
+RC-03,3,cash_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.3413571582014921,False,4.988339119146986,
+RC-03,3,roa_net,-1,probit coef on Phi^-1(T_i) (must be > 0),0.6423484677374455,False,33.95629080602666,
+RC-03,3,interest_coverage,-1,probit coef on Phi^-1(T_i) (must be > 0),0.2373794512864939,False,9.970945149896805,
+RC-03,3,interest_to_assets,1,probit coef on Phi^-1(T_i) (must be > 0),0.4751489580824667,False,18.959477826639784,
+RC-03,3,ar_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.3999043622678391,False,8.392112912654849,
+RC-03,3,tangible_ratio,-1,probit coef on Phi^-1(T_i) (must be > 0),0.8004549490425162,False,19.72552554734809,
+RC-03,3,ap_days,1,probit coef on Phi^-1(T_i) (must be > 0),0.6709790690871038,False,13.542735251559485,
+GB-01,3,log_assets,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,equity_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,st_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,bank_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,st_debt_share,1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,wc_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,current_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,cash_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,roa_net,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,roa_oper,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,ebitda_margin,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,interest_coverage,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,cfo_to_debt,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,interest_to_assets,1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,ar_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,ap_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,tangible_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,intangible_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,neg_equity,1,"PD log-odds, violation share",0.0,False,,False
+GB-01,3,debt_split_missing,1,"PD log-odds, violation share",0.0,False,,False
+GB-02,3,log_assets,-1,"PD log-odds, violation share",0.19115059668788986,False,,True
+GB-02,3,equity_ratio,-1,"PD log-odds, violation share",0.053898527048509025,False,,False
+GB-02,3,st_debt_ratio,1,"PD log-odds, violation share",0.019788840997771326,False,,False
+GB-02,3,bank_debt_ratio,1,"PD log-odds, violation share",0.45156691106694574,False,,True
+GB-02,3,st_debt_share,1,"PD log-odds, violation share",0.1146873960554197,False,,True
+GB-02,3,wc_ratio,-1,"PD log-odds, violation share",0.8301757773253833,True,,False
+GB-02,3,current_ratio,-1,"PD log-odds, violation share",0.1552528454673631,False,,True
+GB-02,3,cash_ratio,-1,"PD log-odds, violation share",0.45483440971773803,False,,True
+GB-02,3,roa_net,-1,"PD log-odds, violation share",0.10230658266566452,False,,True
+GB-02,3,roa_oper,-1,"PD log-odds, violation share",0.29016389946435356,False,,True
+GB-02,3,ebitda_margin,-1,"PD log-odds, violation share",0.28361887977917305,False,,True
+GB-02,3,interest_coverage,-1,"PD log-odds, violation share",0.5674307470918943,True,,False
+GB-02,3,cfo_to_debt,-1,"PD log-odds, violation share",0.1362903566818186,False,,True
+GB-02,3,interest_to_assets,1,"PD log-odds, violation share",0.04455459615726206,False,,False
+GB-02,3,ar_days,1,"PD log-odds, violation share",0.12662432434643897,False,,True
+GB-02,3,ap_days,1,"PD log-odds, violation share",0.28764044277467476,False,,True
+GB-02,3,tangible_ratio,-1,"PD log-odds, violation share",0.04714787099770526,False,,False
+GB-02,3,intangible_ratio,1,"PD log-odds, violation share",0.36944162551681387,False,,True
+GB-02,3,neg_equity,1,"PD log-odds, violation share",0.0,False,,False
+GB-02,3,debt_split_missing,1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,log_assets,-1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,equity_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,st_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,cash_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,roa_net,-1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,interest_coverage,-1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,interest_to_assets,1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,ar_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,tangible_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-03,3,neg_equity,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,log_assets,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,equity_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,st_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,bank_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,st_debt_share,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,wc_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,current_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,cash_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,roa_net,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,roa_oper,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,ebitda_margin,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,interest_coverage,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,cfo_to_debt,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,interest_to_assets,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,ar_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,ap_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,tangible_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,intangible_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,neg_equity,1,"PD log-odds, violation share",0.0,False,,False
+GB-04,3,debt_split_missing,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,log_assets,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,equity_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,st_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,bank_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,st_debt_share,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,wc_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,current_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,cash_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,roa_net,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,roa_oper,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,ebitda_margin,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,interest_coverage,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,cfo_to_debt,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,interest_to_assets,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,ar_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,ap_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,tangible_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,intangible_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,neg_equity,1,"PD log-odds, violation share",0.0,False,,False
+GB-05,3,debt_split_missing,1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,log_assets,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,equity_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,st_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,bank_debt_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,st_debt_share,1,"PD log-odds, violation share",0.10568373017311775,False,,True
+GB-06,3,wc_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,current_ratio,-1,"PD log-odds, violation share",0.8716255131741725,True,,False
+GB-06,3,cash_ratio,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,roa_net,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,roa_oper,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,ebitda_margin,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,interest_coverage,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,cfo_to_debt,-1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,interest_to_assets,1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,ar_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,ap_days,1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,tangible_ratio,-1,"PD log-odds, violation share",0.03358923714182902,False,,False
+GB-06,3,intangible_ratio,1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,neg_equity,1,"PD log-odds, violation share",0.0,False,,False
+GB-06,3,debt_split_missing,1,"PD log-odds, violation share",0.0,False,,False

@@ -1,0 +1,7 @@
+fs_year,rows,panel_ok,make_labels_ok,status_mismatch_rows,y_mismatch_on_common_ok,make_labels_ok_with_incomplete_window,panel_defaults_ok,make_labels_defaults_ok
+2007,144528,144214,144214,0,0,0,1379,1379
+2008,161863,161261,161261,0,0,0,2064,2064
+2009,171150,170386,170386,0,0,0,2752,2752
+2010,175399,174512,174512,0,0,0,2968,2968
+2011,184973,0,2357,2357,0,2357,0,2357
+2012,185639,0,0,0,0,0,0,0

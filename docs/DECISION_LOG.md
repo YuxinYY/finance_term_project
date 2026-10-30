@@ -781,3 +781,168 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
 - Source(s): n/a.
 - Risks: the harness must call `predict_pd` with the same LightGBM major version (4.7.0 used).
 - Human reviewer (initials) and date:
+
+---
+
+## Tournament round 1: referee (2026-10-31)
+
+All numbers below are read from `reports/tournament/r1_*.csv` written by
+`reports/tournament/score_r1.py` (metrics from `src/common/metrics.py`); the full scorecard is
+`reports/tournament/scorecard_r1.md`. Bootstrap: paired, firm-clustered, 200 draws (D-007), seed 0.
+
+### D-060 Referee scoring method for round 1
+- Date / phase / agent: 2026-10-31 / Day 2, round 1 / referee
+- Status: ADOPTED
+- Decision: score all 13 experiments pooled, per test year (2008/09/10) and seen/new firm with
+  `metrics.score`; paired firm-clustered bootstrap (200 draws, same draws for every model) for dAUC
+  and d log loss vs the incumbent SC-03 and for the key pairs. The bootstrap uses firm-multiplicity
+  weights (weighted Mann-Whitney AUC with a single pre-sort; weighted mean log loss), which is
+  algebraically the same estimator as `metrics.paired_bootstrap` with the same RNG call sequence.
+  Two level-adjusted log losses are reported so that models are not compared only on their shared
+  level error: L1 (leakage-free) = one common logit shift per fold, delta = logit(DR last training
+  year) - logit(DR training window), from training labels only (fold 1: 0; fold 2: +0.129; fold 3:
+  +0.219); L2 (oracle, diagnostic, uses test labels) = each model's own per-year
+  calibration-in-the-large intercept. Neither is a level recommendation.
+- Alternatives considered: the shared `paired_bootstrap` (O(firms x rows) index build, too slow on
+  506k rows x 13 models); an in-window per-model level anchor (needs in-window predictions that only
+  the GBM saved).
+- Evidence: equivalence on a 15,000-firm subsample (GB-01 vs SC-03, 40 draws, seed 0): CI bounds
+  identical to the shared function, max |diff| 1.0e-16 (`r1_bootstrap_equivalence.csv`). L1 and L2 do
+  not change the ranking of any face-valid model, and no d log-loss CI changes sign (scorecard T1, T4, T6).
+- Source(s): D-005, D-006; R-16 p. 32 (Brier = overall probability accuracy).
+- Risks / what would change our mind: with 200 draws the 2.5%/97.5% percentiles are themselves noisy
+  (each rests on about 5 draws); none of the promotion-relevant CIs lies near zero, but borderline
+  pairs (e.g. GB-05 vs GB-01, RC-01 vs SC-03 AUC) should be re-run with 1,000 draws before being quoted.
+- Human reviewer (initials) and date:
+
+### D-061 Leakage / process verdicts, round 1
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: ADOPTED
+- Decision: CLEAN: SC-01..SC-04, RC-01, RC-02, GB-01..GB-06. CONCERN: RC-03 (D-063). FAIL: none.
+  Shared CONCERN for all 13: D-062.
+- Evidence: code read (runners, `scorecard_lib.py`, `riskcalc.py`, `gbm_lib.py`, `src/features/build.py`):
+  every fit (B.fit bounds/medians/category pooling, WoE bins, T_i, probit, F, GBM inner split, early
+  stopping, grid, Platt slope, level anchor) uses only `fs_year <= t, label_status == ok` rows. The
+  referee refitted fold 3 of SC-03, RC-03 and GB-01 from current code on training rows only and
+  predicted on a test frame with all label columns removed: submitted PDs reproduced exactly (max
+  |diff| 0, `r1_repro_check.csv`). Contract check passes for all 13 (`r1_contract.csv`). GB notes:
+  fold 1 uses a random 70/15/15 firm split inside 2007 and a pre-declared default config (deviation
+  from "time-ordered inner splits", unavoidable with one training year; no test data); the 1.2 x
+  early-stopping tree count is an untested but pre-fixed heuristic; calibration slope from in-window
+  slice B, level anchored to the training rate. SC: nothing tuned. RiskCalc inner validation
+  (2007-08 -> 2009) was run after the outer results and changed no setting.
+- Source(s): CLAUDE.md section 5 rule 5; data/splits/README.md rules.
+- Human reviewer (initials) and date:
+
+### D-062 Shared caveat: the feature set was designed on fs_year 2007-2009 (test years of folds 1-2)
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: ADOPTED (as a reporting rule); fix OPEN for round 2
+- Finding: `docs/FEATURE_SPEC.md` (core set, which ratios exist, `sign = none` for asset_turnover and
+  extraord_to_assets, rejected candidates) was chosen from 2007-2009 training rows, incl. an inner
+  split scored on 2009 (`src/features/core_selection.py`, `univariate.py`). 2008 and 2009 are the
+  outer test years of folds 1 and 2, so feature selection saw their labels. Common to every model, so
+  paired comparisons are affected much less than absolute fold-1/2 levels; fold 3 (2010) is clean.
+- Decision: (1) quote 2010 (fold 3) next to pooled numbers in the deck; (2) a promotion must also hold
+  on 2010 alone. GB-01 vs SC-03 on 2010: dAUC +0.0191 [+0.0156, +0.0234], d log loss -0.00217
+  [-0.00253, -0.00181]: it does. (3) Say plainly in the deck that folds 1-2 are mildly optimistic.
+- Alternatives considered: re-run feature selection inside each fold (correct but changes the feature
+  set per fold, Roger M12; not feasible on Day 2).
+- Human reviewer (initials) and date:
+
+### D-063 RC-03's sign-drop rule is post hoc; how to report RC-01/02/03
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: ADOPTED
+- Decision: RC-03 verdict CONCERN. The rule is executed in-window, but it was added after RC-01/RC-02
+  outer coefficients and metrics were seen (`run.py` modified 23:59:03, after RC-02 ran 23:58). It is
+  motivated by face validity, not by a performance search, and its measured effect vs RC-02 is nil
+  (dAUC -0.0002 [-0.0004, +0.0001], d log loss -0.00003 [-0.00005, -0.00001]), so the optimism is small.
+  Report RC-03 as "RC-02 + a post-hoc sign rule"; do not present RC-03 vs RC-01/RC-02 differences as
+  evidence for the rule; it needs the real holdout to be confirmed. RC-01/RC-02 stay CLEAN: their settings
+  are code defaults used unchanged, and the inner validation (which validates on 2009 = fold 2's test
+  year) post-dates the outer runs and changed nothing. That inner validation may be quoted only as a
+  fold-3 / final-model check (as `inner_validation.md` already says), never as tuning evidence.
+- Evidence: `r1_paired_bootstrap.csv` (RC-03 vs RC-02); file times in experiments/riskcalc.
+- Human reviewer (initials) and date:
+
+### D-064 Face-validity verdicts, round 1
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: ADOPTED
+- Decision (violating features): SC-01 0, SC-02 1 (log_assets + in folds 1, 3; n.s.), SC-03 0, SC-04 0,
+  RC-01 1 (T_neg_equity < 0 in all folds), RC-02 2 (neg_equity, bank_debt_ratio, all folds), RC-03 0,
+  GB-01/03/04/05 0, GB-02 2 (wc_ratio 83% of partial-dependence movement against the sign,
+  interest_coverage 57%; bank_debt_ratio borderline 45%), GB-06 1 (current_ratio 87% against).
+  Method: coefficient signs per fold (GLM/probit); WoE/T_i monotonicity (111 checks, all pass);
+  GBM partial dependence of the saved fold-3 model on 20,000 fold-3 training rows (folds 1-2 of the
+  constrained GBMs are covered by construction only).
+- tangible_ratio as GB-01's #1 driver: plausible. The expected direction holds within every ATECO group
+  with >= 30 defaults (within-group AUC 0.56-0.73; overall 0.616; `r1_tangible_ratio_check.csv`), so it is
+  not merely a real-estate/sector proxy; its SHAP share is inflated by attribution among correlated
+  leverage/asset-structure ratios. Explain by family (D-058).
+- Evidence: `r1_face_validity_long.csv`, `r1_face_validity_gbm_pd.csv`, `r1_monotone_shape_checks.json`.
+- Source(s): docs/FEATURE_SPEC.md expected-sign table.
+- Human reviewer (initials) and date:
+
+### D-065 Promotion: GB-01 replaces SC-03 as incumbent
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: ADOPTED (referee); human sign-off requested (explainability trade-off)
+- Decision: GB-01 (monotone LightGBM, 26 features, native NaN) is the incumbent after round 1.
+- Evidence (`r1_paired_bootstrap.csv`): vs SC-03 pooled dAUC +0.0209 [+0.0188, +0.0231], d log loss
+  -0.00241 [-0.00260, -0.00223]; better in 2008, 2009 and 2010 and for seen and new firms (all CIs
+  exclude 0); 0 face-validity violations (SC-03: 0); process CLEAN. vs RC-03 (best transparent model):
+  dAUC +0.0183 [+0.0163, +0.0203], d log loss -0.00162 [-0.00177, -0.00147], better in every year, so
+  this is not a tie that goes to transparency. Pooled GB-01: AUC 0.8375 [0.8321, 0.8408] (AR 0.675),
+  log loss 0.06415, Brier 0.01368, mean PD 1.15% vs observed 1.54%, calibration slope 0.976.
+  Part of the gain is the feature set and part is the shape/interactions: GB-03 (GBM on the core set)
+  vs RC-01 (core-set probit): dAUC +0.0123 [+0.0106, +0.0141].
+- Alternatives considered: RC-03 (transparent, D-067); GB-02 (better but fails face validity).
+- Risks / what would change our mind: the humans judge per-firm SHAP reason codes insufficient for a
+  credit officer → RC-03 becomes the submission model at a cost of ~0.018 AUC; the holdout behaves
+  differently from 2008-2010.
+- Human reviewer (initials) and date:
+
+### D-066 Not promoted in round 1 (what didn't work / ties)
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: REJECTED (for promotion)
+- GB-02 (unconstrained) and GB-06 (partial constraints): fail face validity (D-064) despite better
+  metrics (GB-02 vs GB-01 dAUC +0.0065 [+0.0052, +0.0080]); GB-02 is reported as the cost of face
+  validity. GB-04 (imputation) and GB-05 ('advanced' monotone): statistical ties with GB-01 (dAUC
+  +0.0001 [-0.0003, +0.0006] and +0.0002 [-0.0000, +0.0004]) → simpler GB-01 kept. GB-03: dominated by
+  GB-01 (dAUC -0.0077 [-0.0087, -0.0066]). RC-01: log loss better than SC-03 but dAUC tie
+  (+0.0009 [-0.0001, +0.0020]) and a wrong-signed T_neg_equity. RC-02: two wrong-signed transforms.
+  RC-03: CONCERN and dominated by GB-01. SC-01, SC-02, SC-04: worse than SC-03 on both metrics.
+- Human reviewer (initials) and date:
+
+### D-067 Hand-off to calibration-specialist: GB-01 and RC-03
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: ADOPTED
+- Decision: calibrate GB-01 (champion) and RC-03 (transparent fallback). Facts for the specialist:
+  every model under-predicts; obs/pred pooled 1.34 (GB-01) and 1.36 (RC-03), by year 1.21/1.36/1.43
+  (GB-01) and 1.22/1.39/1.44 (RC-03); calibration slopes ≈ 1 pooled (0.976, 1.024), so the miss is a
+  level shift that grows with the default-rate trend; new-firm slopes 0.88 / 0.89 (PDs too spread for
+  new firms). L2 (oracle) shows the best achievable gain from a perfect per-year level: GB-01 log loss
+  0.06415 → 0.06343; the leakage-free L1 shift reaches 0.06370. The central-tendency choice is the
+  specialist's; it must be fitted in-window.
+- Human reviewer (initials) and date:
+
+### D-068 D-011: shared make_labels should censor incomplete windows regardless of outcome (proposed)
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: OPEN (proposed by referee; needs human approval to edit src/common/labels.py)
+- Finding: the panel `y`/`label_status` used for scoring is identical to `make_labels(start 6, horizon
+  12, data_end 2013-05-31)` for fs_year 2007-2010 (0 status mismatches, 0 y mismatches, same default
+  counts 1,379 / 2,064 / 2,752 / 2,968; `r1_d011_label_check.csv`). Round-1 results are unaffected.
+  The bug bites in fs_year 2011: make_labels would mark 2,357 incomplete-window rows `ok`, all with
+  y = 1 (100% default rate); the panel correctly censors them.
+- Proposal: in `make_labels`, set `censored = (~already) & (win_end > data_end + 1 day)` regardless of
+  `in_window`, add the `after_default` status, and change the default `data_end` to the D-009 value;
+  add a unit test with one censored default. Until then, nobody may call make_labels directly to
+  build training rows for the harness refit (use the panel).
+- Human reviewer (initials) and date:
+
+### D-069 Proposed (not made) change to src/common/metrics.paired_bootstrap
+- Date / phase / agent: 2026-10-31 / round 1 / referee
+- Status: OPEN (proposal; src/common not edited)
+- Proposal: replace the per-firm index list with multiplicity weights (`np.bincount` of the resampled
+  firm indices) and weighted AUC / log loss. Same RNG sequence, identical results (verified: max |diff|
+  1e-16 on a 15,000-firm subsample, `r1_bootstrap_equivalence.csv`), and fast enough for 1,000 draws on
+  506k rows. Reference implementation: `AUCEngine` + `bootstrap_draws` in `reports/tournament/score_r1.py`.
+- Human reviewer (initials) and date:
