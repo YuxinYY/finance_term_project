@@ -9,7 +9,6 @@ Team Turquoise · Kiet Nguyen, Desmond Peng, Chloe Li · project title · date. 
 
 ## 1. Business understanding [Formulation 15]
 1. The problem: one-year PD for private Italian borrowers; two uses (cutoff ranking, pricing level).
-   One sentence linking to Basel II IRB PD (verified source).
 2. Why it is worth money: mispricing and adverse selection (Stein 2005 — verified claims only);
    simple illustrative business case (e.g. EL-based pricing under incumbent vs our model).
 3. What has been done: accounting-ratio models (Altman, Ohlson), private-firm practitioner models
