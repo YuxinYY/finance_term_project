@@ -1,0 +1,11 @@
+{
+ "exp": "CAL-01",
+ "source_predictions": "GB-01",
+ "rule": "e_last_6m_annualised",
+ "method": "M1",
+ "desc": "GB-01, prior shift (Saerens eq. 4) to rule e (last 6 months annualised), floor 0.03%, cap 99%",
+ "floor": 0.0003,
+ "cap": 0.99,
+ "script": "experiments/calibration/s3_methods.py + s5_final_level.py",
+ "leakage": "targets from training-window labels only (s2); shift = logit(tau) - logit(training rate)"
+}

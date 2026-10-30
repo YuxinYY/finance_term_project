@@ -1,0 +1,11 @@
+{
+ "exp": "CAL-02",
+ "source_predictions": "RC-02",
+ "rule": "e_last_6m_annualised",
+ "method": "M1",
+ "desc": "RC-02, prior shift to rule e, floor 0.03%, cap 99%",
+ "floor": 0.0003,
+ "cap": 0.99,
+ "script": "experiments/calibration/s3_methods.py + s5_final_level.py",
+ "leakage": "targets from training-window labels only (s2); shift = logit(tau) - logit(training rate)"
+}

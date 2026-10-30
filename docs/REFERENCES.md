@@ -8,8 +8,10 @@ Status meanings (see `.claude/agents/literature-scout.md`):
 - **SECONDARY**: only a secondary mention found (citing source named). Do not cite claims.
 - **TO-VERIFY / UNVERIFIED**: not yet located, or located but nothing checked.
 
-Status as of **Oct 30, 2026** (literature-scout, Day 1 pass). Page numbers are the printed page
-numbers of the document at the recorded URL unless "pdf p." is stated.
+Status as of **Oct 30, 2026** (literature-scout, Day 1 pass; **Day 1b pass** on Moody's feature
+engineering / data cleaning added R-33..R-37, upgraded R-04 and R-10, and added notes N-01b, N-04,
+N-05b, N-10, N-33..N-35; digest in `docs/LIT_moodys_feature_cleaning_2026-10-30.md`). Page numbers
+are the printed page numbers of the document at the recorded URL unless "pdf p." is stated.
 
 ## Contradictions with the team's plan (read first)
 
@@ -42,21 +44,37 @@ numbers of the document at the recorded URL unless "pdf p." is stated.
    cite Altman as lineage.
 7. **Lessmann et al. (2015) data are retail credit scoring** (R-17, Sec. 1), not corporate.
    They also say beating LR alone no longer shows progress; RF should be a benchmark (p. 25).
+8. **Filling missing inputs with a mean/median biases PDs downward, per Moody's (R-34).** Moody's
+   says its earlier RiskCalc versions imputed missing inputs from region/sector means and that
+   this would systematically understate default probabilities (asserted, no numbers given).
+   RiskCalc v1 itself filled a missing input with the mean transformed value (R-05, pp. 60–61).
+   Our D-021 fills residual NaN with the training sector median in the GLM view: acceptable for
+   fields missing on < 0.1% of rows, but the harness will meet messy holdout rows. Check
+   calibration on rows with imputed core inputs (digest lesson L1).
+9. **Moody's sets the level (central default tendency) with external data we cannot use.**
+   RiskCalc 4.0 France triangulates the one-year CDT from OECD provisioning, French bank
+   provisions and EBA default rates, and forces it to exceed the development-sample default rate
+   because samples miss defaults (R-33, Sec. 2.4, p. 9; R-35, p. 798). Under D-004/CLAUDE.md §2.6
+   our level must come from the training data only; say so explicitly and do not imply we
+   "triangulated" a central tendency.
+10. **"RiskCalc 4.0" was read only in its France edition (R-33).** No general RiskCalc 4.0
+    methodology and no RiskCalc Italy document (3.1 or 4.0) was found. Never attribute the France
+    ratio list, weights or CCA formula to Italy or to "RiskCalc 4.0" in general.
 
 ## Bibliography
 
 | ID | Reference | Status | Where located | Intended use / claim to check |
 |---|---|---|---|---|
-| R-01 | Dwyer, D. W., Kocagil, A. E., & Stein, R. M. (2004, April 5). *Moody's KMV RiskCalc v3.1 Model: Next-Generation Technology for Predicting Private Firm Credit Risk.* Moody's KMV. | **VERIFIED** | https://www.rogermstein.com/wp-content/uploads/RiskCalc-v3-1-Model.pdf (author's site; 36 pp.) | See notes N-01 |
-| R-02 | Dwyer, D. W., & Stein, R. M. (2004). *Technical Document on RiskCalc v3.1 Methodology.* Moody's KMV. | LOCATED (listed in R-01 ref. 7, p. 35; on rogermstein.com publication list without link) | no copy found | Detailed methodology — do not cite specifics |
-| R-03 | Moody's KMV. *RiskCalc v3.1 Italy* (model documentation). | SECONDARY (TOC of a private-company valuation book lists "9.1 RiskCalc Italy"; Moody's 2020 webinar R-04) | no readable copy | Italy ratio families — **not available; do not claim which ratios the Italy model uses** |
-| R-04 | Moody's Analytics (2020). *Tracking the Impact of COVID-19 on Credit Risk — Europe* (webinar slides). | LOCATED | ma.moodys.com PDF | Italy/Spain/Portugal credit-cycle adjustment uses national unemployment rate — not re-read today |
-| R-05 | Falkenstein, E., Boral, A., & Carty, L. V. (2000, May). *RiskCalc for Private Companies: Moody's Default Model.* Moody's Investors Service, Rating Methodology. | **VERIFIED** | https://efalken.com/papers/riskcalc.pdf (first author's site; listed at efalken.com/papers/index2.html) | See notes N-05 |
+| R-01 | Dwyer, D. W., Kocagil, A. E., & Stein, R. M. (2004, April 5). *Moody's KMV RiskCalc v3.1 Model: Next-Generation Technology for Predicting Private Firm Credit Risk.* Moody's KMV. | **VERIFIED** | https://www.rogermstein.com/wp-content/uploads/RiskCalc-v3-1-Model.pdf (author's site; 36 pp.) | See notes N-01, **N-01b** (industry, data quality, panel dependence — Day 1b) |
+| R-02 | Dwyer, D. W., & Stein, R. M. (2004). *Technical Document on RiskCalc v3.1 Methodology.* Moody's KMV. | LOCATED (listed in R-01 ref. 7, p. 35; in R-33 references p. 31; on rogermstein.com publication list without link). Re-searched Day 1b: still no copy | no copy found | Detailed methodology — do not cite specifics |
+| R-03 | Moody's KMV. *RiskCalc v3.1 Italy* (model documentation). | SECONDARY (TOC of a private-company valuation book lists "9.1 RiskCalc Italy"; R-04 slide 13 now confirms an Italy model exists in the European suite; a press release (insidearm.com) says Capitalia used "RiskCalc 3.1 Italia" — press release not read) | no readable copy (re-searched Day 1b) | Italy ratio families — **not available; do not claim which ratios the Italy model uses** |
+| R-04 | Buitrago, M., & Makarov, U. (2020, May 6). *Tracking the Impact of Covid-19 on Credit Risk: European Private Firms* (webinar slides). Moody's Analytics. | **VERIFIED** (Day 1b re-read) | https://ma.moodys.com/rs/961-KCJ-308/images/Moody%27s%20Analytics%20Webinar%20Tracking%20the%20Impact%20of%20Covid-19%20on%20Credit%20Risk%20-%20Europe.pdf | See note N-04 (slides 13–15) |
+| R-05 | Falkenstein, E., Boral, A., & Carty, L. V. (2000, May). *RiskCalc for Private Companies: Moody's Default Model.* Moody's Investors Service, Rating Methodology. | **VERIFIED** | https://efalken.com/papers/riskcalc.pdf (first author's site; listed at efalken.com/papers/index2.html) | See notes N-05, **N-05b** (statement quality, levels vs trends, truncation, missing inputs — Day 1b) |
 | R-06 | Sobehart, J. R., Keenan, S. C., & Stein, R. M. (2000). *Benchmarking Quantitative Default Risk Models: A Validation Methodology.* Moody's Investors Service. | LOCATED (author's site link found; not read) | http://www.rogermstein.com/wp-content/uploads/53621.pdf | Walk-forward; CAP/AR origin |
 | R-07 | Stein, R. M. (2007). Benchmarking default prediction models: Pitfalls and remedies in model validation. *Journal of Risk Model Validation*, 1(1), 77–113. (orig. Moody's KMV TR #030124, 2002) | **VERIFIED** | http://www.rogermstein.com/wp-content/uploads/BenchmarkingDefaultPredictionModels_TR030124.pdf (JRMV typeset version) | See notes N-07 |
 | R-08 | Stein, R. M. (2005). The relationship between default prediction and lending profits: Integrating ROC analysis and loan pricing. *Journal of Banking & Finance*, 29(5), 1213–1236. doi:10.1016/j.jbankfin.2004.04.008 | **VERIFIED** | http://www.rogermstein.com/wp-content/uploads/JBF_2026.pdf (published JBF typeset) | See notes N-08 |
 | R-09 | Bohn, J. R., & Stein, R. M. (2009). *Active Credit Portfolio Management in Practice.* Wiley. ISBN 978-0-470-08018-4. | LOCATED | Wiley product page | Not read |
-| R-10 | Stein, R. M., Kocagil, A. E., Bohn, J., & Akhavein, J. (2003). *Systematic and Idiosyncratic Risk in Middle-Market Default Prediction.* Moody's KMV. | LOCATED (listed in R-01 ref. 25, p. 36) | — | Not read |
+| R-10 | Stein, R. M., Kocagil, A. E., Bohn, J., & Akhavein, J. (2003, February). *Systematic and Idiosyncratic Risk in Middle-Market Default Prediction: A Study of the Performance of the RiskCalc and PFM Models.* Moody's Special Comment (cover: Moody's Investors Service, Global Credit Research; R-01 lists it as Moody's KMV). | **VERIFIED** (Day 1b; read pp. 1–10, 14–15, 21–22, 26–30, 33–34) | http://www.rogermstein.com/wp-content/uploads/riskcalcpfm.pdf (author's site; 40 pp.) | See note N-10. NB first-page author spelling is "Jalal Akhavein"; Stein's site spells "Akhavain" |
 | R-11 | Altman, E. I. (1968). Financial ratios, discriminant analysis and the prediction of corporate bankruptcy. *Journal of Finance*, 23(4), 589–609. doi:10.1111/j.1540-6261.1968.tb00843.x | LOCATED (Crossref metadata matches; full text paywalled) | api.crossref.org/works/10.1111/j.1540-6261.1968.tb00843.x | For method/sample details cite R-32 (Altman's own restatement) |
 | R-12 | Ohlson, J. A. (1980). Financial ratios and the probabilistic prediction of bankruptcy. *Journal of Accounting Research*, 18(1), 109–131. doi:10.2307/2490395 | LOCATED (Crossref metadata matches; JSTOR paywalled) | api.crossref.org/works/10.2307/2490395 | "Logit on ratios; size effect" **not checked** — cite only as existence of logit lineage |
 | R-13 | Shumway, T. (2001). Forecasting bankruptcy more accurately: A simple hazard model. *Journal of Business*, 74(1), 101–124. | TO-VERIFY | — | Not attempted today |
@@ -78,6 +96,11 @@ numbers of the document at the recorded URL unless "pdf p." is stated.
 | R-29 | Italian Civil Code, art. 2435 co. 1 (directors file approved accounts with the Registro delle imprese within 30 days of approval). | **VERIFIED (current text)**; historical wording not checked | https://www.brocardi.it/codice-civile/libro-quinto/titolo-v/capo-v/sezione-ix/art2435.html | See notes N-28 |
 | R-30 | Assignment: *Term Project Instructions*, DS-GA 3001, Oct 11, 2026. | VERIFIED | course file | Business need, transaction flow, harness rules, evaluation criteria |
 | R-31 | Team Turquoise proposal with RMS feedback. | VERIFIED | course file | Feedback items (FEEDBACK_RESPONSE.md) |
+| R-33 | Buitrago, M. A., Makarov, U., Zhao, J. Y., & Dwyer, D. (2015, December). *RiskCalc 4.0 France.* Modeling Methodology, Moody's Analytics Quantitative Research Group (ed. C. Crossen). | **VERIFIED** (all 32 pp. read Day 1b) | http://ma.moodys.com/rs/961-KCJ-308/images/RiskCalc_40_France_FINAL.pdf | See note N-33. **The only RiskCalc 4.0 document read. France, not Italy** |
+| R-34 | Moody's (2021, December 2). *Advances in default detection and early warning.* Credit Risk Insights web article (no named author). | **VERIFIED (web page; claims are assertions without numbers)** | https://www.moodys.com/web/en/us/insights/credit-risk/advances-in-default-detection-and-early-warning.html | See note N-34 |
+| R-35 | Dwyer, D. W., & Stein, R. M. (2006). Inferring the default rate in a population by comparing two incomplete default databases. *Journal of Banking & Finance*, 30(3), 797–810. doi:10.1016/j.jbankfin.2005.11.001 | **VERIFIED** (abstract, Sec. 1 p. 798, Sec. 5–6 pp. 806–807) | http://www.rogermstein.com/wp-content/uploads/InferringDefaultRate_JBF1.pdf (published typeset). Stein's site dates it 2005; journal says 2006 (received Oct 2005) | See note N-35 |
+| R-36 | Dwyer, D., Wang, Y.-J., & Fang, F. (2012). *Moody's Analytics RiskCalc v3.1 France.* Moody's Analytics. | LOCATED (R-33 references, p. 31 only) | no copy found | Not read; do not cite |
+| R-37 | Dwyer, D., & Eggleton, D. (2009). *Level and Rank Order Validation of RiskCalc v3.1 United States.* Moody's KMV. | LOCATED (R-33 references, p. 31 only) | no copy found | Not read; do not cite |
 | R-32 | Altman, E. I. (2000, July). *Predicting Financial Distress of Companies: Revisiting the Z-Score and ZETA Models.* Working paper, NYU Stern (adapted from Altman 1968 and Altman, Haldeman & Narayanan 1977). | **VERIFIED** | Author's page pages.stern.nyu.edu/~ealtman/Zscores.pdf (HTTP 500 today); text read from mirror https://moodle2.units.it/pluginfile.php/322514/mod_resource/content/0/Zscores.pdf (unpaginated; pdf pages cited) | See notes N-32 |
 
 ## Verified notes (claims, location, what we take, what we do differently)
@@ -129,6 +152,44 @@ numbers of the document at the recorded URL unless "pdf p." is stated.
   market data (FSO-like only), Italian data with the assignment's label, and we compare the
   RiskCalc-style model against ML challengers on frozen splits.
 
+**N-01b RiskCalc v3.1 — industry, data quality, panel dependence (R-01, Day 1b)**
+- Sec. 3.3, pp. 17–18 + Table 2: adding industry controls to the FSO model raised one-year AR
+  only modestly (54.4% → 55.1%) but improved log-likelihood strongly; industry dummies also
+  correct ratios whose meaning differs by sector. Table 3 example: in services, construction,
+  mining/transport/utilities 40%+ of firms carry no inventory, so "low inventory" should not
+  earn credit there.
+- Sec. 3.4.1, pp. 19–20 + Table 4: re-estimating the v1.0 variable set on the larger, cleaner
+  CRD raised out-of-sample one-year AR from 48.2% to 51.7% (5-year 40.1% → 45.5%) with no
+  change of variables — cleaner data alone improved the model.
+- p. 21: default misclassification (defaults recorded as non-defaults after mergers, system
+  migrations, subsidiary/parent mapping) was detected with Hausman-type checks: e.g. many
+  defaults among firms the model rates safest is a red flag; one lender's post-acquisition
+  defaults were missing and were corrected.
+- pp. 21–22 + fn. 20: Benford's-law screening found excessive rounding at some banks; the model
+  was estimated with and without flagged rows and performed *better* keeping them, so they were
+  kept but flagged.
+- Sec. 3.4.2, p. 22: with panel data, ignoring within-firm dependence can mislead significance
+  tests; GEE estimates enlarged standard errors but left conclusions and rank ordering
+  unchanged. pp. 22–23: a Cox duration model ranked firms very similarly; the one-year probit
+  was slightly more powerful at one year.
+- *Take:* data cleaning is worth power; test each filter by out-of-time performance rather than
+  assuming that removing suspect rows helps; industry dummies mainly fix the level. *Differ:* we
+  cannot drop rows at prediction time (harness must score every row).
+
+**N-04 Moody's 2020 webinar (R-04)** — slide numbers
+- Slide 13: the RiskCalc suite has fifteen European country models for middle-market firms plus
+  a Large Firm Europe model (> €50MM assets); most use a public-firm-based credit cycle
+  adjustment (CCA); **Spain, Italy and Portugal models combine public-firm data with the
+  national unemployment rate**.
+- Slide 14: CCA compares a sector's current public-EDF credit quality with its historical
+  average and moves the FSO EDF up or down accordingly.
+- Slide 15: CCA is a transformation of public-firm distance-to-default by industry, made
+  region/country/industry-specific; inputs are refreshed monthly with a lag (e.g. end-March
+  DDs and February unemployment reflected from 1 May).
+- *Take:* the cycle is handled as a level adjustment on top of a financial-statement-only score,
+  which is our structure too (D-004, calibration step). *Differ:* we have no market or
+  unemployment data (not cleared, CLAUDE.md §2.6); our cycle handling is in-sample only.
+
 **N-05 RiskCalc for Private Companies (R-05)**
 - p. 1 (summary): ratio–default relationships differ between public and private firms, so
   public-firm models may misstate private-firm risk; model uses 10 ratios from 17 inputs.
@@ -141,6 +202,33 @@ numbers of the document at the recorded URL unless "pdf p." is stated.
   benchmark existed**; earlier academic default studies used a median of ~40 defaults.
 - *What we take:* private-firm-specific estimation and the transform-then-probit design; the
   "supplement, not substitute" framing for credit officers. *What we do differently:* see N-01.
+
+**N-05b RiskCalc for Private Companies — data and features (R-05, Day 1b)**
+- p. 25 (Exhibit 3.5): CRD statements carry a quality type, grouped as audit 28%, compile 48%,
+  review 15%, tax return 7%, unknown 2%; lenders' private-firm data are mostly unaudited.
+- pp. 38–39 (Exhibits 4.9–4.10): for prediction, ratio *levels* beat their *trends*; in probits
+  with level + trend, the level dominates (e.g. NI/assets trend insignificant). Sales growth and
+  NI growth are U-shaped. Trends are useful for monitoring, less for prediction; 8 of the 10
+  RiskCalc inputs are levels.
+- p. 40 (Exhibits 4.11–4.12): the latest year's ratio predicts better than the 3-year average;
+  the authors stress getting the most recent statement. (Public-firm data.)
+- pp. 40–41 (Exhibits 4.13–4.15): audited private firms default less (≈30% lower), but audit
+  status is highly correlated with size and its power is mostly absorbed by size in the
+  multivariate model, so it was left out.
+- p. 41: macroeconomic data and (then) industry were deliberately left outside the model;
+  macro forecasting is a time-series problem, separate from cross-sectional ranking.
+- p. 55 fn. 42: raw ratios are truncated at the 2nd and 98th percentiles in estimation and
+  testing, which reduces outlier influence and improves linear models.
+- pp. 55–57: transforms are non-parametric univariate default-frequency curves (on percentiles),
+  checked by regressing probit residuals on polynomial terms (Exhibit 6.1); the stored
+  transform is a lookup of 50 points with linear interpolation (p. 57).
+- pp. 60–61 (Appendix 6B): none of the inputs is mandatory; a missing input takes the **mean
+  transformed value**; the authors say less real data gives a worse output.
+- p. 61: size = total assets deflated by CPI.
+- *Take:* levels-only features (D-020), truncation at fixed training percentiles (D-019), a
+  frozen lookup transform for the harness, and that a missingness/quality signal can be
+  absorbed by size. *Differ:* we keep a missing flag next to the imputed value (cf. R-34); we
+  use nominal assets (CPI is external data, not cleared).
 
 **N-07 Stein (2007) JRMV (R-07)**
 - Sec. 1, pp. 77–78: validation has two dimensions, power and calibration.
@@ -254,6 +342,110 @@ numbers of the document at the recorded URL unless "pdf p." is stated.
   abbreviated statements are a plausible cause of structurally missing line items. *Differ:*
   legal maxima ≠ actual filing dates; data-auditor must check against data (`stmt_date`).
 
+**N-10 Stein, Kocagil, Bohn & Akhavein (2003) (R-10)**
+- p. 2 Highlights + Sec. 2.1, p. 8: on North American CRD data RiskCalc (financial-statement
+  model) beat PFM (public-equity-based comparables model) on every size, sector and period
+  cut; median AR gap ~8 points; both beat Z-score.
+- Highlight 6 + Sec. 4.1, p. 21: both models lose power as statements get older; PFM decays
+  faster.
+- Sec. 4.1, p. 21 + Conclusion p. 27: firm-specific (idiosyncratic) information appears to
+  dominate systematic (industry/market) information for middle-market default prediction;
+  systematic information matters more in cyclical industries (Sec. 2.2.2, p. 9; Fig. 5 p. 14).
+- Sec. 4.2, p. 21: localized (country-specific) RiskCalc models beat the North American model
+  abroad — local accounting/credit conventions matter.
+- Sec. 2.3, p. 9 + Sec. 4.3, p. 22: after re-fitting each model's prior (base rate) to the test
+  data, RiskCalc's likelihood was still better; the authors attribute part of that to power
+  (weaker models have flatter calibration curves).
+- Sec. 4.4, p. 22: simple averaging/thresholding of the two models' outputs did not add stable
+  power.
+- Sec. 4.5, p. 22: out-of-time performance after the data cut-off is offered as evidence
+  against overfitting.
+- App. A, p. 30 + fn. 19: Moody's KMV filters CRD submissions for GAAP violations,
+  undeterminable default status and unmatched statements/obligations; of ~907k North American
+  statements submitted only ~192k survived (> 80% filtered, mostly interim statements).
+- App. C.2.1–C.2.5, p. 34: stepwise selection ranked by univariate power and checked in a
+  multivariate setting; non-parametric transforms; probit/logit on transforms (GAM-like); final
+  mapping adjusted to a population default-rate estimate to correct sample bias.
+- *Take:* financial-statement-only modelling is the right core for private firms; cycle effects
+  are second-order for ranking; strict input filtering; out-of-time evidence for no
+  overfitting. *Differ:* we cannot filter holdout rows; our "localization" is the Italian data
+  itself.
+
+**N-33 RiskCalc 4.0 France (R-33)** — printed pages
+- Sec. 1.2, p. 4: 4.0 keeps the 3.1 structure ("ratios and inputs proved robust"); changes:
+  more data and better data cleansing; 14 industries instead of 9; marketable securities added
+  to liquid assets; interest expense/sales replaces financial charges/sales; personnel
+  expenses/sales replaces change in AR turnover; operating margin replaces EBITDA/sales; cash
+  flow/financial charges dropped; CCA re-specified on public-firm distance-to-default with
+  smoothing for thin sectors.
+- Sec. 2.1, p. 6: default = start of legal proceedings (liquidation, receivership, cessation of
+  payments, continuation plan) — local definition.
+- Sec. 2.2, p. 6: development data exclude firms with sales < €500k, financial institutions,
+  real-estate developers, public-sector/not-for-profit entities and start-ups (first two years'
+  statements too volatile); statements failing plausibility checks (e.g. assets ≠ liabilities +
+  net worth; period shorter than 12 months) are dropped.
+- Sec. 2.3, p. 7 (Table 1): 4.0 sample 1993–2014, 643k+ firms, 76k+ defaults, 3.8m statements.
+- Sec. 2.4, p. 9: development samples tend to show lower default rates than the population
+  (purged defaulters, missed events); one-year CDT of 2.2% triangulated from OECD loan-loss
+  provisions, French bank provisions, EBA default rates and the CRD sample, set to exceed the
+  sample rate. p. 10: CCA-mode CDT equals FSO CDT when the cycle is neutral.
+- Sec. 3, p. 10 eq. (1): FSO EDF = F(Φ(Σβ_i T_i(x_i) + Σγ_j I_j)); T_i and F non-parametric
+  (local regression / density estimation, fn. 7); CCA changes only the final transform F.
+- Sec. 3.1, p. 11, Table 2: seven groups (activity, debt coverage, growth, leverage, liquidity,
+  profitability, size) with expected directions; growth two-sided; selection questions:
+  availability, intuitive meaning, power, unambiguous definition, not-too-high correlation.
+- Table 3, p. 11: France 4.0 inputs — activity: interest expense/sales, accounts
+  payable/sales, personnel expenses/sales; debt coverage: (profit + D&A)/(liabilities − cash
+  and marketable securities); growth: sales growth, change in ROA; leverage: equity/assets;
+  liquidity: cash and marketable securities/assets; profitability: operating margin; size:
+  real total assets.
+- pp. 11–12 + Fig. 5 p. 13: transforms drawn against the ratio's percentile; shapes are
+  monotone except growth (U-shaped); equity/assets and debt coverage are convex (steepest at
+  the weak end).
+- Sec. 3.2, p. 14, Table 4: weight = share of total EDF change when each input moves 1 s.d.
+  from the average firm; 4.0 France weights: debt coverage 19.2%, leverage 17.8%, liquidity
+  16.0%, activity 13.6%, growth 13.0%, size 10.4%, profitability 10.0%.
+- Sec. 3.3, p. 15 + fn. 11: CCA = weighted average of French-industry and European-region DD
+  factors; weight on France = 1/(1 + 20/N) with N French public firms in the industry
+  (Vasicek-style shrinkage).
+- Sec. 4.1, p. 16 + fn. 12: one-year AR 69.1% (CCA) / 70.5% (FSO) vs 3.1's 67.8% / 69%.
+- Sec. 4.3, p. 18, Tables 7–8: Spearman correlations on transformed inputs, max 0.66
+  (equity/assets vs debt coverage); VIFs ≤ 3.04; fn. 13 uses VIF 4–10 as the warning zone.
+- Sec. 4.4–4.6, pp. 18–22, Tables 9–15: AR by industry, by size band, by year; real estate,
+  dealers and not-for-profits reported separately (one-year AR 59.3% / 70.2% / 62.3%) and not
+  recommended for scoring; fn. 14 warns against scoring single-project real-estate developers.
+- Sec. 4.7–4.8, pp. 22–23: 5-fold and walk-forward (from 2000) out-of-sample tests; in- vs
+  out-of-sample AR gap −0.5 points (one-year).
+- Sec. 4.9, p. 24 + Fig. 11, p. 25: FSO EDF averages roughly flat over time; CCA EDF follows
+  the cycle (peaks 2009). Fig. 12, p. 26: equity/assets and cash/assets drift upward over
+  1993–2012.
+- Sec. 5.2–5.4, pp. 27–29: per-firm explanation tools — percentile of each ratio in the
+  development sample, relative sensitivity, and relative contribution versus an average firm.
+- *Take:* see digest. *Differ:* Italy, no CCA, in-sample level only, no growth inputs.
+
+**N-34 Moody's 2021 web article (R-34)**
+- Moody's says a missing input is now estimated so as to neither penalise nor reward the firm;
+  earlier RiskCalc versions imputed missing inputs from region and sector means, which Moody's
+  says would systematically understate PDs — the reason it kept minimum-input rules. Two
+  sub-models estimate total assets and leverage from sales, employees and profitability;
+  incomplete statements go to a "limited financials" adjustment or a benchmark model; a
+  "Near-Neighbors" ML adjustment is announced as forthcoming. No numbers are given.
+- *Take:* plain mean/median imputation is a known downward bias; impute from the firm's own
+  related items (our share × own-total rule is this idea) and keep a flag. *Differ:* we do not
+  have their sub-models; this is a vendor web article, so cite as Moody's statement only.
+
+**N-35 Dwyer & Stein (2006) (R-35)**
+- Abstract + Sec. 1, p. 798: calibration needs the true prior default rate, but default
+  databases are often incomplete (hidden or unreported defaults); calibration has two steps —
+  map score to default rate, then adjust for the gap between database and true default rates.
+  Incomplete data also confound validation of calibration.
+- Sec. 5–6, pp. 806–807: capture–recapture on two merged legacy databases; with independence
+  the combined database misses ~10% of small-firm defaults; the estimate is very sensitive to
+  correlation between the two databases' capture rates (Table 2: 10% at ρ = 0 to 26% at ρ = 0.2).
+- *Take:* name "the sample may under-record defaults" as a risk in the level decision.
+  *Differ:* our target is the assignment's label in the same provider's data, so the in-sample
+  rate is the operative base rate; we cannot run capture–recapture (one source).
+
 **N-32 Altman (2000) (R-32)** — pdf pages
 - pdf p. 2: Z-score (1968) and ZETA (1977) still used by practitioners (author's statement).
 - pdf pp. 5–7: MDA chosen; sample of 66 manufacturers (33 bankrupt 1946–65, 33 matched
@@ -306,6 +498,27 @@ numbers of the document at the recorded URL unless "pdf p." is stated.
 | Prior-shift adjustment of posteriors when class priors change | R-22 | Sec. 2.2 eq. 4 | lit-scout 2026-10-30 |
 | SHAP values: unique additive attribution with local accuracy, missingness, consistency | R-23 | Sec. 3, Thm. 1, p. 4 | lit-scout 2026-10-30 |
 | Beating LR alone is no longer evidence of progress; use RF-type benchmarks (retail data) | R-17 | Conclusions, MS p. 25 | lit-scout 2026-10-30 |
+| RiskCalc 4.0 (France) kept the 3.1 structure: transforms → probit + industry dummies → final transform; cycle only moves the final transform | R-33 | Sec. 1.2 p. 4; Sec. 3 p. 10 eq. 1 | lit-scout 2026-10-30 (1b) |
+| RiskCalc 4.0 France inputs: equity/assets, cash+securities/assets, (profit+D&A)/(liabilities−cash), operating margin, interest exp./sales, AP/sales, personnel exp./sales, sales growth, ΔROA, real assets | R-33 | Table 3, p. 11 | lit-scout 2026-10-30 (1b) |
+| In RiskCalc 4.0 France, debt coverage carries the largest weight (19.2%), then leverage (17.8%) | R-33 | Sec. 3.2, Table 4, p. 14 | lit-scout 2026-10-30 (1b) |
+| Moody's drops statements failing plausibility checks (assets ≠ liabilities + net worth; < 12-month period) from development data | R-33; R-10 | R-33 Sec. 2.2 p. 6; R-10 App. A p. 30 | lit-scout 2026-10-30 (1b) |
+| Moody's excluded tiny firms, financials, real-estate developers, public/NFP and start-ups from RiskCalc France development | R-33 | Sec. 2.2, p. 6 | lit-scout 2026-10-30 (1b) |
+| Cleaner/larger data alone raised RiskCalc v1.0 out-of-sample one-year AR 48.2% → 51.7% (US data) | R-01 | Sec. 3.4.1, Table 4, p. 20 | lit-scout 2026-10-30 (1b) |
+| Removing suspect (rounded) rows made RiskCalc v3.1 weaker, so they were kept and flagged | R-01 | Sec. 3.4.1, p. 22 | lit-scout 2026-10-30 (1b) |
+| Industry controls add little power but much calibration (log-likelihood); ratio meaning differs by sector | R-01 | Sec. 3.3, pp. 17–18, Tables 2–3 | lit-scout 2026-10-30 (1b) |
+| Ignoring within-firm dependence can overstate significance; GEE left RiskCalc conclusions unchanged | R-01 | Sec. 3.4.2, p. 22 | lit-scout 2026-10-30 (1b) |
+| Ratio levels predict default better than trends; latest year beats a 3-year average | R-05 | pp. 38–40, Exhibits 4.9–4.12 | lit-scout 2026-10-30 (1b) |
+| RiskCalc v1 truncated raw ratios at the 2nd/98th percentiles | R-05 | p. 55 fn. 42 | lit-scout 2026-10-30 (1b) |
+| RiskCalc v1 filled a missing input with the mean transformed value | R-05 | Appendix 6B, pp. 60–61 | lit-scout 2026-10-30 (1b) |
+| Moody's says mean imputation of missing inputs would systematically understate PDs (vendor statement, no numbers) | R-34 | web article, 2021-12-02 | lit-scout 2026-10-30 (1b) |
+| Audit/quality status of private-firm statements is predictive but mostly absorbed by size | R-05 | pp. 40–41, Exhibit 4.15 | lit-scout 2026-10-30 (1b) |
+| Macroeconomic forecasting was deliberately left outside RiskCalc | R-05 | p. 41 | lit-scout 2026-10-30 (1b) |
+| For middle-market firms, firm-specific (financial statement) information dominates systematic information | R-10 | Sec. 4.1 p. 21; Conclusion p. 27 | lit-scout 2026-10-30 (1b) |
+| Model power decays as financial statements age | R-10 | Highlight 6 p. 2; Sec. 4.1 p. 21 | lit-scout 2026-10-30 (1b) |
+| Development samples tend to under-record defaults, so calibration needs a central-tendency adjustment | R-33; R-35; R-10 | R-33 Sec. 2.4 p. 9; R-35 Sec. 1 p. 798; R-10 App. C.2.4 p. 34 | lit-scout 2026-10-30 (1b) |
+| Moody's European RiskCalc models adjust for the cycle via public-firm DD; Italy, Spain, Portugal also use national unemployment | R-04; R-33 | R-04 slides 13–15; R-33 Sec. 3.3 p. 15 (France) | lit-scout 2026-10-30 (1b) |
+| Per-firm explanation as ratio percentiles + contribution vs an average firm (RiskCalc tools) | R-33 | Sec. 5.2–5.4, pp. 27–29 | lit-scout 2026-10-30 (1b) |
+| Collinearity check on transformed inputs: Spearman (max 0.66) and VIF (warning zone 4–10) | R-33 | Sec. 4.3, Tables 7–8 + fn. 13, p. 18 | lit-scout 2026-10-30 (1b) |
 
 ## Claims we must NOT make (or must word as assumptions)
 
@@ -330,6 +543,17 @@ numbers of the document at the recorded URL unless "pdf p." is stated.
     details except via R-32; Shumway (R-13), XGBoost monotone constraints (R-18), Platt (R-20),
     isotonic/Zadrozny-Elkan (R-21), EBM/GA2M (R-24, R-25) — all unverified.
 11. "Isotonic overfits with small calibration sets" — not checked in R-19 body.
-12. RiskCalc Italy's ratio list or Italian credit-cycle method (R-03 SECONDARY, R-04 not re-read).
+12. RiskCalc Italy's ratio list (R-03 SECONDARY). For the Italian credit-cycle method, say only
+    what R-04 slides 13–15 show: public-firm DD-based CCA combined with the national
+    unemployment rate (no formula, weights or version number given).
 13. Claims on Italian regional (North/South) credit differences or 2011–12 sovereign-crisis
     credit conditions — no source located yet; phrase as assumption or drop.
+14. "RiskCalc 4.0 uses ratios X/Y" without saying **France** (R-33). No general or Italian 4.0
+    document was read. Also do not say what changed in RiskCalc Italy 4.0 (no source).
+15. "Moody's showed mean imputation underestimates PDs by N%" — R-34 gives no numbers; it is a
+    vendor assertion. Quote as "Moody's states…".
+16. Anything from the Dwyer & Stein (2004) Technical Document (R-02), Dwyer, Wang & Fang
+    (2012) (R-36) or Dwyer & Eggleton (2009) (R-37) — not read.
+17. "Moody's found ≈80% of private-firm statements are bad" as a general rate — R-10 p. 30 is one
+    North American CRD example, mostly interim statements (fn. 19).
+18. A Dwyer paper on overfitting in ratio selection — searched, not found; do not cite.

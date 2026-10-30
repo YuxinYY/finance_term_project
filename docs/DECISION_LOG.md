@@ -946,3 +946,178 @@ All numbers below are read from `reports/tournament/r1_*.csv` written by
   1e-16 on a 15,000-firm subsample, `r1_bootstrap_equivalence.csv`), and fast enough for 1,000 draws on
   506k rows. Reference implementation: `AUCEngine` + `bootstrap_draws` in `reports/tournament/score_r1.py`.
 - Human reviewer (initials) and date:
+
+---
+
+## Calibration round (calibration-specialist, 2026-10-31)
+
+Every number below is printed by `experiments/calibration/s1..s8_*.py` and stored in
+`reports/calibration/*.csv|json` (figures in `reports/calibration/fig/`). Models: GB-01 and RC-02 (RC-02
+used instead of RC-03 per D-063). "e-4" = 0.0001 of log loss. CIs = firm-clustered paired bootstrap, 200
+draws, seed 0, same estimator as `reports/tournament/score_r1.py`. The GB-01 refit used for in-window
+predictions reproduces the submitted OOT PDs exactly (max |diff| 0, `experiments/calibration/cache/gb_oot_check.csv`).
+`reports/calibration/summary.md` was NOT written (the sub-agent harness blocks report files); the
+orchestrator should render it from these entries and the CSVs.
+
+### D-070 What a bank knows when it sets the level (leakage rule for every level parameter)
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED
+- Decision: under start 6, fs_year t's label (30 Jun t+1 to 30 Jun t+2) is complete on 30 Jun t+2, when
+  decisions on fs_year t+1 statements begin. So for test year t+1 the bank has seen defaults up to 30 Jun
+  t+2 and nothing of the test window: a "partially observed next-year rate" is NOT available. The
+  freshest legal signal is the default arrival speed in the last six months of the last training cohort
+  (Jan-Jun t+2) = rule e. All targets, shifts, Platt/isotonic maps use training rows or GB-01's in-window
+  slice B only.
+- Alternatives considered: using the test cohort's 0-6-month defaults (they are excluded rows of the test
+  population and would use other holdout rows: rejected, constraint 2).
+- Evidence: `reports/calibration/ct_targets.csv`, `monthly_hazard.csv`.
+- Source(s): D-002 (R-28, R-29 for filing timing); assumption for decision timing.
+- Human reviewer (initials) and date:
+
+### D-071 Central-tendency rules in the walk-forward: recency wins, long-run average loses, trend is fragile
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED (finding)
+- Decision: in 2008-2010, level rules that follow the latest observed level beat the training-window
+  average; trend extrapolation ties them in the rise but fails at the 2011 turn.
+- Evidence (`methods_by_year.csv`, GB-01, prior shift M1, Delta log loss vs submitted, e-4, pooled):
+  e last-6-months -6.31 [-7.09, -5.60] (per year -2.49 / -7.66 / -8.51); c2 half-trend -6.28 [-7.17, -5.44];
+  c trend -6.16 [-7.43, -4.95]; b last year -4.50 [-5.02, -4.03] (= referee L1); f mean-last-2 -1.57;
+  a pooled 0; d TTC proxy +0.37 [+0.34, +0.41]. RC-02 same order (e -6.65 [-7.50, -5.93]). Targets vs
+  observed (2008/09/10): e 1.17/1.50/1.61%, b 0.96/1.28/1.62%, a 0.96/1.13/1.30%, observed 1.28/1.62/1.70%.
+  obs/pred GB-01: submitted 1.21/1.36/1.43 -> rule e 1.02/1.05/1.18; pooled log loss 0.06415 -> 0.06352
+  (oracle per-year level 0.06343: e recovers 88% of the attainable gain). 2011 pseudo-test (fold-4 models
+  fit on 2007-2010; fs2011 12-month rate estimated at 1.43% from 11 months, `q6_2011_pseudo_test.csv`):
+  level-only extra log loss (e-4) a 0.33, d 0.48, f 0.48, e 0.74, b 0.80, c2 3.85, c 9.42.
+- Alternatives considered: a, b, c, c2, d, e, f (all in `ct_targets.csv`); a true TTC level is not
+  estimable (no post-turn benign years in 2007-2010).
+- Source(s): R-16 Sec. II p. 11 (pricing -> PIT, underwriting -> TTC).
+- Risks / what would change our mind: e was selected among 7 rules after seeing 2008-2010 (optimistic);
+  only one turning point (2011, estimated) tests the rules out of selection.
+- Human reviewer (initials) and date:
+
+### D-072 Method to move the level: prior shift (logit intercept shift); EM, isotonic, raw Platt rejected
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED (M1); REJECTED (M2, M3raw for the harness, M4 isotonic, Saerens EM)
+- Decision: PD' = expit(logit(PD) + delta), delta = logit(tau) - logit(r_w): exactly the R-22 eq. (4)
+  prior correction, i.e. the "simple prior adjustment" of R-07 pp. 88-89. One frozen number; no data
+  needed at prediction time.
+- Evidence (GB-01, rule e, pooled; `methods_by_year.csv`, `auc_invariance_check.csv`): M1 0.06352,
+  -6.31e-4 [-7.09, -5.60], slope 0.98, within-year |dAUC| = 0. M2 (shift matched to the model's mean PD on
+  the last training year) -6.16e-4: slightly worse. M3 (Platt slope from B + level) identical to M1 for
+  GB-01. M3raw (Platt as fitted on B; level = the B year's drift) -6.21e-4: good in a rise but it is an
+  implicit trend rule (D-071). M4 isotonic + level -4.82e-4, slope 0.92, within-year AUC -0.0008
+  (ties): the miss is level, not shape. Saerens EM (prior estimated from the unlabeled test batch):
+  2.18% / 1.79% / 0.45% vs observed 1.28 / 1.62 / 1.70% (`saerens_em_diagnostic.csv`), and it would need
+  the holdout batch (constraint 2).
+- Source(s): R-22 Sec. 2.2 eq. (4) pp. 5-6 (invariance assumption doubtful 2008-12; used as a level tool,
+  not as a claim that the assumption holds); R-07 pp. 88-91 (monotone recalibration cannot add power);
+  Platt/isotonic named as methods only [UNVERIFIED, R-20/R-21].
+- Human reviewer (initials) and date:
+
+### D-073 Holdout central tendency: tau = 1.49% (start-6), PIT anchor plus a horizon hedge
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED by calibration-specialist; human sign-off requested (the hedge is a judgment)
+- Decision: tau = 1.493% = expected rate two years after the fs2011 anchor (1.431%) under a driftless
+  logit random walk with sigma 0.21/yr (estimated from 2007-2011 cohort changes). Harness: delta =
+  logit(0.01493) - logit(r_w) = +0.059 (fit on 2007-2010, r_w 1.409%) or +0.079 (fit incl. fs2011 with
+  11-month label, r_w 1.381%); `experiments/calibration/harness_level_params.json`.
+- Alternatives considered (`final_level_candidates.csv`): pooled 2007-2010 1.41%; last complete year
+  (fs2010) 1.70%; fs2011 estimate 1.43%; latest half-year (Dec 2012-May 2013, seasonally scaled) 1.38%;
+  equal-weight 2007-2011 1.40%; trend 2.21% (2007-2010) / 1.90% (2007-2011); f 1.57%; expected-loss
+  optimum over fs2008-2011 rates 1.51%; minimax regret 1.49%; random walk h = 1/3: 1.46% / 1.53%.
+- Business reason: pricing needs a PIT level (R-16 p. 11; D-071 shows recency wins). At the end of the data
+  PIT (1.38-1.43%) and long-run (1.40-1.41%) agree near 1.4%; the holdout period is unknown (email Q3), and
+  log loss under uncertainty is minimised by the EXPECTED rate, which with convexity and the asymmetry of
+  D-074 sits a little above the anchor. Cost of the hedge if the truth is 1.43%: 0.17e-4; saving if the
+  truth is 1.70%: 1.1e-4 vs shipping 1.43% (`scenario_regret.csv`, grid row tau = 1.50%).
+- Evidence: expected holdout mean PD after the shift 1.40% / 1.41% / 1.61% on fs2010 / fs2011 / fs2012-like
+  populations (GB-01 fold-4 model; the model's features raise the fs2012 mean by ~15%,
+  `holdout_level_range.csv`); realised-rate p10-p90 at h = 2: 0.98%-2.08% (`recommended_level_random_walk.csv`).
+  The decline in 2011 is not an end-of-file reporting artefact: monthly hazards fall from Jul 2012 while
+  Feb-Apr 2013 match the prior year (`monthly_hazard.csv`); complete start-0/start-3 2011 rates also fall
+  (1.39->1.27%, 1.58->1.31%).
+- Source(s): R-16 p. 11; R-22 eq. (4); random-walk persistence and the volatility estimate are assumptions.
+  Nothing is claimed about RiskCalc Italy's cycle adjustment (REFERENCES "must not claim" #12); R-01 Sec. 3.1
+  p. 12 only: FSO mode updates with new statements, the full version adds market information.
+- Risks / what would change our mind: holdout in a stressed year above 2010 (2.13% would cost 11.8e-4);
+  Roger/TA disclose the holdout period (then set h accordingly); cleared macro data (D-004).
+- Human reviewer (initials) and date:
+
+### D-074 Asymmetry and scenario costs of the level
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED (finding)
+- Evidence (`asymmetry_gb01.csv`; GB-01 from the oracle level, extra log loss e-4, 2008/09/10): 30% too
+  low 8.17 / 10.35 / 10.93; 30% too high 5.57 / 7.02 / 7.40 (too low costs ~1.5x); log-symmetric 1/1.3:
+  4.57 / 5.79 / 6.11. Scenarios for shipping ~1.5% (`scenario_regret.csv`, nearest grid row tau = 1.50%): truth 1.28% 1.7e-4, 1.43%
+  0.2e-4, 1.62% 0.4e-4, 1.70% 1.3e-4, 2.13% 11.8e-4. Shipping 1.70% in a 2008-like year: 5.8e-4; shipping
+  1.41% in a 2010-like year: 2.9e-4.
+- Business reason (assumption, no rate/fee data): under-predicted PDs price loans below expected loss and
+  invite adverse selection against better-priced competitors (R-08 Sec. 6 makes this argument for model
+  power); over-prediction loses volume, not money on booked loans.
+- H4 verdict: NOT confirmed in the walk-forward. Best leakage-free level gain 6.3e-4 vs algorithm gains
+  16e-4 (GB-01 vs RC-02) and 24e-4 (vs SC-03). A 30% level miss (8-11e-4) is half the GB-01/RC-02 gap, so
+  the level is second-order only if it is set carefully.
+- Human reviewer (initials) and date:
+
+### D-075 PD floor 0.03%, cap 99%; a 50% cap rejected
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED (floor 0.03%, cap 99%); REJECTED (cap 50%)
+- Evidence (`floor_cap_effect.csv`, walk-forward GB-01 after M1-e): 31 PDs < 0.03%, 0 defaults among them,
+  log loss unchanged. 855 PDs > 50% with 553 defaults (65% observed); a 50% cap raises log loss
+  0.063524 -> 0.063621. Max PD 0.88, so a 99% cap never binds (numerical safety).
+- Source(s): R-15 para. 285 p. 67 (corporate PD floor 0.03%), used by analogy only; we do not claim the bank
+  is IRB (REFERENCES "must not claim" #3).
+- Human reviewer (initials) and date:
+
+### D-076 Label-window sensitivity (D-002a still open): ship the start-6 level, switchable
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED (default s6); OPEN pending Roger/TA
+- Evidence (`q5_label_window_levels.csv`, same rule as D-073): tau s0 1.37%, s3 1.39%, s6 1.49% (ratios
+  0.91 / 0.93 / 1). Cost matrix (`q5_label_window_cost_matrix.csv`, e-4, shipped vs true): s6 shipped,
+  truth s0 0.57, truth s3 0.38; s0 shipped, truth s6 0.59. On 2007-2010 the s0 level is ~1/3 lower
+  (D-002), but the 2011 rates are close across windows, so at the end of the data the gap is ~9%.
+  Ranking is window-robust: fold-4 GB-01 AUC on 2011 = 0.885 (s0), 0.869 (s3), 0.850 (s6, 11-month)
+  (`q5_2011_other_labels_fold4.csv`).
+- Decision: harness reads `tau[s6]`; if Roger/TA confirm another window, switch to `tau[s0|s3]` (no refit
+  of the level logic needed; the model's ranking stays).
+- Human reviewer (initials) and date:
+
+### D-077 Include fs2011 in the final fit with an 11-month label built from the panel
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED (recommendation to harness-engineer; human sign-off requested)
+- Decision: y11 = 1 if win_start <= def_date <= 2013-05-31, else 0, for the 183,953 fs2011 rows alive at
+  window start (2,357 defaults; 1.28% in 11 months). Build from the panel's win_start/def_date, NOT
+  `src/common/labels.make_labels` (D-011/D-068 bug: it marks only the 2,357 defaults "ok" with y = 1).
+  Recompute r_w and delta on the fitted rows (D-073).
+- Evidence (fold-3 analogue, `q6_partial_cohort_test.csv`, test 2010 at the same level, point estimates,
+  no CI): GB-01 AUC / log loss full 0.8307 / 0.07051, newest cohort cut to 11 months 0.8301 / 0.07063,
+  newest cohort dropped 0.8263 / 0.07086; RC-02 0.8115 / 0.07216, 0.8114 / 0.07221, 0.8089 / 0.07242.
+  Including a truncated newest cohort beats dropping it by 2.1-2.3e-4 and 0.003-0.004 AUC.
+- Alternatives considered: exclude 2011 (current; loses the newest behaviour); keep-as-0 for the missing
+  month is what the 11-month label does (~9% of the cohort's 12-month defaults fall in month 12,
+  `cohort_share_11_of_12.csv`), and the level is set separately by tau.
+- Human reviewer (initials) and date:
+
+### D-078 Credit-officer grade table and residual group miscalibration
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED (reporting); group-level corrections REJECTED (they would be fitted on test years)
+- Evidence: `grade_table_2010.csv` (CAL-01 on 2010; 11 pre-declared bands from 0.03% to 99%): observed
+  default rate rises monotonically across all 11 grades; grades 1-3 hold 42.5% of firms and 5.9% of
+  defaults; grades 9-11 hold 3.8% of firms and 33.8% of defaults; grades 4-9 run 20-40% above their
+  grade PD in 2010 because rule e under-shot 2010 by 18%. Group calibration (`subgroup_calibration.csv`,
+  pooled): new firms obs/pred 1.06, slope 0.89 (too spread: a shape issue, D-047); size quintile slopes
+  0.88 (small) to 1.10 (large); big ATECO sections obs/pred 1.01-1.17; macro-areas 1.04-1.17.
+- Source(s): R-16 pp. 33-34 (binomial bands understate error with correlated defaults: bands are diagnostic).
+- Human reviewer (initials) and date:
+
+### D-079 Hand-off from the calibration round
+- Date / phase / agent: 2026-10-31 / calibration round / calibration-specialist
+- Status: ADOPTED
+- Decision: harness = GB-01 final fit (2007-2011, D-077) -> its own calibrator (anchored to r_w) -> M1
+  shift with delta from `harness_level_params.json` -> clip [0.0003, 0.99]. Re-calibrated contract files
+  for the referee: `experiments/calibration/CAL-01` (GB-01 + M1 + e), `CAL-02` (RC-02 + M1 + e),
+  `CAL-03` (GB-01 + M1 + b), all floor 0.03% / cap 99%.
+- Open for humans: (1) sign off the hedge (1.49% vs the pure PIT anchor 1.43%); (2) D-002a label window;
+  (3) email Q3 holdout period (sets the horizon h); (4) new-firm over-dispersion (slope 0.89) needs a shape
+  fix in a later round, not a level fix.
+- Human reviewer (initials) and date:
