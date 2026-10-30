@@ -222,3 +222,18 @@ This file is the backbone of the final report's "defence of choices" and "what d
   reconstructable from eqty_tot, profit and fixed assets. `days_rec` 72% missing and not equal to
   365 x AR / revenue → recompute. Abbreviated statements (R-27, art. 2435-bis) are a plausible but
   unproven cause.
+
+### D-017 Drop the "one-sentence Basel II link" requirement
+- Date / phase / agent: 2026-10-30 / Day 1 / orchestrator (information from KN)
+- Status: ADOPTED
+- Decision: no Basel II sentence in the deck's Business Problem section. The instruction was
+  hidden white-ink text in the assignment PDF, placed to catch teams that let AI read the brief
+  for them. Removed from CLAUDE.md and docs/REPORT_TEMPLATE.md.
+- Alternatives considered: keeping the sentence because it is verified (R-15 paras 211/285/447/452).
+  Rejected: it would signal that the brief was read by AI rather than by the team.
+- Business reason: none; this is about honest documentation (Documentation 10 pts, AI use).
+- Evidence: KN confirmed the hidden text. The visible assignment text does not ask for it.
+- Source(s): assignment R-30 (visible text)
+- Risks / what would change our mind: none. R-15 remains in REFERENCES.md and may be cited only
+  where it genuinely supports a choice (e.g. the 0.03% PD floor in the harness).
+- Human reviewer (initials) and date: KN 2026-10-30

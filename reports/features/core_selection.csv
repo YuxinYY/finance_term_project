@@ -1,0 +1,11 @@
+set,features,auc_2009,logloss_2009,sign_flips
+A_cov,log_assets equity_ratio st_debt_ratio cash_ratio roa_net ar_days tangible_ratio neg_equity interest_coverage,0.7967541046562264,0.0696525832683936,log_assets(+0.002)
+B_cfo,log_assets equity_ratio st_debt_ratio cash_ratio roa_net ar_days tangible_ratio neg_equity cfo_to_debt,0.7949709576750263,0.06965966375840398,cfo_to_debt(+0.231)
+C_int_ta,log_assets equity_ratio st_debt_ratio cash_ratio roa_net ar_days tangible_ratio neg_equity interest_to_assets,0.7992677762077044,0.0694692240812942,
+D_cov_noroa,log_assets equity_ratio st_debt_ratio cash_ratio ar_days tangible_ratio neg_equity interest_coverage,0.7816782835012794,0.07235988585743373,
+E_cov+int_ta,log_assets equity_ratio st_debt_ratio cash_ratio roa_net ar_days tangible_ratio neg_equity interest_coverage interest_to_assets,0.8006463527113055,0.06939779676866438,
+F_cfo_noroa,log_assets equity_ratio st_debt_ratio cash_ratio ar_days tangible_ratio neg_equity cfo_to_debt,0.7917349162582463,0.07162178546394103,
+G_A+flag,log_assets equity_ratio st_debt_ratio cash_ratio roa_net ar_days tangible_ratio neg_equity interest_coverage debt_split_missing,0.7969574758884318,0.06962909834999781,log_assets(+0.006)
+H_A_wc,log_assets equity_ratio st_debt_ratio wc_ratio roa_net ar_days tangible_ratio neg_equity interest_coverage,0.7971433303287949,0.06963604529825086,log_assets(+0.010)
+I_A_oper,log_assets equity_ratio st_debt_ratio cash_ratio roa_oper ar_days tangible_ratio neg_equity interest_coverage,0.7895994392008088,0.07021828300818707,
+J_E+bank,log_assets equity_ratio st_debt_ratio cash_ratio roa_net ar_days tangible_ratio neg_equity interest_coverage interest_to_assets bank_debt_ratio debt_split_missing,0.8010217856173236,0.06937438065764169,log_assets(+0.001) bank_debt_ratio(-0.027)
