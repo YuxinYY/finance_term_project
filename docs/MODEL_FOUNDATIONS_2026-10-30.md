@@ -484,18 +484,52 @@ safe". Story: tangible assets are collateral and hold value in distress.
 - **Less transparent globally** than RiskCalc's curves, though SHAP dependence plots exist
   (`GB-01/dep_*.png`).
 
-### 5.4 EBM / GAM (running now)
+### 5.4 EBM / GAM (GAM-01, GAM-02): "the best fully explainable model"
 
-An **Explainable Boosting Machine** sits between RiskCalc and LightGBM. It learns **one curve
-per feature**, like RiskCalc, but learns the curves with boosting (one feature at a time,
-round-robin), optionally adding a few two-feature interaction curves. If it gets close to 0.838
-it's a strong "fully explainable" option. Results go in the next briefing.
+An **Explainable Boosting Machine** sits between RiskCalc and LightGBM.
+- **One curve per feature**, like RiskCalc, so you can plot exactly how each ratio moves the
+  PD, and the curves add up to the score.
+- The curves are learned by **boosting, one feature at a time** (round-robin), on all 26
+  features, with the same direction rules as LightGBM.
+- **GAM-02** also adds 10 two-feature "interaction" curves.
+
+**Results** (`experiments/gam/`, bootstrap in `paired_bootstrap.csv`):
+
+| | AUC pooled | AUC 2010 | Log loss after calibration | vs LightGBM |
+|---|---|---|---|---|
+| GAM-01 (curves only) | 0.825 | 0.818 | 0.0645 | **−0.012 AUC [−0.014, −0.010]** |
+| GAM-02 (+10 interactions) | 0.826 | 0.819 | 0.0644 | interactions add only +0.0008 [+0.0004, +0.0012] |
+
+**What it teaches us:**
+- The EBM beats RiskCalc-style (0.819) and the scorecard (0.817), so it's the **most accurate
+  model where every feature's effect is one readable curve**.
+- It still trails LightGBM by 0.012. So **LightGBM's edge comes from combinations of ratios**
+  that a curve-per-feature model can't represent. Even 10 interaction pairs recover only about
+  7% of the gap.
+
+**Shapes** (all 20 features with an expected direction obey it):
+- **Tangible ratio:** PD falls almost in a straight line as hard assets rise.
+- **Short-term debt:** PD rises smoothly; negative equity adds a further jump.
+- **Profitability (ROA, cash flow, EBITDA margin):** PD falls steeply **until zero**, then flat.
+  Losses are the signal; extra profit adds nothing.
+
+**Quirks to know:**
+- `rev_nonpositive = 1` (no sales) *lowers* risk, which an officer won't believe alone. These
+  are probably holding / real-estate companies.
+- Pooled "OTHER" category levels get large effects.
+- One fix was needed: a "missing" bin learned from 19 rows with 0 defaults scored −5.1 log-odds,
+  which would price a messy row at about 1/150 of the average PD. Missing bins with < 30 training
+  defaults are now reset to neutral (D-082).
+
+**Practical:** prediction is fast (about 0.9 s per 100k rows). The saved models depend on
+the `interpret` library unless exported to tables.
 
 ### 5.5 Head-to-head (pooled 2008–2010; CIs from firm-clustered bootstrap)
 
 | Model | AUC [95% CI] | vs scorecard | Log loss | Wrong-direction ratios |
 |---|---|---|---|---|
 | GB-01 LightGBM, monotone | 0.838 [0.832, 0.841] | **+0.021 [+0.019, +0.023]** | 0.0642 | 0 |
+| GAM-01 EBM, monotone | 0.825 | about +0.009 | 0.0652 | 0 |
 | RC-02 RiskCalc-style | 0.819 | +0.003 | 0.0658 | 1 |
 | SC-03 WoE scorecard | 0.817 [0.812, 0.821] | — | 0.0666 | 0 |
 | SC-02 plain logit | 0.803 | worse | 0.0672 | 1 (size) |
@@ -618,7 +652,8 @@ year), which is the cycle risk to disclose.
 - The label window Roger uses.
 - Whether a training-data filter for broken statements or an imputation flag helps (Moody's says
   they should; R-33, R-34).
-- EBM results (running).
+- LightGBM (0.838) vs EBM (0.825): is 0.012 AUC worth the loss of one-curve-per-feature
+  transparency? This is the team's call (see 5.4).
 
 ---
 
