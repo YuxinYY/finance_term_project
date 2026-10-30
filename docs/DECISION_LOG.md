@@ -408,3 +408,376 @@ All numbers below come from files written by `python -m src.features.univariate`
   roa_net–roa_oper 0.76. Actions: tax_to_assets dropped (Spearman 0.96 with roa_net, `rejected_candidates.csv`);
   cfo_to_debt, roa_oper, current_ratio kept out of core.
 - Source(s): R-01 Sec. 4.2 p. 26 (VIFs used to limit collinearity).
+
+---
+
+## Tournament round 1: challenger-scorecard (merged by orchestrator from experiments/scorecard/decisions.md)
+
+### D-030 Benchmark family and pre-declared settings (SC-01..SC-04)
+- Date / phase / agent: 2026-10-31 / Round 1 / challenger-scorecard
+- Status: ADOPTED
+- Decision: four benchmarks on the frozen walk-forward folds, each refit per fold on `fs_year <= t`, `label_status == ok`, with `B.fit/B.transform(impute=True)`: SC-01 single best core numeric ratio (chosen by in-window |AUC-0.5|; it was roa_net in all 3 folds) -> logit; SC-02 unpenalised logit on the 10 core features + 3 categoricals; SC-03 monotone-WoE scorecard; SC-04 Z'-style logit on wc_ratio, equity_ratio, roa_oper, asset_turnover.
+- Tuning: none needed. GLMs are unpenalised (no hyper-parameter). SC-03 settings were declared before looking at results and are identical in all folds, including fold 1 (single training year): 20 initial quantile bins, pool-adjacent-violators to monotone in the expected-sign direction, minimum final bin 2% of training rows. No inner validation split was used; no fold uses a default instead of a tuned value because nothing was tuned.
+- Evidence: `experiments/scorecard/SC-0*/metrics.md`. Pooled AUC 0.746 / 0.803 / 0.817 / 0.770; log loss 0.0713 / 0.0672 / 0.0666 / 0.0699.
+- Source(s): Stein (benchmarking logic, course); Altman lineage only via R-32; Ohlson (R-12) cited only as existence of logit lineage (content unread).
+
+### D-031 SC-03 (WoE scorecard) is the benchmark to beat; SC-02 is the transparent logit reference
+- Status: ADOPTED (round-1 provisional; the referee decides)
+- Evidence: pooled AUC 0.8166 vs 0.8027 (SC-02); AUC higher in all three folds (+0.014, +0.011, +0.017); log loss 0.0666 vs 0.0672. Brier 0.0141 vs 0.0140 (overall probability accuracy, essentially tied). Calibration-in-the-large is poor for all (see D-033), so level comparisons between SC-02 and SC-03 are mostly about shape, not level. Paired bootstrap is the referee's job.
+- Interpretation (hypothesis, not tested): the AUC gain of SC-03 over SC-02 comes from non-linear shapes in the ratios (e.g. roa_net default rate 9.4% in the lowest bin, falling to 0.43% at the top; the logit is linear in a winsorised ratio). A GAM/GBM challenger should beat SC-03 if shape is the only story.
+
+### D-032 Sign check (Roger face-validity)
+- Status: ADOPTED (reported)
+- Result: SC-03 betas (on risk-oriented WoE) positive in all 13 features in all 3 folds; monotone bins enforce the numeric direction by construction. SC-01, SC-04: no violations. SC-02: one violation, `log_assets` has a positive coefficient in fold 1 (+0.049) and fold 3 (+0.012, SE 0.017, not significant) against expected sign -; negative in fold 2. Cause: size is correlated with the leverage/profit ratios and carries almost no marginal signal once they are in (univariate AUC 0.4765). Not "fixed" by dropping or sign-constraining; reported. The SC-03 `log_assets` WoE is monotone decreasing by construction with beta 0.43.
+- Source(s): FEATURE_SPEC expected-sign table.
+
+### D-033 Level calibration: all benchmarks under-predict (rising default rate, no cycle information)
+- Status: OPEN (hand-off to calibration-specialist)
+- Evidence: pooled mean PD vs observed default rate: SC-01 1.21% vs 1.54%; SC-02 1.08%; SC-03 1.10%; SC-04 1.17%. Calibration intercepts +0.25 to +0.45. Train-window default rates (1.0%, 1.1%, 1.3%) trail the test-year rates (1.28%, 1.62%, 1.70%) in every fold. Calibration slopes are near 1 (0.95 to 1.10), so ordering and spread are fine and the miss is a level shift. The logit models also lose a little level because the GLM fits the training years' mean exactly, which by construction was lower than the next year's.
+- Not fixed here: any level adjustment is the calibration-specialist's decision (central tendency / cycle). The fix is not tuned on test years.
+
+### D-034 SC-04 Altman-lineage benchmark is a proxy, not Z'
+- Status: ADOPTED with caveat
+- Decision: Z'-style ratios are rebuilt from the feature library: working capital/TA (wc_ratio), equity/assets (stands in for both retained earnings/TA and book equity/liabilities; retained earnings is not in the data), operating ROA (EBIT/TA proxy), sales/TA (asset_turnover); re-estimated as a logit, no published coefficients used. It is lineage only (R-32: original Z needs market equity; Z' replaces it with book equity); we do not claim it reproduces Altman's model. Pooled AUC 0.770, below SC-02 (0.803) with 4 vs 13 inputs.
+
+### D-035 REJECTED / not done
+- Points scaling is illustrative (PDO 20, 600 points at 50:1 good:bad odds): conventional choices, not a bank policy. Reported, not tuned.
+- Isotonic/other post-hoc recalibration of the benchmarks: not done (calibration-specialist's scope).
+- Penalised (L1/L2) logit: not used; with 475k rows and 13 features, no overfit visible (calibration slope 0.95 to 1.03).
+
+---
+
+## Tournament round 1: challenger-riskcalc (merged by orchestrator from experiments/riskcalc/decisions.md)
+
+# challenger-riskcalc decisions (for the orchestrator to merge into docs/DECISION_LOG.md)
+
+All numbers are from files written by code in `experiments/riskcalc/` (paths given). Outer metrics
+are diagnostic and come from `src/common/metrics.py`; the referee's scorecard is authoritative.
+
+### D-040 RiskCalc-style architecture and its in-window estimation recipe
+- Date / phase / agent: 2026-10-31 / Phase 3 (tournament round 1) / challenger-riskcalc
+- Status: ADOPTED (as the RiskCalc challenger; promotion is the referee's call)
+- Decision: PD = F(Phi(sum_i beta_i * Phi^-1(T_i(x_i)) + sum_j gamma_j I_j)), with I_j = ATECO
+  section-group indicators. Everything is refitted in each fold's training window:
+  (1) T_i = the ratio's default rate by training quantile bin (K = clip(train_defaults // 30, 10, 50):
+  45 bins in fold 1, 50 in folds 2–3), shrunk toward the base rate with a Beta prior of 2
+  pseudo-defaults, made monotone in the FEATURE_SPEC direction by weighted pool-adjacent-violators,
+  interpolated on the probit scale between bin centres and flat beyond the outer centres; a missing
+  ratio gets its own shrunk empirical default rate. (2) statsmodels Probit. (3) F = 100 quantile bins
+  of the probit index → shrunk rates → PAV (increasing) → one knot per PAV block, linear
+  interpolation on the probit scale, slope-1 extrapolation beyond the outer knots. Features come from
+  `B.transform(impute=False)` (NaNs kept, so missingness is priced inside T_i, not imputed).
+- Alternatives considered: imputation + linear probit on raw ratios (that is the scorecard
+  challenger's territory); isotonic step function for F (ties ranks in the tails; rejected in
+  favour of interpolation); 1-D logistic recalibration as F (inner check "F = identity", i.e. the
+  raw probit, gave AUC 0.8169 / log loss 0.0681 vs 0.8170 / 0.0680 with F: F changes almost nothing
+  in-window; kept because it is part of the published architecture and gives calibration-specialist a
+  fitted hook).
+- Business reason: each T_i is a driver curve a credit officer can read ("default rate vs this
+  ratio"); flat tails stop one extreme or manipulated ratio from dominating the PD (R-01 fn. 8);
+  monotone curves make the reason codes face-valid.
+- Evidence: RC-01 / RC-02 / RC-03 below; inner checks in `experiments/riskcalc/inner_validation.md`.
+- Source(s): R-01 Sec. 3.1 p. 14 (functional form, industry indicators, "closely related to a GAM"),
+  fn. 8 (transforms reduce the impact of noisy ratios), p. 13 (ratio families). The specific bin
+  rule, shrinkage prior, PAV and the shape of F are **our choices (assumption)**: the paper's T_i
+  and F estimation details are in R-02, which we have not read. Do not say "as in RiskCalc" for them.
+- Risks / what would change our mind: if the referee finds a monotone-GBM with clearly better power
+  and comparable explanation, the RiskCalc model becomes the benchmark rather than the champion.
+- Human reviewer (initials) and date:
+
+### D-041 In-window sign rule drops `neg_equity` and `bank_debt_ratio`
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-riskcalc
+- Status: ADOPTED (RC-03)
+- Decision: after the probit is fitted on a fold's training rows, any T_i with coefficient <= 0 is
+  dropped (most negative z first) and the probit refitted. The rule runs inside every fold (no test
+  data used). It dropped the same two terms in all three folds (`RC-03/train_log.md`):
+  `T_bank_debt_ratio` (z = −1.24, −3.17, −2.56 in folds 1–3) and `T_neg_equity` (z = −0.81, −1.43,
+  −1.78). **Selected set is identical across folds** (10 ratios: log_assets, equity_ratio,
+  st_debt_ratio, cash_ratio, roa_net, interest_coverage, interest_to_assets, ar_days,
+  tangible_ratio, ap_days) — answers Roger's "does each year's model have different variables?": no.
+- Why the signs flip (explanation, not a data error): (a) `neg_equity` is a deterministic function
+  of `equity_ratio` < 0; the nonparametric T_equity_ratio already prices that region (its bottom bin
+  has a 16.0% default rate in fold 3, `explain.md` §1), so the flag is redundant and picks up a small
+  negative offset. The flag was designed for linear models (FEATURE_SPEC: "adds a jump that
+  winsorised equity_ratio cannot show"), which the RiskCalc transform does not need. (b)
+  `bank_debt_ratio`: univariately + (AUC 0.579), but conditional on short-term liabilities, equity
+  and interest/assets, more bank debt means less of the same leverage is trade/other debt; ap_days
+  (trade payables) keeps a strong + coefficient. Treated as collinearity inside the leverage family,
+  not as a finding that bank debt is safe.
+- Alternatives considered: keep them with negative signs (RC-02; face-validity violation in the
+  reason codes); force positivity by constrained estimation (more complex, same effect).
+- Evidence: RC-02 vs RC-03 pooled AUC 0.8194 vs 0.8192, log loss 0.0658 vs 0.0658 (the rule costs
+  nothing measurable); `RC-02/train_log.md`, `RC-03/train_log.md`.
+- Source(s): R-01 Sec. 3.1 p. 13 (expected signs per family; at least one ratio per family);
+  dropping on sign is our rule (assumption).
+- Risks: bank debt is the lender-facing leverage measure a credit officer may ask about; answer: it is
+  represented by the leverage family (equity_ratio, st_debt_ratio) and the interest burden.
+- Human reviewer (initials) and date:
+
+### D-042 Missing values priced inside T_i; H2 evidence from the debt-split block
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-riskcalc
+- Status: ADOPTED (method); H2 → PARTLY CONFIRMED for this model
+- Decision: a missing ratio gets its own shrunk empirical default rate inside T_i (no imputation, no
+  separate indicator). RC-02 tested H2 by adding the two block ratios (`bank_debt_ratio`, `ap_days`,
+  missing on 15.7% of fold-3 training rows).
+- Evidence (fold-3 params, `RC-03/explain.md` §1): T_ap_days(missing) = 1.39% vs base rate 1.30%
+  (68,730 rows): the block's missingness is only weakly informative, matching D-016. In contrast the
+  rare missing cases of `ar_days` (1,109 rows; revenue undefined/non-positive) carry T = 5.94%, and
+  `interest_coverage` missing (321 rows) 1.90%: missingness *is* informative where it marks an
+  abnormal statement. Adding ap_days lifted pooled AUC 0.8175 → 0.8194 and per-year AUC in every
+  year (2008 0.8311→0.8328, 2009 0.8144→0.8174, 2010 0.8102→0.8115); log loss 0.0660 → 0.0658.
+  That gain comes from the ratio's values, not from the missing bin.
+- Alternatives: median imputation + `debt_split_missing` flag (the GLM path; scorecard challenger).
+- Source(s): assumption (method); D-016 (data-auditor) for the block pattern.
+- Risks: paired bootstrap needed before claiming the +0.002 AUC is real (referee).
+- Human reviewer (initials) and date:
+
+### D-043 Probit vs logit link
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-riskcalc
+- Status: ADOPTED (probit), logit REJECTED as a separate experiment (near-identical)
+- Evidence: inner validation (train 2007–08 → validate 2009, inside fold-3 window,
+  `inner_validation.md`): probit AUC 0.8170 / log loss 0.0680; logit 0.8153 / 0.0679; PD rank
+  correlation (Spearman) 0.9973. Small AUC edge for probit is expected because the T_i enter on the
+  probit scale.
+- Source(s): R-01 Sec. 3.1 p. 14 (probit link).
+- Human reviewer (initials) and date:
+
+### D-044 Bins, smoothing, monotonicity: pre-declared defaults kept
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-riskcalc
+- Status: ADOPTED (defaults); alternatives REJECTED
+- Decision: K = clip(train_defaults // 30, 10, 50), prior 2 pseudo-defaults, PAV on. Pre-declared
+  before any outer result; fold 1 (one training year, 1,379 defaults) uses the same rule (45 bins), no
+  tuning possible there.
+- Evidence (inner validation 2007–08 → 2009, `inner_validation.md`): base AUC 0.8170 / LL 0.0680;
+  K <= 20: 0.8165 / 0.0683; K <= 100 (15 defaults/bin): 0.8160 / 0.0680; PAV off: 0.8146 / 0.0681;
+  prior 10: 0.8171 / 0.0684 (cal. slope 1.15). No alternative is better on both metrics.
+- Source(s): assumption.
+- Human reviewer (initials) and date:
+
+### D-045 Industry, legal form and macro-area indicators
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-riskcalc
+- Status: ADOPTED (ateco_group only, as in R-01's form); legal_group + macro_area OPEN (not run
+  out-of-time)
+- Evidence (inner validation, `inner_validation.md`): base (industry) AUC 0.8170 / LL 0.0680;
+  + legal_group + macro_area 0.8183 / 0.0680; no industry indicators 0.8184 / 0.0681. All
+  differences ≤ 0.0015 AUC on one validation year (2009), within noise. Fold-3 industry coefficients
+  are all negative vs manufacturing (ATECO C, the reference), e.g. real estate (L) −0.287 (SE 0.019),
+  construction (F) −0.215 (SE 0.017): conditional on ratios, manufacturing is the riskiest large
+  sector in 2007–09 training data. [Section names follow D-013's mapping.]
+- Source(s): R-01 Sec. 3.1 p. 14 (industry indicators in the probit).
+- Risks: in 2009 validation industry indicators did not add power; they may matter more for level
+  (calibration) than for ranking. Re-test with legal/macro if round 2 happens.
+- Human reviewer (initials) and date:
+
+### D-046 Final transform F does not fix the level; under-prediction left to calibration-specialist
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-riskcalc
+- Status: OPEN (owner: calibration-specialist)
+- Evidence: RC-03 pooled mean PD 1.13% vs observed 1.54% (obs/pred 1.36); per year obs/pred 1.22
+  (2008), 1.39 (2009), 1.44 (2010); calibration intercept +0.33, slope 1.02 (`RC-03/metrics.md`). The
+  slope ≈ 1 says the *shape* of the PD scale is right; the *level* follows the training-window base
+  rate (0.96%, 1.13%, 1.30%) while test years run at 1.28%, 1.62%, 1.70%. The driver curves shift up
+  fold by fold (`RC-03/transforms.png`). This is H4 territory: a central-tendency adjustment of the
+  final transform, not a change of model.
+- Source(s): R-01 Sec. 4.1 p. 25 (power and calibration are separate validation dimensions).
+- Human reviewer (initials) and date:
+
+### D-047 New firms are ranked worse than seen firms (H5, first evidence)
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-riskcalc
+- Status: OPEN (H5 evidence; referee to confirm with CIs)
+- Evidence: RC-03 pooled AUC seen firms 0.8259 (442,415 rows, 6,862 defaults) vs new firms 0.7651
+  (63,744 rows, 922 defaults); calibration slope 1.04 vs 0.89 (`RC-03/metrics.md`). The model uses
+  no firm history, so the gap is a property of the population (new firms in the data), not of
+  history features.
+- Source(s): assumption.
+- Human reviewer (initials) and date:
+
+---
+
+## Tournament round 1: challenger-gbm (merged by orchestrator from experiments/gbm/decisions.md)
+
+# challenger-gbm decisions (D-050..D-059), for the orchestrator to merge into docs/DECISION_LOG.md
+
+All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `config.json`,
+`experiments/gbm/comparison.md` and `experiments/gbm/GB-01/explain.md` (code: `gbm_lib.py`,
+`run_experiment.py`, `compare.py`, `explain.py` in `experiments/gbm/`). Pooled = test years
+2008-2010, 506,159 rows, 7,784 defaults.
+
+### D-050 GBM challenger = monotone-constrained LightGBM, full feature set, native NaN (GB-01)
+- Date / phase / agent: 2026-10-31 / Phase 3 (tournament round 1) / challenger-gbm
+- Status: ADOPTED (as the GBM entry to the tournament; promotion is the referee's call)
+- Decision: LightGBM binary log-loss objective; monotone constraints from `B.expected_signs()` on every
+  feature with sign +1/-1 (asset_turnover, extraord_to_assets, rev_nonpositive and the 3 categoricals
+  unconstrained); categoricals as LightGBM categoricals (never numeric codes); NaN left to LightGBM's
+  native missing-value handling; no class re-weighting or resampling.
+- Alternatives considered: unconstrained twin (GB-02, D-051), core features only (GB-03, D-055), shared
+  imputation (GB-04, D-056), 'advanced' monotone method (GB-05, D-057), partial constraints (GB-06,
+  D-051). XGBoost was not tested (team decision: not installed). So the past-cohort tip that
+  "calibrated XGBoost did well" is tested only in its LightGBM form.
+- Business reason: one model that ranks well (approval) and whose drivers all move PD in the direction
+  a credit officer expects (defensible declines, reason codes).
+- Evidence: GB-01 pooled AUC 0.8375 (AR 0.675), log loss 0.06416, Brier 0.01368; per year AUC
+  0.8441 / 0.8359 / 0.8307 (2008/2009/2010); seen firms AUC 0.8438, new firms 0.7865. All 20
+  sign-expected features have zero partial-dependence movement against the expected sign (explain.md §1).
+- Source(s): monotone constraints = FEATURE_SPEC expected signs (D-018, D-022); R-19 (abstract) for the
+  need to check boosted-tree probabilities post hoc.
+- Risks / what would change our mind: referee bootstrap shows the RiskCalc/scorecard challengers equal on
+  AUC (then the simpler model wins under the tie rule); the new-firm AUC gap (0.787 vs 0.844) also
+  appears in the other challengers or is specific to GBM.
+- Human reviewer (initials) and date:
+
+### D-051 Monotone constraints kept despite a significant cost in power
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED (constraints kept). Unconstrained model REJECTED for submission ("what didn't work" /
+  trade-off row)
+- Decision: keep the constraints. The unconstrained twin GB-02 is better on both metrics, but it gets
+  there partly by using ratios against their economic direction.
+- Alternatives considered: GB-02 (no constraints); GB-06 (constraints dropped only on the three
+  decile-break features current_ratio, tangible_ratio, st_debt_share flagged by feature-architect).
+- Business reason: a model that says "more working capital raises PD" or "more bank debt lowers PD"
+  cannot be defended to a credit officer or a validator, and its reason codes would be wrong-signed.
+- Evidence (comparison.md, firm-clustered paired bootstrap, 200 draws, d = variant - GB-01):
+  GB-02 dAUC +0.0065 [+0.0052, +0.0079], d log loss -0.00083 [-0.00096, -0.00072] (-1.3%), both
+  significant; per year AUC 0.8485 / 0.8419 / 0.8402. GB-02 fold-3 partial dependence CONTRADICTS the
+  expected sign for wc_ratio (84.7% of movement against), bank_debt_ratio (55.5%), interest_coverage
+  (57.4%), and partly violates nearly every other ratio (GB-01/explain.md §4). GB-06 recovers only
+  dAUC +0.0005 [+0.0000, +0.0010], d log loss -0.00011, so the gap is not caused by the three decile-
+  break features. It is spread over collinear ratios used conditionally against sign.
+- Source(s): assumption (face validity is a course grading criterion and a credit-officer requirement).
+- Risks / what would change our mind: if the referee's face-validity test also accepts limited
+  non-monotonicity, a partially constrained model could be revisited in round 2. The gap is about
+  0.0065 AUC, about the same size as the extra power the full feature set adds over the core set (D-055).
+- Human reviewer (initials) and date:
+
+### D-052 Inner validation scheme, tuning grid and number of trees
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED
+- Decision: folds 2-3: inner-train = training years except the last; the last training year is
+  split by firm (crc32 hash of id) into A (early stopping + grid choice by A log loss) and B
+  (calibration). Fold 1 (one training year): random firm split 70/15/15 with the pre-declared DEFAULT
+  config (num_leaves 8, depth 3, min_data_in_leaf 1000), no grid. Pre-declared grid (folds 2-3):
+  num_leaves/max_depth in {4/2, 8/3} x min_data_in_leaf in {500, 2000}; fixed lr 0.03,
+  feature/bagging fraction 0.8, lambda_l2 10, early stopping 150 rounds (max 4000). Final booster
+  refit on all training rows with round(1.2 x best_iter) trees (heuristic: more rows support
+  slightly more trees). Feature params (`B.fit`) refit on inner-train for the inner model and on the
+  full window for the final model.
+- Alternatives considered: Optuna search (rejected: time box, and the grid differences are tiny);
+  no refit (final model = inner model; rejected because it would drop the most recent training year).
+- Business reason: tuning never sees the test year; the latest year is used for validation, which
+  mimics deployment.
+- Evidence: chosen per fold (config.json): fold 1 DEFAULT, 282 -> 338 trees; fold 2 8 leaves/min 500,
+  408 -> 490; fold 3 8 leaves/min 2000, 322 -> 386. The grid spread in A log loss is <= 0.0003
+  (train_log.md), so the choice matters little.
+- Source(s): assumption (standard practice). The 1.2 factor is a heuristic, not tuned.
+- Risks / what would change our mind: the 1.2 factor is untested; the harness refit on 2007-2010
+  should use the same rule (encoded in `fit_pd_model`).
+- Human reviewer (initials) and date:
+
+### D-053 Own calibration: Platt slope from held-out slice B, level anchored to the training default rate
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED (own calibration); final level-setting is DEFERRED to calibration-specialist
+- Decision: Platt map logit(PD) = a + b*logit(p_raw). Slope b is fitted on slice B with the inner model
+  (B was used neither for fitting nor for early stopping). The intercept a is re-anchored so that the
+  mean calibrated PD over the full training window equals the training default rate. Isotonic was
+  compared but not adopted.
+- Alternatives considered: (a) raw booster probabilities; (b) Platt as fitted on B (its intercept
+  mixes in the year-on-year rise in the default rate, then would be applied to a refit model that
+  already contains that year, so it double-counts); (c) isotonic (eligible only if B has >= 500
+  defaults: fold 1 B has 203 defaults, so not eligible there).
+- Business reason: pricing needs the right level. A shape-only fix from held-out data, plus an
+  explicit, documented level choice (training-window average), keeps the level decision with one
+  owner (calibration-specialist) for all challengers.
+- Evidence: 2-fold firm-cross-fitted log loss on B (raw / Platt / isotonic): fold 1 0.04398 / 0.04401
+  / 0.04553; fold 2 0.05579 / 0.05549 / 0.05573; fold 3 0.06518 / 0.06447 / 0.06476. Platt slope b on B
+  = 1.017 / 0.943 / 0.998. So the LightGBM log-loss booster (no re-weighting) is close to slope 1. In
+  this data, the Platt gain on B is almost all intercept (level drift between years), not the sigmoid
+  distortion R-19 describes for boosting. OOT effect of our map vs raw: pooled AUC unchanged, log loss
+  0.064155 vs raw within 1e-4 (metrics.md). OOT level: mean PD 1.145% vs observed 1.538% (obs/pred
+  1.34; 1.21 / 1.36 / 1.43 by year), calibration slope 0.976. The level gap grows as default rates rise,
+  so it is a central-tendency problem, not a shape problem.
+- Source(s): R-19 (abstract only: boosted-tree probabilities can be distorted and need post-hoc
+  calibration; we tested this and found little distortion here). Platt (R-20) is TO-VERIFY, so
+  "Platt scaling" is cited as a method name only [UNVERIFIED].
+- Risks / what would change our mind: the calibration-specialist's chosen central tendency. Raw OOT
+  predictions (`oot_predictions_raw.parquet`) and inner-B predictions (`inner_B_predictions.parquet`:
+  row_id, y, pd_raw_inner, fold) are provided so the common method can be fitted without touching
+  test years.
+- Human reviewer (initials) and date:
+
+### D-054 No class re-weighting or resampling
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED
+- Decision: train on the natural ~1-1.3% default rate with strong min_data_in_leaf (500-2000) and
+  shallow trees; no scale_pos_weight, no up/down-sampling.
+- Alternatives considered: scale_pos_weight plus re-calibration (rejected: it destroys the probability
+  level and needs another calibration stage, with no expected gain in AUC).
+- Business reason: the PD level is used for pricing.
+- Evidence: calibration slope 0.976 pooled without any re-weighting (metrics.md).
+- Source(s): assumption.
+- Risks / what would change our mind: none expected.
+- Human reviewer (initials) and date:
+
+### D-055 Full feature set vs core set for the GBM
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED full set (core-only GB-03 REJECTED)
+- Decision: the GBM uses all 26 features from FEATURE_SPEC.
+- Alternatives considered: the 13 core features only (GB-03).
+- Business reason: more power for approval ranking at no cost in face validity (all constrained).
+- Evidence: GB-03 vs GB-01: dAUC -0.0077 [-0.0087, -0.0066], d log loss +0.00077 [+0.00067, +0.00085];
+  GB-03 per year AUC 0.8381 / 0.8274 / 0.8226. It is also a like-for-like reference for the probit /
+  logit challengers that use the core set: GB-03 pooled AUC 0.8298.
+- Source(s): assumption.
+- Risks / what would change our mind: if the referee rates the GBM vs probit gap as mostly a feature-set
+  effect, the probit challengers could add non-core features in round 2.
+- Human reviewer (initials) and date:
+
+### D-056 Native NaN handling vs shared imputation (build.py impute=True)
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED native NaN (imputation GB-04 REJECTED as unnecessary, not as harmful)
+- Decision: keep NaN for LightGBM; the `debt_split_missing` flag stays in the feature set.
+- Alternatives considered: GB-04 = same per-fold configs as GB-01 with sector-median / block-share
+  imputation.
+- Business reason: simpler harness (no imputation step for this model); identical results.
+- Evidence: GB-04 vs GB-01 dAUC +0.0001 [-0.0003, +0.0006], d log loss -0.000007 [-0.00004, +0.00003]:
+  no difference.
+- Source(s): assumption.
+- Risks / what would change our mind: none. Either is acceptable for the harness.
+- Human reviewer (initials) and date:
+
+### D-057 LightGBM monotone method 'intermediate' (vs 'advanced')
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED 'intermediate' ('advanced' GB-05 REJECTED: no material gain)
+- Evidence: GB-05 vs GB-01 dAUC +0.0002 [-0.0000, +0.0004], d log loss -0.00002 [-0.00004, +0.00000].
+- Business reason: same face validity, simpler and faster; the difference is below any business relevance.
+- Source(s): assumption.
+- Human reviewer (initials) and date:
+
+### D-058 Explainability: TreeSHAP reason codes and dependence checks
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED
+- Decision: per-firm reason codes = top-3 positive TreeSHAP contributions (LightGBM `pred_contrib`, log-odds
+  scale) in plain words with natural-scale values and percentiles; global = mean |SHAP| + partial
+  dependence vs expected sign; report driver FAMILIES because correlated ratios split attribution.
+- Evidence: GB-01/explain.md. Top drivers (mean |SHAP|): tangible_ratio 0.41, equity_ratio 0.21, roa_net
+  0.21, st_debt_ratio 0.18, ap_days 0.15, ar_days 0.14, ateco_group 0.12. Every sign-expected feature
+  agrees. asset_turnover (unconstrained by design) rises with PD over its range in the fold-3 model
+  (-5.36 -> -4.87 log-odds).
+- Source(s): R-23 (Shapley-value properties, Sec. 3). The TreeSHAP algorithm is NOT in R-23, so it is
+  cited as [UNVERIFIED] until literature-scout verifies a source.
+- Risks: tangible_ratio being the #1 driver should be sanity-checked by a human (sector mix: real
+  estate / asset-heavy firms; FEATURE_SPEC notes decile breaks). ar_days hits the p99 cap (~60,000
+  days) for near-zero-revenue firms, so the reason code must be worded "almost no revenue".
+- Human reviewer (initials) and date:
+
+### D-059 Reusable estimation for the harness; prediction cost
+- Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
+- Status: ADOPTED
+- Decision: `experiments/gbm/gbm_lib.py`: `fit_pd_model(train_df, "GB-01")` fits feature params +
+  inner model + calibrator + final booster on any training frame (needs columns id, fs_year, y, raw
+  fields); `save_model` / `load_model` write and read booster.txt, feature_params.json,
+  calibrator.json, meta.json; `predict_pd(art, df)` is frozen (no re-estimation, row-wise).
+- Evidence: round trip of the saved fold-3 model reproduces the fold-3 OOT PDs exactly (max |diff| 0.0,
+  comparison.md). Cost: 100,000 rows in 1.0 s (0.8 s of it is the shared feature transform), 8
+  threads, laptop. Complexity O(n x (F + T x D)): 386 trees of depth <= 3 in fold 3.
+- Source(s): n/a.
+- Risks: the harness must call `predict_pd` with the same LightGBM major version (4.7.0 used).
+- Human reviewer (initials) and date:

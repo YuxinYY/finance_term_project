@@ -1,0 +1,145 @@
+{
+ "features": [
+  "log_assets",
+  "equity_ratio",
+  "st_debt_ratio",
+  "cash_ratio",
+  "roa_net",
+  "interest_coverage",
+  "interest_to_assets",
+  "ar_days",
+  "tangible_ratio",
+  "neg_equity",
+  "ateco_group",
+  "legal_group",
+  "macro_area"
+ ],
+ "impute": false,
+ "record": {
+  "exp": "GB-03",
+  "train_years": [
+   2007,
+   2008,
+   2009
+  ],
+  "n_train": 475861,
+  "train_defaults": 6195,
+  "features": [
+   "log_assets",
+   "equity_ratio",
+   "st_debt_ratio",
+   "cash_ratio",
+   "roa_net",
+   "interest_coverage",
+   "interest_to_assets",
+   "ar_days",
+   "tangible_ratio",
+   "neg_equity",
+   "ateco_group",
+   "legal_group",
+   "macro_area"
+  ],
+  "monotone": [
+   -1,
+   -1,
+   1,
+   -1,
+   -1,
+   -1,
+   1,
+   1,
+   -1,
+   1,
+   0,
+   0,
+   0
+  ],
+  "inner_scheme": "time: inner-train [np.int64(2007), np.int64(2008)], last year 2009 split by firm into A (early stop/grid) and B (calibration)",
+  "n_inner_train": 305475,
+  "defaults_inner_train": 3443,
+  "n_A_early_stop": 85773,
+  "defaults_A_early_stop": 1395,
+  "n_B_calibration": 84613,
+  "defaults_B_calibration": 1357,
+  "grid": [
+   {
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 500
+    },
+    "best_iter": 284,
+    "A_log_loss": 0.06836589607425154,
+    "A_auc": 0.8183347873636735,
+    "secs": 6.7
+   },
+   {
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 2000
+    },
+    "best_iter": 284,
+    "A_log_loss": 0.06835976881049254,
+    "A_auc": 0.818189868581654,
+    "secs": 7.4
+   },
+   {
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 500
+    },
+    "best_iter": 198,
+    "A_log_loss": 0.06816033701321356,
+    "A_auc": 0.819888624589246,
+    "secs": 8.5
+   },
+   {
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 2000
+    },
+    "best_iter": 198,
+    "A_log_loss": 0.06817282217661483,
+    "A_auc": 0.8201571508175661,
+    "secs": 7.1
+   }
+  ],
+  "chosen_cfg": {
+   "num_leaves": 8,
+   "max_depth": 3,
+   "min_data_in_leaf": 500
+  },
+  "best_iter": 198,
+  "calibration_compare_B": {
+   "raw": 0.06606710124677813,
+   "platt": 0.06533253780916844,
+   "isotonic": 0.06599672736400368,
+   "auc_raw": 0.8336401309376044,
+   "auc_platt": 0.8335086810228278,
+   "auc_isotonic": 0.831022395857785
+  },
+  "isotonic_eligible": true,
+  "platt_on_B": {
+   "a": 0.4560599269448869,
+   "b": 1.0298003489002436
+  },
+  "n_final_trees": 238,
+  "final_fit_secs": 7.3,
+  "calibrator": {
+   "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+   "a": 0.10414611340624047,
+   "b": 1.0298003489002436,
+   "target_rate": 0.013018507505342947
+  },
+  "fold": 3,
+  "test_year": 2010,
+  "predict_secs_test": 1.54,
+  "predict_secs_per_100k": 0.88,
+  "wall_secs": 64.5
+ },
+ "lightgbm_version": "4.7.0",
+ "feature_version": "features-v1 (2026-10-30)"
+}

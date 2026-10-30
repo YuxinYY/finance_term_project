@@ -1,0 +1,184 @@
+{
+ "features": [
+  "log_assets",
+  "equity_ratio",
+  "st_debt_ratio",
+  "bank_debt_ratio",
+  "st_debt_share",
+  "wc_ratio",
+  "current_ratio",
+  "cash_ratio",
+  "roa_net",
+  "roa_oper",
+  "ebitda_margin",
+  "interest_coverage",
+  "cfo_to_debt",
+  "interest_to_assets",
+  "asset_turnover",
+  "ar_days",
+  "ap_days",
+  "tangible_ratio",
+  "intangible_ratio",
+  "extraord_to_assets",
+  "neg_equity",
+  "debt_split_missing",
+  "rev_nonpositive",
+  "ateco_group",
+  "legal_group",
+  "macro_area"
+ ],
+ "impute": false,
+ "record": {
+  "exp": "GB-01",
+  "train_years": [
+   2007,
+   2008,
+   2009
+  ],
+  "n_train": 475861,
+  "train_defaults": 6195,
+  "features": [
+   "log_assets",
+   "equity_ratio",
+   "st_debt_ratio",
+   "bank_debt_ratio",
+   "st_debt_share",
+   "wc_ratio",
+   "current_ratio",
+   "cash_ratio",
+   "roa_net",
+   "roa_oper",
+   "ebitda_margin",
+   "interest_coverage",
+   "cfo_to_debt",
+   "interest_to_assets",
+   "asset_turnover",
+   "ar_days",
+   "ap_days",
+   "tangible_ratio",
+   "intangible_ratio",
+   "extraord_to_assets",
+   "neg_equity",
+   "debt_split_missing",
+   "rev_nonpositive",
+   "ateco_group",
+   "legal_group",
+   "macro_area"
+  ],
+  "monotone": [
+   -1,
+   -1,
+   1,
+   1,
+   1,
+   -1,
+   -1,
+   -1,
+   -1,
+   -1,
+   -1,
+   -1,
+   -1,
+   1,
+   0,
+   1,
+   1,
+   -1,
+   1,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "inner_scheme": "time: inner-train [np.int64(2007), np.int64(2008)], last year 2009 split by firm into A (early stop/grid) and B (calibration)",
+  "n_inner_train": 305475,
+  "defaults_inner_train": 3443,
+  "n_A_early_stop": 85773,
+  "defaults_A_early_stop": 1395,
+  "n_B_calibration": 84613,
+  "defaults_B_calibration": 1357,
+  "grid": [
+   {
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 500
+    },
+    "best_iter": 456,
+    "A_log_loss": 0.06753726350671417,
+    "A_auc": 0.8265949752823338,
+    "secs": 12.6
+   },
+   {
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 2000
+    },
+    "best_iter": 698,
+    "A_log_loss": 0.06755622974640511,
+    "A_auc": 0.8265705715303494,
+    "secs": 16.9
+   },
+   {
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 500
+    },
+    "best_iter": 341,
+    "A_log_loss": 0.06733240600049016,
+    "A_auc": 0.827895990486912,
+    "secs": 17.8
+   },
+   {
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 2000
+    },
+    "best_iter": 322,
+    "A_log_loss": 0.06727753144412187,
+    "A_auc": 0.8281792651620363,
+    "secs": 10.6
+   }
+  ],
+  "chosen_cfg": {
+   "num_leaves": 8,
+   "max_depth": 3,
+   "min_data_in_leaf": 2000
+  },
+  "best_iter": 322,
+  "calibration_compare_B": {
+   "raw": 0.0651801450643171,
+   "platt": 0.06446622975362284,
+   "isotonic": 0.06475951846799041,
+   "auc_raw": 0.8433146224987871,
+   "auc_platt": 0.8431932541578394,
+   "auc_isotonic": 0.8410740436100382
+  },
+  "isotonic_eligible": true,
+  "platt_on_B": {
+   "a": 0.33618885019140143,
+   "b": 0.9976986095690534
+  },
+  "n_final_trees": 386,
+  "final_fit_secs": 9.5,
+  "calibrator": {
+   "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+   "a": -0.008004771868824978,
+   "b": 0.9976986095690534,
+   "target_rate": 0.013018507505342947
+  },
+  "fold": 3,
+  "test_year": 2010,
+  "predict_secs_test": 1.79,
+  "predict_secs_per_100k": 1.03,
+  "wall_secs": 89.6
+ },
+ "lightgbm_version": "4.7.0",
+ "feature_version": "features-v1 (2026-10-30)"
+}
