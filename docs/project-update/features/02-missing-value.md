@@ -1,6 +1,6 @@
 # Missing-value handling
 
-Code: [notebooks/03_missing_values.ipynb](../../../notebooks/03_missing_values.ipynb), function `fill_missing(df, medians)`.
+Code: [notebooks/features/02_missing_values.ipynb](../../../notebooks/features/02_missing_values.ipynb), function `fill_missing(df, medians)`.
 
 ## Definition
 - Input: a raw-data DataFrame (training or holdout). `medians` is the sector-median table computed from the **training data** by `sector_medians(train)`. At prediction time, pass the table computed from the training data; never recompute it from the holdout.
@@ -9,7 +9,7 @@ Code: [notebooks/03_missing_values.ipynb](../../../notebooks/03_missing_values.i
   - Added: one 0/1 flag, `debt_detail_missing`.
   - `HQ_city` becomes a string category (missing → `"Unknown"`).
   - Numeric columns are first coerced with `pd.to_numeric(errors="coerce")`, so blanks, `"NA"` and other missing-value spellings all become NaN (the project instructions say the holdout may spell missing values differently from the training data).
-- Only missing values (NaN) are handled here. Negative values and other economically implausible values are not, see [financial-anomalies.md](financial-anomalies.md).
+- Only missing values (NaN) are handled here. Negative values and other economically implausible values are not, see [01-financial-anomalies.md](01-financial-anomalies.md).
 - Column groups follow [data_dictionary.md](../../data_dictionary.md).
 
 ## Per-column handling (`data/train-2025.csv`, 1,023,552 rows)

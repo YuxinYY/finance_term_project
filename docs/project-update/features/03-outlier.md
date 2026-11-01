@@ -1,6 +1,6 @@
 # Outliers
 
-Outliers are values that are valid but extreme, as opposed to values that should not exist by definition (see [financial-anomalies.md](financial-anomalies.md)).
+Outliers are values that are valid but extreme, as opposed to values that should not exist by definition (see [01-financial-anomalies.md](01-financial-anomalies.md)).
 
 ## Position in the pipeline
 
@@ -22,11 +22,11 @@ flag_anomalies(raw)  →  fill_missing  →  outlier handling  →  feature engi
 
 ## Decision
 
-**No handling for now.** Exploration results are in `notebooks/05_outliers.ipynb`:
+**No handling for now.** Exploration results are in `notebooks/features/03_outliers.ipynb`:
 
 - The extreme values are real and carry a strong default signal (e.g. the bottom 1% of `eqty_tot / asst_tot` has a default rate of 40.8%, versus 4.37% overall), so they must not be dropped.
 - We expect to deliver a tree model. Trees only use the ordering of values, so they are insensitive to monotonic transformations, and values beyond the training range fall into the last leaf instead of being extrapolated. Winsorizing is therefore not needed.
 
 If we switch to a linear model such as logistic regression, we need to come back: build ratios with `asst_tot` as the denominator, winsorize at the training set's p1/p99 (store the bounds and apply the same ones to the holdout), and use binning for variables like `roa` whose default rate is high at both ends.
 
-Left for feature engineering: ratios with `rev_operating` as the denominator become inf or NaN when revenue is 0 (31,370 rows), so they must be avoided or handled separately; see [feature-engineering-zh.md](feature-engineering-zh.md).
+Left for feature engineering: ratios with `rev_operating` as the denominator become inf or NaN when revenue is 0 (31,370 rows), so they must be avoided or handled separately; see [04-feature-engineering-zh.md](04-feature-engineering-zh.md).

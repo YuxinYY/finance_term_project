@@ -1,6 +1,6 @@
 # Economically implausible values
 
-All figures are computed on `data/train-2025.csv` (1,023,552 rows), excluding missing values, with a tolerance of €1. The reference is Riva, *Structure and Contents of (Italian) Financial Statements* (`docs/relevent reading/`). Its templates follow the post-2016 reform, while this data covers 2007–2012, so the mapping is indicative only. Missing-value handling: see [missing-value.md](missing-value.md).
+All figures are computed on `data/train-2025.csv` (1,023,552 rows), excluding missing values, with a tolerance of €1. The reference is Riva, *Structure and Contents of (Italian) Financial Statements* (`docs/relevent reading/`). Its templates follow the post-2016 reform, while this data covers 2007–2012, so the mapping is indicative only. Missing-value handling: see [02-missing-value.md](02-missing-value.md).
 
 Principle: **keep original values, only add flags, never change any value**. Rows that violate these checks default more often than the overall rate (4.37%), so they should not be dropped. Negative values are also already included in the data's totals (among rows with negatives, the asset and liability identities hold at about the same rate as for all rows, and the `wc_net` formula holds 100%), so changing them would break consistency between columns.
 
@@ -24,8 +24,8 @@ Principle: **keep original values, only add flags, never change any value**. Row
 | `eqty_tot` is negative | 4.0% | None (not a violation) | Insolvency; a real situation |
 | `COGS > rev_operating`; `profit > rev_operating`; `rev_operating == 0` | 23.8% / 2.0% / 3.05% | Deferred to the outlier stage | Operating losses, financial income of holding companies; ratios with revenue as the denominator break when revenue is 0 |
 | `roa` ranges from −964 to 908 | | Deferred to the outlier stage | The formula matches exactly, so these are extreme values; `roa` is the return on operating profit (not net income) |
-| `days_rec` has negative values and an unclear definition | 74,688 rows negative | Column dropped | See [missing-value.md](missing-value.md) |
-| `roe` truncated at ±150 | 72,937 rows missing | Column dropped | See [missing-value.md](missing-value.md) method F |
+| `days_rec` has negative values and an unclear definition | 74,688 rows negative | Column dropped | See [02-missing-value.md](02-missing-value.md) |
+| `roe` truncated at ±150 | 72,937 rows missing | Column dropped | See [02-missing-value.md](02-missing-value.md) method F |
 
 Checked with no issues: no duplicate (`id`, `fs_year`); `fs_year` equals the year of `stmt_date`; every `def_date` is after `stmt_date`; every `asst_tot` > 0, **minimum €1.5M** (the sample seems to include only firms above €1.5M); no column in the data should fall between 0 and 1.
 
@@ -43,7 +43,7 @@ debt_detail_inconsistent = none of debt_bank_st, debt_bank_lt, debt_fin_st, debt
                             or debt_bank_lt + debt_fin_lt + AP_lt > debt_lt + 1)               (11,620 rows)
 ```
 
-`debt_detail_inconsistent` and `debt_detail_missing` from [missing-value.md](missing-value.md) method C (any of the six details missing, 134,145 rows) are mutually exclusive: one marks "details missing", the other "details present but inconsistent with the totals", so the two flags do not overlap and cause collinearity. Default rates: missing 5.29%, inconsistent 4.58%, neither 4.23%.
+`debt_detail_inconsistent` and `debt_detail_missing` from [02-missing-value.md](02-missing-value.md) method C (any of the six details missing, 134,145 rows) are mutually exclusive: one marks "details missing", the other "details present but inconsistent with the totals", so the two flags do not overlap and cause collinearity. Default rates: missing 5.29%, inconsistent 4.58%, neither 4.23%.
 
 Later feature engineering: columns that keep negative values cannot be log-transformed directly; ratios with `asst_tot` (always > 0) as the denominator are unaffected.
 
@@ -61,7 +61,7 @@ One would expect `prof_financing = inc_financing − exp_financing`, but among t
 | `exp_financing` | Item 17 interest and other financial expenses (gross) | | Keep original values; the 720 negative rows are merged into `neg_pl_flag` |
 | `prof_financing` | Class D value adjustments to financial assets (revaluations − write-downs), unrelated to class C | Most non-financial firms have no such item, which explains 95.7% being 0 | Treat 0 as a real 0, not missing; add `fin_adj_flag = prof_financing != 0`; no formula correction |
 
-Missing values are still filled with [missing-value.md](missing-value.md) method B; the sector median ratio of `prof_financing` is 0, so filled values are 0, consistent with the hypothesis above. If the hypothesis fails (e.g. the professor confirms that a 0 in `prof_financing` means missing), `prof_financing` and `fin_adj_flag` need to be reworked.
+Missing values are still filled with [02-missing-value.md](02-missing-value.md) method B; the sector median ratio of `prof_financing` is 0, so filled values are 0, consistent with the hypothesis above. If the hypothesis fails (e.g. the professor confirms that a 0 in `prof_financing` means missing), `prof_financing` and `fin_adj_flag` need to be reworked.
 
 ### `goodwill`
 
