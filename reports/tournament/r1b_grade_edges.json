@@ -1,0 +1,42 @@
+{
+ "edges_old": [
+  0.0003,
+  0.001,
+  0.0025,
+  0.005,
+  0.0075,
+  0.01,
+  0.015,
+  0.025,
+  0.05,
+  0.1,
+  0.2,
+  0.99
+ ],
+ "edges_new": [
+  0.0003,
+  0.001,
+  0.0017,
+  0.0025,
+  0.0036,
+  0.005,
+  0.0062,
+  0.0075,
+  0.01,
+  0.012,
+  0.015,
+  0.019,
+  0.025,
+  0.05,
+  0.1,
+  0.2,
+  0.99
+ ],
+ "cap_share": 0.12,
+ "edge_sample": "GB-01 fold-3 model (fit 2007-2009) in-sample PDs on its 475,861 training rows, shifted by the fold-3 CAL-01 delta",
+ "delta_fold3_from_files": 0.21749563462808386,
+ "delta_fold3_logit_tau_minus_logit_rw": 0.21749563462808386,
+ "tau_rule_e_2010": 0.0161304638543875,
+ "r_w_fold3": 0.013018507505342947,
+ "rule": "split the grade with the largest share > 12% at the 2-significant-digit rounded median PD of its rows; repeat"
+}

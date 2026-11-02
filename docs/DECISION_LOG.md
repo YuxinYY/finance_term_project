@@ -1231,3 +1231,135 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
   testing); walk-forward design as in R-33 Sec. 4.8 p. 23.
 - Human reviewer (initials) and date:
 
+
+---
+
+## Round 1b referee diagnostics (merged by orchestrator from reports/tournament/r1b_diagnostics.md, 2026-11-02)
+
+### D-110 Referee verdict on the EBM challengers (GAM-01, GAM-02)
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED
+- Decision: GAM-01 and GAM-02 are CLEAN (no leakage). Contract PASS (506,159 rows, 0 missing/NaN/out-of-range);
+  saved fold models reproduce the submitted own, raw and +CAL PDs exactly (max |diff| 0) on test rows with every
+  label column removed and rows shuffled. Process notes: D-082 missing-bin reset was added after a full OOT run
+  (robustness rule, training data only, OOT effect +0.0004 AUC, not used as evidence); GAM-02 reused GAM-01's
+  in-window grid choice; +CAL inherits rule-e selection optimism (D-071); shared D-062 caveat.
+- Alternatives considered: CONCERN by analogy with RC-03 (D-063) - rejected because the rule was triggered by
+  training shapes, is not reported as a performance gain, and changes nothing measurable.
+- Evidence: r1b_contract.csv, r1b_gam_repro.csv; code read of run_gam.py, gam_lib.py, explain_gam.py.
+- Source(s): CLAUDE.md sec. 5 rule 5; data/splits/README.md.
+- Risks / what would change our mind: a refit from current code not reproducing the saved models (not run:
+  ~10 min per fold at 2 threads; saved-model reproduction done instead).
+- Human reviewer (initials) and date:
+
+### D-111 EBM face validity confirmed (D-084)
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED
+- Decision: 0 violations in 20 sign-expected terms x 3 folds x 2 models (step-function against-share 0); GAM-02
+  pairs involve only unsigned features. Flag for officers: rev_nonpositive lowers the score (-0.19), OTHER levels
+  of legal_group (-0.87) / macro_area (+0.65) are thin pools that unseen codes inherit.
+- Evidence: r1b_gam_face_validity.csv (fold-3 GAM-01 shapes in section 1.5).
+- Source(s): docs/FEATURE_SPEC.md expected-sign table.
+- Human reviewer (initials) and date:
+
+### D-112 GAM-01 not promoted over GB-01; GAM-01 becomes the transparent fallback (replaces RC-03 in D-067)
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED (referee); human sign-off requested for the fallback change
+- Decision: GB-01 remains champion. GAM-01 replaces RC-03 as the documented transparent alternative.
+- Evidence (1,000-draw firm bootstrap, r1b_gam_paired_bootstrap.csv): GAM-01 vs GB-01 dAUC -0.0120 [-0.0139,
+  -0.0102], dLL +0.00102 [+0.00088, +0.00115], worse in every year and firm group; GAM-01+CAL vs CAL-01 -0.0119 /
+  +0.00098. GAM-01 vs RC-02 dAUC +0.0061 [+0.0044, +0.0078], dLL -0.00063 [-0.00078, -0.00048] (2008 AUC and
+  new-firm LL ties), 0 vs 2 face-validity violations. GAM-01 vs SC-03 +0.0089 / -0.00139. GAM-02 vs GAM-01
+  +0.0008 [+0.0004, +0.0012] / -0.00008 [-0.00010, -0.00005]: small, GAM-01 kept (D-083).
+- Alternatives considered: RC-03 as fallback (CONCERN, D-063, and dominated); GAM-02 (not worth ten heat maps).
+- Business reason: if the team or Roger judges SHAP reason codes insufficient, the fallback with readable
+  curves is also the stronger transparent model.
+- Risks / what would change our mind: the 2011 lockbox reverses the GB-01 vs GAM-01 ranking.
+- Human reviewer (initials) and date:
+
+### D-113 Power by segment (lesson L4)
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED (reporting)
+- Decision: report AR by year, size quintile (training-fold asst_tot edges), ATECO section (< 30 test defaults
+  pooled; L separate) and seen/new, with firm-clustered CIs and default counts, for GB-01, GAM-01+CAL, RC-02, SC-03.
+- Evidence (r1b_segment_power.csv): GB-01 best or tied in every cell; AR Q1 0.626 -> Q5 0.735; C 0.745, I 0.756,
+  F 0.559, A 0.550, L 0.643 (997 defaults); seen 0.688, new 0.573; years 0.688 / 0.672 / 0.661. GB-01 minus
+  GAM-01 CI excludes 0 in every year, size quintile, firm group and in sections C, E, F, G, J, L, M.
+- Source(s): R-33 Tables 9-14 pp. 19-21 (AR by industry, size, year); R-33 Sec. 4.6 fn. 14 p. 22 (real estate).
+- Risks: section cells with < 100 defaults have single-model AUC CIs 0.08-0.23 wide; do not rank models there.
+- Human reviewer (initials) and date:
+
+### D-114 Missing-input check (lesson L1): no extra under-prediction for GB-01; no n_core_imputed flag
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED (no change to GB-01); OPEN for GAM-01 if it ever becomes the submission model
+- Evidence (r1b_missing_tests.csv; relative obs/pred = group vs same-year average, Poisson CI): GB-01
+  debt_split_missing 1.04 [0.98, 1.09] (88,593 rows, 1,446 defaults); core ratio NaN 1.01 [0.84, 1.22] (1,800 rows,
+  114 defaults, DR 6.3%). GAM-01+CAL 1.21 [1.00, 1.46] (missing bins reset to average, D-082); SC-03 1.30
+  [1.07, 1.56]; RC-02 0.75 [0.62, 0.90].
+- Decision: keep GB-01 as is. For GAM-01, replace "reset sparse missing bins to 0" by a pooled in-window
+  "any core missing" bin before any use.
+- Source(s): R-34 (mean fills understate PDs), R-05 pp. 60-61, via docs/LIT_moodys_feature_cleaning_2026-10-30.md L1.
+- Human reviewer (initials) and date:
+
+### D-115 Re-split grade grid: 16 grades, no grade above ~10% of firms (supersedes the 11 bands of D-078 for reporting)
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED (proposal for the deck and harness documentation; human sign-off requested)
+- Decision: edges 0.03, 0.10, 0.17, 0.25, 0.36, 0.50, 0.62, 0.75, 1.0, 1.2, 1.5, 1.9, 2.5, 5, 10, 20, 99 (%).
+  Chosen on fold-3 GB-01 in-sample PDs on 2007-2009 training rows at the CAL-01 level (no 2010 data), by splitting
+  any grade above 12% at its rounded median.
+- Evidence (r1b_grade_summary.csv): max share 9.9% (edge sample), 10.3% (OOT 2008-09), 10.0% (2010); old grid had
+  19.6% / 19.4% in grades 2-3. 2010 observed default rates are monotone across all 16 grades.
+- Alternatives considered: equal-share quantile grades (edges not round, move with every refit); keeping 11 grades.
+- Source(s): R-33 Sec. 4.9 p. 24 (< 12% of observations per category).
+- Risks: the edge sample is in-sample (slightly more spread than OOT); shares on the holdout will differ.
+- Human reviewer (initials) and date:
+
+### D-116 The 2010 under-prediction, quantified on the new grid
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED (finding; no group-level correction, per D-078)
+- Evidence (r1b_grade_table.csv, CAL-01, 2010): 2,968 observed vs 2,511.4 expected (obs/pred 1.18, +457).
+  Grades 1-5 (PD < 0.5%, 42.5% of firms): 174 vs 186.1, on target. Grades 6 and 8-14 (PD 0.5-10%, 50.0% of firms):
+  above the acceptance band, +501.6 defaults, obs/pred 1.26-1.41. Grade 16 (>= 20%): 451 vs 498.9, over-predicted.
+  GB-01 at its own level: obs/pred 1.43, grades 5-15 flagged.
+- Reading: a cycle-driven level miss concentrated in the middle of the scale plus a slightly compressed top
+  (2010 slope 0.957); ranking intact. Bands ignore default correlation (R-16 pp. 33-34): diagnostic only.
+- Business reason: in a 2010-like year mid-grade PDs were 20-30% too low (observed 1.26-1.41x predicted), so pricing would not cover expected loss there.
+- Human reviewer (initials) and date:
+
+### D-117 Overfitting and validation evidence for the deck
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED (reporting)
+- Evidence: OOT calibration slopes 0.96-1.01 by year for GB-01 (new firms 0.88, all models 0.83-0.89); per-year
+  AUC range 0.0135 (GB-01, smallest); pooled AUC CI width ~0.009; same-year in-sample minus OOT AUC: GB-01
+  +0.015 to +0.026, RC-02 +0.004 to +0.006, GAM-01 +0.006 (r1b_same_year_overfit.csv, r1b_insample_vs_oot.csv,
+  r1b_stability_summary.csv).
+- Decision: the deck quotes only OOT numbers, shows the same-year gap honestly (GBM fits training years harder;
+  R-33 reports -0.5 AR points for RiskCalc France, Sec. 4.7-4.8) and uses the OOT slope ~1 as the evidence that
+  the PDs are not over-spread.
+- Source(s): R-33 Sec. 4.7-4.8 pp. 22-23; R-10 Sec. 4.5 p. 22.
+- Human reviewer (initials) and date:
+
+### D-118 Selection ledger and correction to D-087 (fs_year 2011 is partially spent)
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: ADOPTED (correction of fact in D-087)
+- Finding: 30 OOT prediction files and 62 calibration configurations have been scored on 2008-2010
+  (r1b_selection_ledger.json). D-087 says 2011 "has so far been used only for a level statistic"; in fact GB-01
+  and RC-02 fold-4 models were scored on fs2011 with AUC (reports/calibration/q5_2011_other_labels_fold4.csv,
+  q6_2011_pseudo_test.csv; D-076 quotes 0.885 / 0.869 / 0.850) and tau is anchored to the fs2011 rate (D-073).
+  GAM-01/02 and SC-03 have not been scored on 2011. (Referee read only the headers/model names of those files.)
+- Decision: treat 2011 as valid for ONE ranking decision between GB-01 and GAM-01; never as a level test.
+- Human reviewer (initials) and date:
+
+### D-119 Pre-registered one-time 2011 lockbox protocol
+- Date / phase / agent: 2026-11-02 / round 1b / referee
+- Status: OPEN (proposal; needs orchestrator + human sign-off before anyone opens 2011)
+- Decision: freeze finalists (GB-01, GAM-01), code, seeds; fit fold 4 on fs 2007-2010 ok rows; label y11 (D-077)
+  primary, s0/s3 sensitivity; metrics AUC and log loss after one common per-model prior shift; same decision
+  rule, 1,000-draw firm bootstrap; one run by the referee, one file, result reported whatever it says; then
+  refit the chosen model on 2007-2011 (D-077). No other model is scored on 2011.
+- Alternatives considered: no lockbox (selection optimism unchecked); a random-firm holdout inside 2010 (not
+  out-of-time, and 2010 is already used).
+- Risks: one year, one cycle point; a reversal would be a tie-break signal, not proof.
+- Source(s): assumption (standard validation practice); R-33 Sec. 4.8 p. 23 (walk-forward).
+- Human reviewer (initials) and date:
+```
