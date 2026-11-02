@@ -1,0 +1,5 @@
+feature,pd_min_x,share_above_min,share_in_top3_up,share_wrong_way_top3
+interest_coverage,1.5536047607550465,0.45015,0.11295,0.0314
+cfo_to_debt,0.1627440895579494,0.157175,0.076575,0.021375
+ebitda_margin,0.2038043977174044,0.22245,0.04235,0.000725
+ANY,,,,0.05155

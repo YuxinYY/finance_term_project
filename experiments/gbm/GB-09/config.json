@@ -1,0 +1,2526 @@
+{
+ "exp": "GB-09",
+ "desc": "GB-01 constraints + random search (37 cfgs incl. GB-01's own) on inner slice A",
+ "features": "full",
+ "relax": [],
+ "rf": false,
+ "base_params": {
+  "objective": "binary",
+  "learning_rate": 0.03,
+  "feature_fraction": 0.8,
+  "bagging_fraction": 0.8,
+  "bagging_freq": 1,
+  "lambda_l2": 10.0,
+  "min_sum_hessian_in_leaf": 1.0,
+  "max_bin": 255,
+  "cat_smooth": 50.0,
+  "cat_l2": 10.0,
+  "min_data_per_group": 500,
+  "max_cat_threshold": 16,
+  "monotone_constraints_method": "intermediate",
+  "monotone_penalty": 0.0,
+  "seed": 0,
+  "deterministic": true,
+  "force_col_wise": true,
+  "num_threads": 2,
+  "verbose": -1
+ },
+ "max_rounds": 4000,
+ "early_stopping_rounds": 150,
+ "n_final_factor": 1.2,
+ "selection": "min log loss on inner slice A (early stopping also on A); B = Platt slope + untouched check",
+ "search_space": {
+  "learning_rate": "<scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x10e001190>",
+  "max_depth": "[2, 3, 4]",
+  "num_leaves": "[4, 6, 8, 12, 16]",
+  "min_data_in_leaf": "[200, 500, 1000, 2000, 4000]",
+  "feature_fraction": "<scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x12fccea10>",
+  "bagging_fraction": "<scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x12fd5ea90>",
+  "lambda_l1": "[0.0, 0.1, 1.0, 10.0]",
+  "lambda_l2": "<scipy.stats._distn_infrastructure.rv_continuous_frozen object at 0x12fd7c4d0>",
+  "min_gain_to_split": "[0.0, 0.01, 0.1, 0.5]"
+ },
+ "half_lives": null,
+ "class_weighting": "none",
+ "lockbox": "fs_year >= 2011 never read",
+ "folds": [
+  {
+   "train_years": [
+    2007
+   ],
+   "n_train": 144214,
+   "train_defaults": 1379,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "inner_scheme": "single training year: firm split 70/15/15 (train / A / B)",
+   "rf": false,
+   "n_inner_train": 101261,
+   "defaults_inner_train": 946,
+   "n_A": 21563,
+   "defaults_A": 230,
+   "n_B": 21390,
+   "defaults_B": 203,
+   "trials": [
+    {
+     "i": 0,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000
+     },
+     "best_iter": 282,
+     "A_log_loss": 0.0487775020449029,
+     "A_auc": 0.8230367729930566,
+     "B_log_loss": 0.043980087683884034,
+     "B_auc": 0.8297345639730284,
+     "secs": 2.3
+    },
+    {
+     "i": 1,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500
+     },
+     "best_iter": 395,
+     "A_log_loss": 0.048854150719718596,
+     "A_auc": 0.8216993879659804,
+     "B_log_loss": 0.04410299535213126,
+     "B_auc": 0.8278342909875258,
+     "secs": 2.3
+    },
+    {
+     "i": 2,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000
+     },
+     "best_iter": 384,
+     "A_log_loss": 0.048850899485520766,
+     "A_auc": 0.8221608082191502,
+     "B_log_loss": 0.04416989654266353,
+     "B_auc": 0.8269110089582306,
+     "secs": 2.2
+    },
+    {
+     "i": 3,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500
+     },
+     "best_iter": 282,
+     "A_log_loss": 0.048683331139897035,
+     "A_auc": 0.8243906664302499,
+     "B_log_loss": 0.0439738320587674,
+     "B_auc": 0.8293504637684461,
+     "secs": 2.5
+    },
+    {
+     "i": 4,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000
+     },
+     "best_iter": 286,
+     "A_log_loss": 0.048752358352384687,
+     "A_auc": 0.8239025473903464,
+     "B_log_loss": 0.04407463672013915,
+     "B_auc": 0.8292402558404971,
+     "secs": 3.0
+    },
+    {
+     "i": 5,
+     "cfg": {
+      "bagging_fraction": 0.7744,
+      "feature_fraction": 0.8576,
+      "lambda_l1": 10.0,
+      "lambda_l2": 37.4832,
+      "learning_rate": 0.0748,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 206,
+     "A_log_loss": 0.04885114949059338,
+     "A_auc": 0.82275409194573,
+     "B_log_loss": 0.04425092562539564,
+     "B_auc": 0.8245919923477567,
+     "secs": 2.1
+    },
+    {
+     "i": 6,
+     "cfg": {
+      "bagging_fraction": 0.9818,
+      "feature_fraction": 0.6917,
+      "lambda_l1": 1.0,
+      "lambda_l2": 27.3216,
+      "learning_rate": 0.0373,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 370,
+     "A_log_loss": 0.04880220874820397,
+     "A_auc": 0.8224551062958184,
+     "B_log_loss": 0.04407505389851184,
+     "B_auc": 0.8276675840585396,
+     "secs": 2.7
+    },
+    {
+     "i": 7,
+     "cfg": {
+      "bagging_fraction": 0.5436,
+      "feature_fraction": 0.5101,
+      "lambda_l1": 10.0,
+      "lambda_l2": 74.3816,
+      "learning_rate": 0.0196,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 1533,
+     "A_log_loss": 0.048902282073723824,
+     "A_auc": 0.8221612158342149,
+     "B_log_loss": 0.04431094930905455,
+     "B_auc": 0.824211147229654,
+     "secs": 5.9
+    },
+    {
+     "i": 8,
+     "cfg": {
+      "bagging_fraction": 0.9005,
+      "feature_fraction": 0.7602,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.2264,
+      "learning_rate": 0.0505,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 271,
+     "A_log_loss": 0.04869570843039816,
+     "A_auc": 0.823512255965956,
+     "B_log_loss": 0.044204507929472225,
+     "B_auc": 0.8259347155205546,
+     "secs": 2.4
+    },
+    {
+     "i": 9,
+     "cfg": {
+      "bagging_fraction": 0.7609,
+      "feature_fraction": 0.7073,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.3622,
+      "learning_rate": 0.0607,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 175,
+     "A_log_loss": 0.04866724643254136,
+     "A_auc": 0.8268237207510715,
+     "B_log_loss": 0.04434792452349458,
+     "B_auc": 0.8246673243491396,
+     "secs": 1.6
+    },
+    {
+     "i": 10,
+     "cfg": {
+      "bagging_fraction": 0.6621,
+      "feature_fraction": 0.5748,
+      "lambda_l1": 0.0,
+      "lambda_l2": 7.0925,
+      "learning_rate": 0.0899,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 100,
+     "A_log_loss": 0.04890201938363362,
+     "A_auc": 0.821954758803976,
+     "B_log_loss": 0.044158049919122144,
+     "B_auc": 0.8251076910485821,
+     "secs": 1.5
+    },
+    {
+     "i": 11,
+     "cfg": {
+      "bagging_fraction": 0.9512,
+      "feature_fraction": 0.5496,
+      "lambda_l1": 0.1,
+      "lambda_l2": 10.0069,
+      "learning_rate": 0.0535,
+      "max_depth": 4,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 199,
+     "A_log_loss": 0.04889051574594982,
+     "A_auc": 0.8197789095889407,
+     "B_log_loss": 0.04411310602083224,
+     "B_auc": 0.827711992738367,
+     "secs": 2.1
+    },
+    {
+     "i": 12,
+     "cfg": {
+      "bagging_fraction": 0.6577,
+      "feature_fraction": 0.6819,
+      "lambda_l1": 0.1,
+      "lambda_l2": 0.1304,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 16
+     },
+     "best_iter": 119,
+     "A_log_loss": 0.04873580042134476,
+     "A_auc": 0.8255268934229268,
+     "B_log_loss": 0.04420026919451031,
+     "B_auc": 0.8263936827141655,
+     "secs": 1.7
+    },
+    {
+     "i": 13,
+     "cfg": {
+      "bagging_fraction": 0.5807,
+      "feature_fraction": 0.8266,
+      "lambda_l1": 0.0,
+      "lambda_l2": 1.7503,
+      "learning_rate": 0.0369,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 6
+     },
+     "best_iter": 181,
+     "A_log_loss": 0.0488451669699718,
+     "A_auc": 0.8237229929543736,
+     "B_log_loss": 0.04412778688623634,
+     "B_auc": 0.829348138706675,
+     "secs": 2.0
+    },
+    {
+     "i": 14,
+     "cfg": {
+      "bagging_fraction": 0.9748,
+      "feature_fraction": 0.8313,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.1956,
+      "learning_rate": 0.0735,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 12
+     },
+     "best_iter": 75,
+     "A_log_loss": 0.04872466452715591,
+     "A_auc": 0.825323493505673,
+     "B_log_loss": 0.04416623636747035,
+     "B_auc": 0.8279851874964689,
+     "secs": 1.8
+    },
+    {
+     "i": 15,
+     "cfg": {
+      "bagging_fraction": 0.7343,
+      "feature_fraction": 0.9884,
+      "lambda_l1": 10.0,
+      "lambda_l2": 2.2567,
+      "learning_rate": 0.0156,
+      "max_depth": 4,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 8
+     },
+     "best_iter": 595,
+     "A_log_loss": 0.048634590615451834,
+     "A_auc": 0.8270670669446601,
+     "B_log_loss": 0.04416979551117852,
+     "B_auc": 0.8282007207226478,
+     "secs": 5.0
+    },
+    {
+     "i": 16,
+     "cfg": {
+      "bagging_fraction": 0.6797,
+      "feature_fraction": 0.7404,
+      "lambda_l1": 0.1,
+      "lambda_l2": 0.8994,
+      "learning_rate": 0.0329,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 6
+     },
+     "best_iter": 205,
+     "A_log_loss": 0.04887547879817698,
+     "A_auc": 0.825053040910286,
+     "B_log_loss": 0.044053670387433505,
+     "B_auc": 0.8304551006158857,
+     "secs": 2.5
+    },
+    {
+     "i": 17,
+     "cfg": {
+      "bagging_fraction": 0.7545,
+      "feature_fraction": 0.9584,
+      "lambda_l1": 1.0,
+      "lambda_l2": 5.3437,
+      "learning_rate": 0.0874,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 128,
+     "A_log_loss": 0.04881937743180078,
+     "A_auc": 0.8240018016585858,
+     "B_log_loss": 0.04427589966906904,
+     "B_auc": 0.8261504812529107,
+     "secs": 1.7
+    },
+    {
+     "i": 18,
+     "cfg": {
+      "bagging_fraction": 0.8236,
+      "feature_fraction": 0.9207,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.3545,
+      "learning_rate": 0.0456,
+      "max_depth": 2,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 235,
+     "A_log_loss": 0.048851797104275986,
+     "A_auc": 0.8225239932417423,
+     "B_log_loss": 0.0442663914393499,
+     "B_auc": 0.8269503025021616,
+     "secs": 2.0
+    },
+    {
+     "i": 19,
+     "cfg": {
+      "bagging_fraction": 0.8389,
+      "feature_fraction": 0.635,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.7335,
+      "learning_rate": 0.0341,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 310,
+     "A_log_loss": 0.04882224204330887,
+     "A_auc": 0.8234873914470131,
+     "B_log_loss": 0.04427656367911122,
+     "B_auc": 0.8254069264985198,
+     "secs": 2.7
+    },
+    {
+     "i": 20,
+     "cfg": {
+      "bagging_fraction": 0.948,
+      "feature_fraction": 0.8195,
+      "lambda_l1": 10.0,
+      "lambda_l2": 72.1518,
+      "learning_rate": 0.035,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 657,
+     "A_log_loss": 0.04885158264419701,
+     "A_auc": 0.8212000595117993,
+     "B_log_loss": 0.04430321429938041,
+     "B_auc": 0.8248854151432667,
+     "secs": 6.1
+    },
+    {
+     "i": 21,
+     "cfg": {
+      "bagging_fraction": 0.6487,
+      "feature_fraction": 0.9069,
+      "lambda_l1": 0.1,
+      "lambda_l2": 10.6247,
+      "learning_rate": 0.0241,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 8
+     },
+     "best_iter": 268,
+     "A_log_loss": 0.04862849011253913,
+     "A_auc": 0.8274373852308834,
+     "B_log_loss": 0.0440135362743732,
+     "B_auc": 0.8289161422296089,
+     "secs": 3.6
+    },
+    {
+     "i": 22,
+     "cfg": {
+      "bagging_fraction": 0.8298,
+      "feature_fraction": 0.7666,
+      "lambda_l1": 10.0,
+      "lambda_l2": 8.5501,
+      "learning_rate": 0.0335,
+      "max_depth": 3,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 6
+     },
+     "best_iter": 286,
+     "A_log_loss": 0.048705378041005776,
+     "A_auc": 0.8262504101626589,
+     "B_log_loss": 0.04424479750518738,
+     "B_auc": 0.8251532622592951,
+     "secs": 3.8
+    },
+    {
+     "i": 23,
+     "cfg": {
+      "bagging_fraction": 0.7144,
+      "feature_fraction": 0.5677,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.1893,
+      "learning_rate": 0.0294,
+      "max_depth": 3,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 560,
+     "A_log_loss": 0.04893261868812213,
+     "A_auc": 0.8206648609319305,
+     "B_log_loss": 0.044297149375393106,
+     "B_auc": 0.8259279728414185,
+     "secs": 5.3
+    },
+    {
+     "i": 24,
+     "cfg": {
+      "bagging_fraction": 0.7157,
+      "feature_fraction": 0.9483,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.1958,
+      "learning_rate": 0.097,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 12
+     },
+     "best_iter": 55,
+     "A_log_loss": 0.04883092807941513,
+     "A_auc": 0.8261483025889671,
+     "B_log_loss": 0.04423738657242126,
+     "B_auc": 0.8262646417858706,
+     "secs": 3.0
+    },
+    {
+     "i": 25,
+     "cfg": {
+      "bagging_fraction": 0.9597,
+      "feature_fraction": 0.8571,
+      "lambda_l1": 10.0,
+      "lambda_l2": 33.3749,
+      "learning_rate": 0.0835,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 208,
+     "A_log_loss": 0.0488109929227696,
+     "A_auc": 0.822279016587895,
+     "B_log_loss": 0.04439066013565279,
+     "B_auc": 0.8230158329731425,
+     "secs": 4.3
+    },
+    {
+     "i": 26,
+     "cfg": {
+      "bagging_fraction": 0.5834,
+      "feature_fraction": 0.8895,
+      "lambda_l1": 1.0,
+      "lambda_l2": 26.4215,
+      "learning_rate": 0.0442,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 211,
+     "A_log_loss": 0.04871246740495532,
+     "A_auc": 0.8244202185224363,
+     "B_log_loss": 0.044117124062070634,
+     "B_auc": 0.8287192094975984,
+     "secs": 5.3
+    },
+    {
+     "i": 27,
+     "cfg": {
+      "bagging_fraction": 0.71,
+      "feature_fraction": 0.5253,
+      "lambda_l1": 10.0,
+      "lambda_l2": 84.4432,
+      "learning_rate": 0.0761,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 8
+     },
+     "best_iter": 211,
+     "A_log_loss": 0.04870787420301348,
+     "A_auc": 0.8274722363189099,
+     "B_log_loss": 0.044201199488092556,
+     "B_auc": 0.8261958199574467,
+     "secs": 2.9
+    },
+    {
+     "i": 28,
+     "cfg": {
+      "bagging_fraction": 0.7605,
+      "feature_fraction": 0.5272,
+      "lambda_l1": 0.0,
+      "lambda_l2": 0.3455,
+      "learning_rate": 0.0207,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 442,
+     "A_log_loss": 0.04892185964105513,
+     "A_auc": 0.8212400057881339,
+     "B_log_loss": 0.044275591871937185,
+     "B_auc": 0.8273611409171113,
+     "secs": 4.9
+    },
+    {
+     "i": 29,
+     "cfg": {
+      "bagging_fraction": 0.7983,
+      "feature_fraction": 0.8918,
+      "lambda_l1": 10.0,
+      "lambda_l2": 7.3187,
+      "learning_rate": 0.0448,
+      "max_depth": 2,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 275,
+     "A_log_loss": 0.048778579859490814,
+     "A_auc": 0.8237931027454912,
+     "B_log_loss": 0.04426205321027018,
+     "B_auc": 0.8251716302472866,
+     "secs": 3.8
+    },
+    {
+     "i": 30,
+     "cfg": {
+      "bagging_fraction": 0.807,
+      "feature_fraction": 0.7678,
+      "lambda_l1": 1.0,
+      "lambda_l2": 17.8868,
+      "learning_rate": 0.0935,
+      "max_depth": 3,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 118,
+     "A_log_loss": 0.04885549273906704,
+     "A_auc": 0.8219506826533295,
+     "B_log_loss": 0.04428829717656754,
+     "B_auc": 0.8249588870952328,
+     "secs": 4.8
+    },
+    {
+     "i": 31,
+     "cfg": {
+      "bagging_fraction": 0.5931,
+      "feature_fraction": 0.9722,
+      "lambda_l1": 0.1,
+      "lambda_l2": 2.2716,
+      "learning_rate": 0.0945,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 6
+     },
+     "best_iter": 79,
+     "A_log_loss": 0.048911693468398326,
+     "A_auc": 0.8220798966288195,
+     "B_log_loss": 0.04438905153767595,
+     "B_auc": 0.8239070291499969,
+     "secs": 3.1
+    },
+    {
+     "i": 32,
+     "cfg": {
+      "bagging_fraction": 0.6559,
+      "feature_fraction": 0.8482,
+      "lambda_l1": 10.0,
+      "lambda_l2": 7.1281,
+      "learning_rate": 0.042,
+      "max_depth": 4,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 210,
+     "A_log_loss": 0.0486877166937934,
+     "A_auc": 0.8275645611310503,
+     "B_log_loss": 0.04418469905026743,
+     "B_auc": 0.8261214179807723,
+     "secs": 4.8
+    },
+    {
+     "i": 33,
+     "cfg": {
+      "bagging_fraction": 0.7268,
+      "feature_fraction": 0.7683,
+      "lambda_l1": 10.0,
+      "lambda_l2": 13.9345,
+      "learning_rate": 0.0366,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 16
+     },
+     "best_iter": 221,
+     "A_log_loss": 0.04868028375286185,
+     "A_auc": 0.8269533423416263,
+     "B_log_loss": 0.0442096284722848,
+     "B_auc": 0.8260600363500157,
+     "secs": 4.6
+    },
+    {
+     "i": 34,
+     "cfg": {
+      "bagging_fraction": 0.5103,
+      "feature_fraction": 0.8792,
+      "lambda_l1": 10.0,
+      "lambda_l2": 51.6743,
+      "learning_rate": 0.0511,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 329,
+     "A_log_loss": 0.048763778885033846,
+     "A_auc": 0.8237289033728108,
+     "B_log_loss": 0.04429466453244255,
+     "B_auc": 0.8249105258103944,
+     "secs": 4.2
+    },
+    {
+     "i": 35,
+     "cfg": {
+      "bagging_fraction": 0.9363,
+      "feature_fraction": 0.6368,
+      "lambda_l1": 0.1,
+      "lambda_l2": 45.2911,
+      "learning_rate": 0.0545,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 296,
+     "A_log_loss": 0.04883643079619186,
+     "A_auc": 0.8210031814355795,
+     "B_log_loss": 0.04415435012077132,
+     "B_auc": 0.8271239846164613,
+     "secs": 5.9
+    },
+    {
+     "i": 36,
+     "cfg": {
+      "bagging_fraction": 0.9737,
+      "feature_fraction": 0.8654,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.8731,
+      "learning_rate": 0.0922,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 12
+     },
+     "best_iter": 83,
+     "A_log_loss": 0.04866877014798142,
+     "A_auc": 0.8278221738519013,
+     "B_log_loss": 0.04407605269567298,
+     "B_auc": 0.8304230147634447,
+     "secs": 2.9
+    }
+   ],
+   "chosen_cfg": {
+    "bagging_fraction": 0.6487,
+    "feature_fraction": 0.9069,
+    "lambda_l1": 0.1,
+    "lambda_l2": 10.6247,
+    "learning_rate": 0.0241,
+    "max_depth": 3,
+    "min_data_in_leaf": 500,
+    "min_gain_to_split": 0.0,
+    "num_leaves": 8
+   },
+   "best_iter": 268,
+   "chosen_index": 21,
+   "calibration_compare_B": {
+    "raw": 0.0440135362743732,
+    "platt": 0.04402294884054731,
+    "isotonic": 0.04571187843156954,
+    "auc_raw": 0.8289161422296089,
+    "auc_platt": 0.828462057665717,
+    "auc_isotonic": 0.8207564541970969
+   },
+   "platt_on_B": {
+    "a": 0.17911001493336315,
+    "b": 1.0408648595259564
+   },
+   "n_final_trees": 322,
+   "final_fit_secs": 4.6,
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": 0.15527082236055856,
+    "b": 1.0408648595259564,
+    "target_rate": 0.00956217842927871
+   },
+   "in_sample": {
+    "auc": 0.8437129734804325,
+    "log_loss": 0.043572419021980766
+   },
+   "fold": 1,
+   "test_year": 2008,
+   "wall_secs": 141.1,
+   "oot_auc": 0.8442428699695511,
+   "oot_log_loss": 0.054231844472022464
+  },
+  {
+   "train_years": [
+    2007,
+    2008
+   ],
+   "n_train": 305475,
+   "train_defaults": 3443,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "inner_scheme": "time: inner-train [np.int64(2007)], validate 2008 (firm halves A / B)",
+   "rf": false,
+   "n_inner_train": 144214,
+   "defaults_inner_train": 1379,
+   "n_A": 81167,
+   "defaults_A": 1028,
+   "n_B": 80094,
+   "defaults_B": 1036,
+   "trials": [
+    {
+     "i": 0,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.05263270293666123,
+     "A_auc": 0.8527756830872117,
+     "B_log_loss": 0.055762887774069556,
+     "B_auc": 0.8364782353720854,
+     "secs": 12.1
+    },
+    {
+     "i": 1,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500
+     },
+     "best_iter": 663,
+     "A_log_loss": 0.05277445963609163,
+     "A_auc": 0.851175277993397,
+     "B_log_loss": 0.05589075324630424,
+     "B_auc": 0.8352598224401204,
+     "secs": 11.6
+    },
+    {
+     "i": 2,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000
+     },
+     "best_iter": 601,
+     "A_log_loss": 0.052715820405711586,
+     "A_auc": 0.8519010718875953,
+     "B_log_loss": 0.055902386712785156,
+     "B_auc": 0.835085606471804,
+     "secs": 10.7
+    },
+    {
+     "i": 3,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.052586713269189345,
+     "A_auc": 0.8533459956710431,
+     "B_log_loss": 0.05579006951682878,
+     "B_auc": 0.8363929282748377,
+     "secs": 8.7
+    },
+    {
+     "i": 4,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.05261272089396726,
+     "A_auc": 0.8527899457571847,
+     "B_log_loss": 0.05570966372635284,
+     "B_auc": 0.8371767963523383,
+     "secs": 10.0
+    },
+    {
+     "i": 5,
+     "cfg": {
+      "bagging_fraction": 0.7744,
+      "feature_fraction": 0.8576,
+      "lambda_l1": 10.0,
+      "lambda_l2": 37.4832,
+      "learning_rate": 0.0748,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 439,
+     "A_log_loss": 0.05263849966575803,
+     "A_auc": 0.8523560207136208,
+     "B_log_loss": 0.055930656078067346,
+     "B_auc": 0.8344973574456993,
+     "secs": 8.6
+    },
+    {
+     "i": 6,
+     "cfg": {
+      "bagging_fraction": 0.9818,
+      "feature_fraction": 0.6917,
+      "lambda_l1": 1.0,
+      "lambda_l2": 27.3216,
+      "learning_rate": 0.0373,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 776,
+     "A_log_loss": 0.052654639540534724,
+     "A_auc": 0.8526035478336934,
+     "B_log_loss": 0.055738298943981635,
+     "B_auc": 0.836737062501691,
+     "secs": 14.5
+    },
+    {
+     "i": 7,
+     "cfg": {
+      "bagging_fraction": 0.5436,
+      "feature_fraction": 0.5101,
+      "lambda_l1": 10.0,
+      "lambda_l2": 74.3816,
+      "learning_rate": 0.0196,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 1732,
+     "A_log_loss": 0.05287866558808402,
+     "A_auc": 0.8512413596745304,
+     "B_log_loss": 0.056053180274815824,
+     "B_auc": 0.8331455323695198,
+     "secs": 21.7
+    },
+    {
+     "i": 8,
+     "cfg": {
+      "bagging_fraction": 0.9005,
+      "feature_fraction": 0.7602,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.2264,
+      "learning_rate": 0.0505,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 601,
+     "A_log_loss": 0.0528513140936411,
+     "A_auc": 0.8500754501310783,
+     "B_log_loss": 0.05601770041134743,
+     "B_auc": 0.8332277504878634,
+     "secs": 8.9
+    },
+    {
+     "i": 9,
+     "cfg": {
+      "bagging_fraction": 0.7609,
+      "feature_fraction": 0.7073,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.3622,
+      "learning_rate": 0.0607,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 442,
+     "A_log_loss": 0.05274417907342006,
+     "A_auc": 0.8517355642236983,
+     "B_log_loss": 0.055975002680547614,
+     "B_auc": 0.8342248557849762,
+     "secs": 9.2
+    },
+    {
+     "i": 10,
+     "cfg": {
+      "bagging_fraction": 0.6621,
+      "feature_fraction": 0.5748,
+      "lambda_l1": 0.0,
+      "lambda_l2": 7.0925,
+      "learning_rate": 0.0899,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 165,
+     "A_log_loss": 0.052993337893109255,
+     "A_auc": 0.8493933182146605,
+     "B_log_loss": 0.055919638363230495,
+     "B_auc": 0.8349961603870127,
+     "secs": 4.3
+    },
+    {
+     "i": 11,
+     "cfg": {
+      "bagging_fraction": 0.9512,
+      "feature_fraction": 0.5496,
+      "lambda_l1": 0.1,
+      "lambda_l2": 10.0069,
+      "learning_rate": 0.0535,
+      "max_depth": 4,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 381,
+     "A_log_loss": 0.052832396797002745,
+     "A_auc": 0.8502858214785662,
+     "B_log_loss": 0.055905342050546744,
+     "B_auc": 0.8349664060724296,
+     "secs": 8.4
+    },
+    {
+     "i": 12,
+     "cfg": {
+      "bagging_fraction": 0.6577,
+      "feature_fraction": 0.6819,
+      "lambda_l1": 0.1,
+      "lambda_l2": 0.1304,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 16
+     },
+     "best_iter": 165,
+     "A_log_loss": 0.0525587651369718,
+     "A_auc": 0.8531610543606554,
+     "B_log_loss": 0.05571990795882689,
+     "B_auc": 0.8358757990199464,
+     "secs": 9.2
+    },
+    {
+     "i": 13,
+     "cfg": {
+      "bagging_fraction": 0.5807,
+      "feature_fraction": 0.8266,
+      "lambda_l1": 0.0,
+      "lambda_l2": 1.7503,
+      "learning_rate": 0.0369,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 6
+     },
+     "best_iter": 266,
+     "A_log_loss": 0.05266392385085827,
+     "A_auc": 0.8522244885503655,
+     "B_log_loss": 0.05575305307658175,
+     "B_auc": 0.8367935309895642,
+     "secs": 9.6
+    },
+    {
+     "i": 14,
+     "cfg": {
+      "bagging_fraction": 0.9748,
+      "feature_fraction": 0.8313,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.1956,
+      "learning_rate": 0.0735,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 12
+     },
+     "best_iter": 127,
+     "A_log_loss": 0.052720076369900816,
+     "A_auc": 0.8522547132722652,
+     "B_log_loss": 0.05594959602002945,
+     "B_auc": 0.8357233279979871,
+     "secs": 8.2
+    },
+    {
+     "i": 15,
+     "cfg": {
+      "bagging_fraction": 0.7343,
+      "feature_fraction": 0.9884,
+      "lambda_l1": 10.0,
+      "lambda_l2": 2.2567,
+      "learning_rate": 0.0156,
+      "max_depth": 4,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 8
+     },
+     "best_iter": 1080,
+     "A_log_loss": 0.05263757951723292,
+     "A_auc": 0.8533226048922876,
+     "B_log_loss": 0.05573262459788951,
+     "B_auc": 0.8379207885203483,
+     "secs": 24.4
+    },
+    {
+     "i": 16,
+     "cfg": {
+      "bagging_fraction": 0.6797,
+      "feature_fraction": 0.7404,
+      "lambda_l1": 0.1,
+      "lambda_l2": 0.8994,
+      "learning_rate": 0.0329,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 6
+     },
+     "best_iter": 308,
+     "A_log_loss": 0.052674351259910136,
+     "A_auc": 0.8518207396749317,
+     "B_log_loss": 0.055665690351157364,
+     "B_auc": 0.8372667430226437,
+     "secs": 8.6
+    },
+    {
+     "i": 17,
+     "cfg": {
+      "bagging_fraction": 0.7545,
+      "feature_fraction": 0.9584,
+      "lambda_l1": 1.0,
+      "lambda_l2": 5.3437,
+      "learning_rate": 0.0874,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 170,
+     "A_log_loss": 0.05277480306449503,
+     "A_auc": 0.8514754252618372,
+     "B_log_loss": 0.05585918021959305,
+     "B_auc": 0.8356111846334214,
+     "secs": 4.9
+    },
+    {
+     "i": 18,
+     "cfg": {
+      "bagging_fraction": 0.8236,
+      "feature_fraction": 0.9207,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.3545,
+      "learning_rate": 0.0456,
+      "max_depth": 2,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 388,
+     "A_log_loss": 0.05274027228480573,
+     "A_auc": 0.8519568480310208,
+     "B_log_loss": 0.05582906661533378,
+     "B_auc": 0.8356973708076695,
+     "secs": 8.3
+    },
+    {
+     "i": 19,
+     "cfg": {
+      "bagging_fraction": 0.8389,
+      "feature_fraction": 0.635,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.7335,
+      "learning_rate": 0.0341,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 479,
+     "A_log_loss": 0.05274878629893221,
+     "A_auc": 0.8514505171777657,
+     "B_log_loss": 0.055846081179917795,
+     "B_auc": 0.8353091117991571,
+     "secs": 9.6
+    },
+    {
+     "i": 20,
+     "cfg": {
+      "bagging_fraction": 0.948,
+      "feature_fraction": 0.8195,
+      "lambda_l1": 10.0,
+      "lambda_l2": 72.1518,
+      "learning_rate": 0.035,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 1138,
+     "A_log_loss": 0.05275646900688545,
+     "A_auc": 0.8519360184636394,
+     "B_log_loss": 0.05591199116936951,
+     "B_auc": 0.8347469176385921,
+     "secs": 17.1
+    },
+    {
+     "i": 21,
+     "cfg": {
+      "bagging_fraction": 0.6487,
+      "feature_fraction": 0.9069,
+      "lambda_l1": 0.1,
+      "lambda_l2": 10.6247,
+      "learning_rate": 0.0241,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 8
+     },
+     "best_iter": 410,
+     "A_log_loss": 0.052620383416927735,
+     "A_auc": 0.8524943018509231,
+     "B_log_loss": 0.05576436230344745,
+     "B_auc": 0.83676653600001,
+     "secs": 11.6
+    },
+    {
+     "i": 22,
+     "cfg": {
+      "bagging_fraction": 0.8298,
+      "feature_fraction": 0.7666,
+      "lambda_l1": 10.0,
+      "lambda_l2": 8.5501,
+      "learning_rate": 0.0335,
+      "max_depth": 3,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 6
+     },
+     "best_iter": 611,
+     "A_log_loss": 0.05256706156985312,
+     "A_auc": 0.8537604506527884,
+     "B_log_loss": 0.055812626962029516,
+     "B_auc": 0.8364745481324449,
+     "secs": 13.0
+    },
+    {
+     "i": 23,
+     "cfg": {
+      "bagging_fraction": 0.7144,
+      "feature_fraction": 0.5677,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.1893,
+      "learning_rate": 0.0294,
+      "max_depth": 3,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 737,
+     "A_log_loss": 0.052720943799445565,
+     "A_auc": 0.8519951812325307,
+     "B_log_loss": 0.05574611993075687,
+     "B_auc": 0.8367454625708058,
+     "secs": 12.4
+    },
+    {
+     "i": 24,
+     "cfg": {
+      "bagging_fraction": 0.7157,
+      "feature_fraction": 0.9483,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.1958,
+      "learning_rate": 0.097,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 12
+     },
+     "best_iter": 79,
+     "A_log_loss": 0.05265046676742024,
+     "A_auc": 0.8524866060783591,
+     "B_log_loss": 0.05573012740264383,
+     "B_auc": 0.8368926225025545,
+     "secs": 5.4
+    },
+    {
+     "i": 25,
+     "cfg": {
+      "bagging_fraction": 0.9597,
+      "feature_fraction": 0.8571,
+      "lambda_l1": 10.0,
+      "lambda_l2": 33.3749,
+      "learning_rate": 0.0835,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 483,
+     "A_log_loss": 0.052921938173887025,
+     "A_auc": 0.8506514677828985,
+     "B_log_loss": 0.05607032622384933,
+     "B_auc": 0.8327979123581719,
+     "secs": 9.8
+    },
+    {
+     "i": 26,
+     "cfg": {
+      "bagging_fraction": 0.5834,
+      "feature_fraction": 0.8895,
+      "lambda_l1": 1.0,
+      "lambda_l2": 26.4215,
+      "learning_rate": 0.0442,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 312,
+     "A_log_loss": 0.05258669492982074,
+     "A_auc": 0.8537516381435117,
+     "B_log_loss": 0.055857816864945814,
+     "B_auc": 0.836734290967259,
+     "secs": 6.3
+    },
+    {
+     "i": 27,
+     "cfg": {
+      "bagging_fraction": 0.71,
+      "feature_fraction": 0.5253,
+      "lambda_l1": 10.0,
+      "lambda_l2": 84.4432,
+      "learning_rate": 0.0761,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 8
+     },
+     "best_iter": 445,
+     "A_log_loss": 0.052666510261997534,
+     "A_auc": 0.8529446866225575,
+     "B_log_loss": 0.055885269932692376,
+     "B_auc": 0.836322394554958,
+     "secs": 6.7
+    },
+    {
+     "i": 28,
+     "cfg": {
+      "bagging_fraction": 0.7605,
+      "feature_fraction": 0.5272,
+      "lambda_l1": 0.0,
+      "lambda_l2": 0.3455,
+      "learning_rate": 0.0207,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 832,
+     "A_log_loss": 0.05263305751080602,
+     "A_auc": 0.8520747972770851,
+     "B_log_loss": 0.05574818645799488,
+     "B_auc": 0.8359399105939621,
+     "secs": 15.2
+    },
+    {
+     "i": 29,
+     "cfg": {
+      "bagging_fraction": 0.7983,
+      "feature_fraction": 0.8918,
+      "lambda_l1": 10.0,
+      "lambda_l2": 7.3187,
+      "learning_rate": 0.0448,
+      "max_depth": 2,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 524,
+     "A_log_loss": 0.052693010816199315,
+     "A_auc": 0.8523178088965364,
+     "B_log_loss": 0.05584541892019974,
+     "B_auc": 0.8359500077700639,
+     "secs": 11.6
+    },
+    {
+     "i": 30,
+     "cfg": {
+      "bagging_fraction": 0.807,
+      "feature_fraction": 0.7678,
+      "lambda_l1": 1.0,
+      "lambda_l2": 17.8868,
+      "learning_rate": 0.0935,
+      "max_depth": 3,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 161,
+     "A_log_loss": 0.05264362163252035,
+     "A_auc": 0.8523048814552421,
+     "B_log_loss": 0.055713199704156995,
+     "B_auc": 0.8365165851062282,
+     "secs": 6.5
+    },
+    {
+     "i": 31,
+     "cfg": {
+      "bagging_fraction": 0.5931,
+      "feature_fraction": 0.9722,
+      "lambda_l1": 0.1,
+      "lambda_l2": 2.2716,
+      "learning_rate": 0.0945,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 6
+     },
+     "best_iter": 123,
+     "A_log_loss": 0.05270019084020962,
+     "A_auc": 0.852296772975632,
+     "B_log_loss": 0.055840195418031174,
+     "B_auc": 0.8366206824743595,
+     "secs": 6.1
+    },
+    {
+     "i": 32,
+     "cfg": {
+      "bagging_fraction": 0.6559,
+      "feature_fraction": 0.8482,
+      "lambda_l1": 10.0,
+      "lambda_l2": 7.1281,
+      "learning_rate": 0.042,
+      "max_depth": 4,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 309,
+     "A_log_loss": 0.05263124233437514,
+     "A_auc": 0.8536851194784472,
+     "B_log_loss": 0.0557982677586019,
+     "B_auc": 0.8376107795742748,
+     "secs": 9.0
+    },
+    {
+     "i": 33,
+     "cfg": {
+      "bagging_fraction": 0.7268,
+      "feature_fraction": 0.7683,
+      "lambda_l1": 10.0,
+      "lambda_l2": 13.9345,
+      "learning_rate": 0.0366,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 16
+     },
+     "best_iter": 432,
+     "A_log_loss": 0.05266171413707019,
+     "A_auc": 0.8538168094414554,
+     "B_log_loss": 0.05584690525960046,
+     "B_auc": 0.8374192506728115,
+     "secs": 13.6
+    },
+    {
+     "i": 34,
+     "cfg": {
+      "bagging_fraction": 0.5103,
+      "feature_fraction": 0.8792,
+      "lambda_l1": 10.0,
+      "lambda_l2": 51.6743,
+      "learning_rate": 0.0511,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 556,
+     "A_log_loss": 0.052810840971651486,
+     "A_auc": 0.8518807521348,
+     "B_log_loss": 0.055940105930199324,
+     "B_auc": 0.8354834498615014,
+     "secs": 11.0
+    },
+    {
+     "i": 35,
+     "cfg": {
+      "bagging_fraction": 0.9363,
+      "feature_fraction": 0.6368,
+      "lambda_l1": 0.1,
+      "lambda_l2": 45.2911,
+      "learning_rate": 0.0545,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 466,
+     "A_log_loss": 0.05284664322298342,
+     "A_auc": 0.850725500143889,
+     "B_log_loss": 0.05591340654911876,
+     "B_auc": 0.8345822860514606,
+     "secs": 10.0
+    },
+    {
+     "i": 36,
+     "cfg": {
+      "bagging_fraction": 0.9737,
+      "feature_fraction": 0.8654,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.8731,
+      "learning_rate": 0.0922,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 12
+     },
+     "best_iter": 83,
+     "A_log_loss": 0.05269345151121966,
+     "A_auc": 0.8521433430620523,
+     "B_log_loss": 0.055752972535418666,
+     "B_auc": 0.8361737206572644,
+     "secs": 5.2
+    }
+   ],
+   "chosen_cfg": {
+    "bagging_fraction": 0.6577,
+    "feature_fraction": 0.6819,
+    "lambda_l1": 0.1,
+    "lambda_l2": 0.1304,
+    "learning_rate": 0.05,
+    "max_depth": 4,
+    "min_data_in_leaf": 4000,
+    "min_gain_to_split": 0.5,
+    "num_leaves": 16
+   },
+   "best_iter": 165,
+   "chosen_index": 12,
+   "calibration_compare_B": {
+    "raw": 0.05571990795882689,
+    "platt": 0.055441259622755146,
+    "isotonic": 0.055687242705893945,
+    "auc_raw": 0.8358757990199464,
+    "auc_platt": 0.8352099714485559,
+    "auc_isotonic": 0.8323831040033068
+   },
+   "platt_on_B": {
+    "a": 0.07638780017986194,
+    "b": 0.9553755288904426
+   },
+   "n_final_trees": 198,
+   "final_fit_secs": 6.0,
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": -0.15770395346419536,
+    "b": 0.9553755288904426,
+    "target_rate": 0.011270971437924543
+   },
+   "in_sample": {
+    "auc": 0.8573831143696792,
+    "log_loss": 0.04819315438328775
+   },
+   "fold": 2,
+   "test_year": 2009,
+   "wall_secs": 405.7,
+   "oot_auc": 0.8359572809038434,
+   "oot_log_loss": 0.06627371265259473
+  },
+  {
+   "train_years": [
+    2007,
+    2008,
+    2009
+   ],
+   "n_train": 475861,
+   "train_defaults": 6195,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "inner_scheme": "time: inner-train [np.int64(2007), np.int64(2008)], validate 2009 (firm halves A / B)",
+   "rf": false,
+   "n_inner_train": 305475,
+   "defaults_inner_train": 3443,
+   "n_A": 85773,
+   "defaults_A": 1395,
+   "n_B": 84613,
+   "defaults_B": 1357,
+   "trials": [
+    {
+     "i": 0,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000
+     },
+     "best_iter": 341,
+     "A_log_loss": 0.06739563594389818,
+     "A_auc": 0.8275206017366297,
+     "B_log_loss": 0.0651278990712427,
+     "B_auc": 0.8433335287689347,
+     "secs": 14.9
+    },
+    {
+     "i": 1,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500
+     },
+     "best_iter": 456,
+     "A_log_loss": 0.06753726350671417,
+     "A_auc": 0.8265949752823338,
+     "B_log_loss": 0.06545259714443243,
+     "B_auc": 0.8405722264129941,
+     "secs": 13.9
+    },
+    {
+     "i": 2,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000
+     },
+     "best_iter": 698,
+     "A_log_loss": 0.06755622974640511,
+     "A_auc": 0.8265705715303494,
+     "B_log_loss": 0.06534059479635793,
+     "B_auc": 0.8427954480003575,
+     "secs": 20.8
+    },
+    {
+     "i": 3,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500
+     },
+     "best_iter": 341,
+     "A_log_loss": 0.06733240600049016,
+     "A_auc": 0.827895990486912,
+     "B_log_loss": 0.06511531331529732,
+     "B_auc": 0.8431258917191882,
+     "secs": 14.6
+    },
+    {
+     "i": 4,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000
+     },
+     "best_iter": 322,
+     "A_log_loss": 0.06727753144412187,
+     "A_auc": 0.8281792651620363,
+     "B_log_loss": 0.0651801450643171,
+     "B_auc": 0.8433146224987871,
+     "secs": 13.9
+    },
+    {
+     "i": 5,
+     "cfg": {
+      "bagging_fraction": 0.7744,
+      "feature_fraction": 0.8576,
+      "lambda_l1": 10.0,
+      "lambda_l2": 37.4832,
+      "learning_rate": 0.0748,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 337,
+     "A_log_loss": 0.06767773560867137,
+     "A_auc": 0.8272088921240321,
+     "B_log_loss": 0.06542692309097661,
+     "B_auc": 0.8429726411754914,
+     "secs": 12.7
+    },
+    {
+     "i": 6,
+     "cfg": {
+      "bagging_fraction": 0.9818,
+      "feature_fraction": 0.6917,
+      "lambda_l1": 1.0,
+      "lambda_l2": 27.3216,
+      "learning_rate": 0.0373,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 546,
+     "A_log_loss": 0.0675507690732159,
+     "A_auc": 0.8276998514365845,
+     "B_log_loss": 0.06538783667570922,
+     "B_auc": 0.8424400481819568,
+     "secs": 16.3
+    },
+    {
+     "i": 7,
+     "cfg": {
+      "bagging_fraction": 0.5436,
+      "feature_fraction": 0.5101,
+      "lambda_l1": 10.0,
+      "lambda_l2": 74.3816,
+      "learning_rate": 0.0196,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 1074,
+     "A_log_loss": 0.06773229827334354,
+     "A_auc": 0.8261871458960366,
+     "B_log_loss": 0.0656378336517323,
+     "B_auc": 0.8399215090616621,
+     "secs": 23.0
+    },
+    {
+     "i": 8,
+     "cfg": {
+      "bagging_fraction": 0.9005,
+      "feature_fraction": 0.7602,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.2264,
+      "learning_rate": 0.0505,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 369,
+     "A_log_loss": 0.06747480810727816,
+     "A_auc": 0.8274743726621565,
+     "B_log_loss": 0.06531941048139725,
+     "B_auc": 0.8440120567479842,
+     "secs": 12.7
+    },
+    {
+     "i": 9,
+     "cfg": {
+      "bagging_fraction": 0.7609,
+      "feature_fraction": 0.7073,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.3622,
+      "learning_rate": 0.0607,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 377,
+     "A_log_loss": 0.0674858828920129,
+     "A_auc": 0.8269603349188763,
+     "B_log_loss": 0.06542984226949096,
+     "B_auc": 0.8433380915883455,
+     "secs": 11.2
+    },
+    {
+     "i": 10,
+     "cfg": {
+      "bagging_fraction": 0.6621,
+      "feature_fraction": 0.5748,
+      "lambda_l1": 0.0,
+      "lambda_l2": 7.0925,
+      "learning_rate": 0.0899,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 196,
+     "A_log_loss": 0.0676617054327028,
+     "A_auc": 0.8254823341048233,
+     "B_log_loss": 0.0656555606881294,
+     "B_auc": 0.8398215253408811,
+     "secs": 7.7
+    },
+    {
+     "i": 11,
+     "cfg": {
+      "bagging_fraction": 0.9512,
+      "feature_fraction": 0.5496,
+      "lambda_l1": 0.1,
+      "lambda_l2": 10.0069,
+      "learning_rate": 0.0535,
+      "max_depth": 4,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 355,
+     "A_log_loss": 0.06755272108514479,
+     "A_auc": 0.8267634779862015,
+     "B_log_loss": 0.0653951269728096,
+     "B_auc": 0.8421398536102372,
+     "secs": 11.6
+    },
+    {
+     "i": 12,
+     "cfg": {
+      "bagging_fraction": 0.6577,
+      "feature_fraction": 0.6819,
+      "lambda_l1": 0.1,
+      "lambda_l2": 0.1304,
+      "learning_rate": 0.05,
+      "max_depth": 4,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 16
+     },
+     "best_iter": 135,
+     "A_log_loss": 0.06736837398724642,
+     "A_auc": 0.8286629861815719,
+     "B_log_loss": 0.06530471482683667,
+     "B_auc": 0.8423380596530352,
+     "secs": 7.9
+    },
+    {
+     "i": 13,
+     "cfg": {
+      "bagging_fraction": 0.5807,
+      "feature_fraction": 0.8266,
+      "lambda_l1": 0.0,
+      "lambda_l2": 1.7503,
+      "learning_rate": 0.0369,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 6
+     },
+     "best_iter": 228,
+     "A_log_loss": 0.06726323785599822,
+     "A_auc": 0.8290732113409099,
+     "B_log_loss": 0.06521953656922895,
+     "B_auc": 0.8427530593637765,
+     "secs": 9.5
+    },
+    {
+     "i": 14,
+     "cfg": {
+      "bagging_fraction": 0.9748,
+      "feature_fraction": 0.8313,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.1956,
+      "learning_rate": 0.0735,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 12
+     },
+     "best_iter": 67,
+     "A_log_loss": 0.06742621721586917,
+     "A_auc": 0.8268360393250003,
+     "B_log_loss": 0.06548456602922655,
+     "B_auc": 0.8419766542614626,
+     "secs": 8.0
+    },
+    {
+     "i": 15,
+     "cfg": {
+      "bagging_fraction": 0.7343,
+      "feature_fraction": 0.9884,
+      "lambda_l1": 10.0,
+      "lambda_l2": 2.2567,
+      "learning_rate": 0.0156,
+      "max_depth": 4,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 8
+     },
+     "best_iter": 877,
+     "A_log_loss": 0.0672140546165338,
+     "A_auc": 0.8303801565085466,
+     "B_log_loss": 0.06486434304923669,
+     "B_auc": 0.8468066309529347,
+     "secs": 29.6
+    },
+    {
+     "i": 16,
+     "cfg": {
+      "bagging_fraction": 0.6797,
+      "feature_fraction": 0.7404,
+      "lambda_l1": 0.1,
+      "lambda_l2": 0.8994,
+      "learning_rate": 0.0329,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 6
+     },
+     "best_iter": 362,
+     "A_log_loss": 0.06731249505267287,
+     "A_auc": 0.8286507906773164,
+     "B_log_loss": 0.06511064066626797,
+     "B_auc": 0.8447407137818,
+     "secs": 11.6
+    },
+    {
+     "i": 17,
+     "cfg": {
+      "bagging_fraction": 0.7545,
+      "feature_fraction": 0.9584,
+      "lambda_l1": 1.0,
+      "lambda_l2": 5.3437,
+      "learning_rate": 0.0874,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 185,
+     "A_log_loss": 0.06759131985208003,
+     "A_auc": 0.8257314137923975,
+     "B_log_loss": 0.06556642265224907,
+     "B_auc": 0.8416441304988657,
+     "secs": 6.1
+    },
+    {
+     "i": 18,
+     "cfg": {
+      "bagging_fraction": 0.8236,
+      "feature_fraction": 0.9207,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.3545,
+      "learning_rate": 0.0456,
+      "max_depth": 2,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 322,
+     "A_log_loss": 0.06760298058665075,
+     "A_auc": 0.8264085722458527,
+     "B_log_loss": 0.06542075745954291,
+     "B_auc": 0.8419955649572354,
+     "secs": 9.9
+    },
+    {
+     "i": 19,
+     "cfg": {
+      "bagging_fraction": 0.8389,
+      "feature_fraction": 0.635,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.7335,
+      "learning_rate": 0.0341,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 452,
+     "A_log_loss": 0.06749748764141038,
+     "A_auc": 0.8269056484257435,
+     "B_log_loss": 0.06541565282844171,
+     "B_auc": 0.8417014467686884,
+     "secs": 10.5
+    },
+    {
+     "i": 20,
+     "cfg": {
+      "bagging_fraction": 0.948,
+      "feature_fraction": 0.8195,
+      "lambda_l1": 10.0,
+      "lambda_l2": 72.1518,
+      "learning_rate": 0.035,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 720,
+     "A_log_loss": 0.06765783761818037,
+     "A_auc": 0.8268451976347094,
+     "B_log_loss": 0.06545674311000166,
+     "B_auc": 0.8426036768163597,
+     "secs": 18.4
+    },
+    {
+     "i": 21,
+     "cfg": {
+      "bagging_fraction": 0.6487,
+      "feature_fraction": 0.9069,
+      "lambda_l1": 0.1,
+      "lambda_l2": 10.6247,
+      "learning_rate": 0.0241,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 8
+     },
+     "best_iter": 338,
+     "A_log_loss": 0.06738834207306546,
+     "A_auc": 0.8279529962922438,
+     "B_log_loss": 0.0652361274821899,
+     "B_auc": 0.8417028939480746,
+     "secs": 10.9
+    },
+    {
+     "i": 22,
+     "cfg": {
+      "bagging_fraction": 0.8298,
+      "feature_fraction": 0.7666,
+      "lambda_l1": 10.0,
+      "lambda_l2": 8.5501,
+      "learning_rate": 0.0335,
+      "max_depth": 3,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 6
+     },
+     "best_iter": 411,
+     "A_log_loss": 0.06730482083405036,
+     "A_auc": 0.8292820896170341,
+     "B_log_loss": 0.06503403334968925,
+     "B_auc": 0.8450377971391203,
+     "secs": 13.2
+    },
+    {
+     "i": 23,
+     "cfg": {
+      "bagging_fraction": 0.7144,
+      "feature_fraction": 0.5677,
+      "lambda_l1": 10.0,
+      "lambda_l2": 0.1893,
+      "learning_rate": 0.0294,
+      "max_depth": 3,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 822,
+     "A_log_loss": 0.06756370233183377,
+     "A_auc": 0.8280457900193284,
+     "B_log_loss": 0.06531712683753486,
+     "B_auc": 0.8439177953603731,
+     "secs": 17.8
+    },
+    {
+     "i": 24,
+     "cfg": {
+      "bagging_fraction": 0.7157,
+      "feature_fraction": 0.9483,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.1958,
+      "learning_rate": 0.097,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 12
+     },
+     "best_iter": 66,
+     "A_log_loss": 0.06723344848135089,
+     "A_auc": 0.8285949870063295,
+     "B_log_loss": 0.065561410081759,
+     "B_auc": 0.8405697878936002,
+     "secs": 6.0
+    },
+    {
+     "i": 25,
+     "cfg": {
+      "bagging_fraction": 0.9597,
+      "feature_fraction": 0.8571,
+      "lambda_l1": 10.0,
+      "lambda_l2": 33.3749,
+      "learning_rate": 0.0835,
+      "max_depth": 2,
+      "min_data_in_leaf": 1000,
+      "min_gain_to_split": 0.5,
+      "num_leaves": 4
+     },
+     "best_iter": 291,
+     "A_log_loss": 0.06774684983548626,
+     "A_auc": 0.8260395509845565,
+     "B_log_loss": 0.06552032864152212,
+     "B_auc": 0.8417446806996509,
+     "secs": 7.8
+    },
+    {
+     "i": 26,
+     "cfg": {
+      "bagging_fraction": 0.5834,
+      "feature_fraction": 0.8895,
+      "lambda_l1": 1.0,
+      "lambda_l2": 26.4215,
+      "learning_rate": 0.0442,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 233,
+     "A_log_loss": 0.06738239581293694,
+     "A_auc": 0.8283221874665219,
+     "B_log_loss": 0.06514852842219125,
+     "B_auc": 0.8428221964780664,
+     "secs": 8.6
+    },
+    {
+     "i": 27,
+     "cfg": {
+      "bagging_fraction": 0.71,
+      "feature_fraction": 0.5253,
+      "lambda_l1": 10.0,
+      "lambda_l2": 84.4432,
+      "learning_rate": 0.0761,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 8
+     },
+     "best_iter": 243,
+     "A_log_loss": 0.0676128822611759,
+     "A_auc": 0.8272304370901008,
+     "B_log_loss": 0.06530061537223168,
+     "B_auc": 0.8435637984651082,
+     "secs": 8.6
+    },
+    {
+     "i": 28,
+     "cfg": {
+      "bagging_fraction": 0.7605,
+      "feature_fraction": 0.5272,
+      "lambda_l1": 0.0,
+      "lambda_l2": 0.3455,
+      "learning_rate": 0.0207,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 729,
+     "A_log_loss": 0.06740333423576779,
+     "A_auc": 0.8275545418547071,
+     "B_log_loss": 0.06530299124730787,
+     "B_auc": 0.8422616733649385,
+     "secs": 16.0
+    },
+    {
+     "i": 29,
+     "cfg": {
+      "bagging_fraction": 0.7983,
+      "feature_fraction": 0.8918,
+      "lambda_l1": 10.0,
+      "lambda_l2": 7.3187,
+      "learning_rate": 0.0448,
+      "max_depth": 2,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 4
+     },
+     "best_iter": 497,
+     "A_log_loss": 0.0674841464541058,
+     "A_auc": 0.8271574552166726,
+     "B_log_loss": 0.06524747934411797,
+     "B_auc": 0.8438512074061029,
+     "secs": 12.8
+    },
+    {
+     "i": 30,
+     "cfg": {
+      "bagging_fraction": 0.807,
+      "feature_fraction": 0.7678,
+      "lambda_l1": 1.0,
+      "lambda_l2": 17.8868,
+      "learning_rate": 0.0935,
+      "max_depth": 3,
+      "min_data_in_leaf": 4000,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 123,
+     "A_log_loss": 0.0675525676995636,
+     "A_auc": 0.8275876281600523,
+     "B_log_loss": 0.06520088029783312,
+     "B_auc": 0.8439756648333251,
+     "secs": 6.7
+    },
+    {
+     "i": 31,
+     "cfg": {
+      "bagging_fraction": 0.5931,
+      "feature_fraction": 0.9722,
+      "lambda_l1": 0.1,
+      "lambda_l2": 2.2716,
+      "learning_rate": 0.0945,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 6
+     },
+     "best_iter": 91,
+     "A_log_loss": 0.06742939181840012,
+     "A_auc": 0.8277951386366744,
+     "B_log_loss": 0.06553773096757466,
+     "B_auc": 0.8395135460947258,
+     "secs": 5.4
+    },
+    {
+     "i": 32,
+     "cfg": {
+      "bagging_fraction": 0.6559,
+      "feature_fraction": 0.8482,
+      "lambda_l1": 10.0,
+      "lambda_l2": 7.1281,
+      "learning_rate": 0.042,
+      "max_depth": 4,
+      "min_data_in_leaf": 500,
+      "min_gain_to_split": 0.01,
+      "num_leaves": 8
+     },
+     "best_iter": 366,
+     "A_log_loss": 0.06723111251564443,
+     "A_auc": 0.830387165419038,
+     "B_log_loss": 0.06480270902996428,
+     "B_auc": 0.8474833355744699,
+     "secs": 12.9
+    },
+    {
+     "i": 33,
+     "cfg": {
+      "bagging_fraction": 0.7268,
+      "feature_fraction": 0.7683,
+      "lambda_l1": 10.0,
+      "lambda_l2": 13.9345,
+      "learning_rate": 0.0366,
+      "max_depth": 4,
+      "min_data_in_leaf": 200,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 16
+     },
+     "best_iter": 333,
+     "A_log_loss": 0.06726474231544717,
+     "A_auc": 0.8304372047921237,
+     "B_log_loss": 0.06493308074309113,
+     "B_auc": 0.8467434330274412,
+     "secs": 11.8
+    },
+    {
+     "i": 34,
+     "cfg": {
+      "bagging_fraction": 0.5103,
+      "feature_fraction": 0.8792,
+      "lambda_l1": 10.0,
+      "lambda_l2": 51.6743,
+      "learning_rate": 0.0511,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 4
+     },
+     "best_iter": 368,
+     "A_log_loss": 0.06765489840213552,
+     "A_auc": 0.828119591722893,
+     "B_log_loss": 0.06556835552990202,
+     "B_auc": 0.8422477060923295,
+     "secs": 10.6
+    },
+    {
+     "i": 35,
+     "cfg": {
+      "bagging_fraction": 0.9363,
+      "feature_fraction": 0.6368,
+      "lambda_l1": 0.1,
+      "lambda_l2": 45.2911,
+      "learning_rate": 0.0545,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.0,
+      "num_leaves": 4
+     },
+     "best_iter": 322,
+     "A_log_loss": 0.06766582087586044,
+     "A_auc": 0.8265925455266967,
+     "B_log_loss": 0.06552173222058745,
+     "B_auc": 0.8409635888604255,
+     "secs": 8.8
+    },
+    {
+     "i": 36,
+     "cfg": {
+      "bagging_fraction": 0.9737,
+      "feature_fraction": 0.8654,
+      "lambda_l1": 1.0,
+      "lambda_l2": 0.8731,
+      "learning_rate": 0.0922,
+      "max_depth": 4,
+      "min_data_in_leaf": 2000,
+      "min_gain_to_split": 0.1,
+      "num_leaves": 12
+     },
+     "best_iter": 75,
+     "A_log_loss": 0.06738150062133114,
+     "A_auc": 0.827436902601886,
+     "B_log_loss": 0.06542261700937504,
+     "B_auc": 0.8425871161274804,
+     "secs": 6.2
+    }
+   ],
+   "chosen_cfg": {
+    "bagging_fraction": 0.7343,
+    "feature_fraction": 0.9884,
+    "lambda_l1": 10.0,
+    "lambda_l2": 2.2567,
+    "learning_rate": 0.0156,
+    "max_depth": 4,
+    "min_data_in_leaf": 1000,
+    "min_gain_to_split": 0.5,
+    "num_leaves": 8
+   },
+   "best_iter": 877,
+   "chosen_index": 15,
+   "calibration_compare_B": {
+    "raw": 0.06486434304923669,
+    "platt": 0.06415635469203285,
+    "isotonic": 0.06468039603795481,
+    "auc_raw": 0.8468066309529347,
+    "auc_platt": 0.8466610013355476,
+    "auc_isotonic": 0.843434822474726
+   },
+   "platt_on_B": {
+    "a": 0.2568574110621154,
+    "b": 0.9762649052943604
+   },
+   "n_final_trees": 1052,
+   "final_fit_secs": 30.2,
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": -0.0800084210279477,
+    "b": 0.9762649052943604,
+    "target_rate": 0.013018507505342947
+   },
+   "in_sample": {
+    "auc": 0.854551651798563,
+    "log_loss": 0.05386747440776392
+   },
+   "fold": 3,
+   "test_year": 2010,
+   "wall_secs": 508.5,
+   "oot_auc": 0.832800144129368,
+   "oot_log_loss": 0.0710840718012921
+  }
+ ]
+}

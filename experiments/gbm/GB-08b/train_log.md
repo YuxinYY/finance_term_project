@@ -1,0 +1,44 @@
+# GB-08b training log
+
+GB-01 with only the ebitda_margin constraint dropped (the one drop with a supported economic reason; conceived AFTER GB-08's outer score was seen, see D-103)
+feature set: full (26 features)
+relaxed (unconstrained) features: ['ebitda_margin']
+monotone vector: {'log_assets': -1, 'equity_ratio': -1, 'st_debt_ratio': 1, 'bank_debt_ratio': 1, 'st_debt_share': 1, 'wc_ratio': -1, 'current_ratio': -1, 'cash_ratio': -1, 'roa_net': -1, 'roa_oper': -1, 'ebitda_margin': 0, 'interest_coverage': -1, 'cfo_to_debt': -1, 'interest_to_assets': 1, 'asset_turnover': 0, 'ar_days': 1, 'ap_days': 1, 'tangible_ratio': -1, 'intangible_ratio': 1, 'extraord_to_assets': 0, 'neg_equity': 1, 'debt_split_missing': 1, 'rev_nonpositive': 0, 'ateco_group': 0, 'legal_group': 0, 'macro_area': 0}
+BASE params: {"objective": "binary", "learning_rate": 0.03, "feature_fraction": 0.8, "bagging_fraction": 0.8, "bagging_freq": 1, "lambda_l2": 10.0, "min_sum_hessian_in_leaf": 1.0, "max_bin": 255, "cat_smooth": 50.0, "cat_l2": 10.0, "min_data_per_group": 500, "max_cat_threshold": 16, "monotone_constraints_method": "intermediate", "monotone_penalty": 0.0, "seed": 0, "deterministic": true, "force_col_wise": true, "num_threads": 4, "verbose": -1}
+Lockbox: panel read with fs_year < 2011; max fs_year read = 2010
+
+
+## Fold 1: train [2007] (144,214 rows) -> test 2008; 1 candidate cfgs
+  [GB-08b] #0 best_iter=300 A_ll=0.04875 A_auc=0.8232 B_ll=0.04396 B_auc=0.8297 (7.7s) cfg={'num_leaves': 8, 'max_depth': 3, 'min_data_in_leaf': 1000}
+  CHOSEN #0 {'num_leaves': 8, 'max_depth': 3, 'min_data_in_leaf': 1000} best_iter=300 final_trees=360
+  inner: A_ll 0.04875 A_auc 0.8232 | B_ll 0.04396 B_auc 0.8297
+  Platt on B b=1.026; in-sample AUC 0.8526
+  OUTER test 2008 (scored once): AUC 0.8451 log loss 0.05414 mean pd 0.0105 vs DR 0.0128 (58.7s)
+
+## Fold 2: train [2007, 2008] (305,475 rows) -> test 2009; 4 candidate cfgs
+  [GB-08b] #0 best_iter=728 A_ll=0.05268 A_auc=0.8527 B_ll=0.05577 B_auc=0.8358 (31.5s) cfg={'num_leaves': 4, 'max_depth': 2, 'min_data_in_leaf': 500}
+  [GB-08b] #1 best_iter=815 A_ll=0.05266 A_auc=0.8534 B_ll=0.05579 B_auc=0.8359 (36.3s) cfg={'num_leaves': 4, 'max_depth': 2, 'min_data_in_leaf': 2000}
+  [GB-08b] #2 best_iter=591 A_ll=0.05244 A_auc=0.8557 B_ll=0.05567 B_auc=0.8372 (35.4s) cfg={'num_leaves': 8, 'max_depth': 3, 'min_data_in_leaf': 500}
+  [GB-08b] #3 best_iter=494 A_ll=0.05247 A_auc=0.8548 B_ll=0.05559 B_auc=0.8380 (21.2s) cfg={'num_leaves': 8, 'max_depth': 3, 'min_data_in_leaf': 2000}
+  CHOSEN #2 {'num_leaves': 8, 'max_depth': 3, 'min_data_in_leaf': 500} best_iter=591 final_trees=709
+  inner: A_ll 0.05244 A_auc 0.8557 | B_ll 0.05567 B_auc 0.8372
+  Platt on B b=0.944; in-sample AUC 0.8668
+  OUTER test 2009 (scored once): AUC 0.8374 log loss 0.06603 mean pd 0.0118 vs DR 0.0162 (213.7s)
+
+## Fold 3: train [2007, 2008, 2009] (475,861 rows) -> test 2010; 4 candidate cfgs
+  [GB-08b] #0 best_iter=698 A_ll=0.06745 A_auc=0.8269 B_ll=0.06517 B_auc=0.8434 (27.3s) cfg={'num_leaves': 4, 'max_depth': 2, 'min_data_in_leaf': 500}
+  [GB-08b] #1 best_iter=698 A_ll=0.06748 A_auc=0.8268 B_ll=0.06523 B_auc=0.8436 (33.6s) cfg={'num_leaves': 4, 'max_depth': 2, 'min_data_in_leaf': 2000}
+  [GB-08b] #2 best_iter=452 A_ll=0.06728 A_auc=0.8284 B_ll=0.06487 B_auc=0.8457 (34.4s) cfg={'num_leaves': 8, 'max_depth': 3, 'min_data_in_leaf': 500}
+  [GB-08b] #3 best_iter=452 A_ll=0.06722 A_auc=0.8288 B_ll=0.06494 B_auc=0.8455 (21.5s) cfg={'num_leaves': 8, 'max_depth': 3, 'min_data_in_leaf': 2000}
+  CHOSEN #3 {'num_leaves': 8, 'max_depth': 3, 'min_data_in_leaf': 2000} best_iter=452 final_trees=542
+  inner: A_ll 0.06722 A_auc 0.8288 | B_ll 0.06494 B_auc 0.8455
+  Platt on B b=1.000; in-sample AUC 0.8549
+  OUTER test 2010 (scored once): AUC 0.8328 log loss 0.07112 mean pd 0.0119 vs DR 0.0170 (190.6s)
+
+## Pooled / per-year (own calibration)
+| group   |      n |   defaults |     auc |      ar |   log_loss |    brier |   mean_pd |   observed_dr |   ratio_obs_to_pred |   binom_pvalue |   cal_intercept |   cal_slope |
+|:--------|-------:|-----------:|--------:|--------:|-----------:|---------:|----------:|--------------:|--------------------:|---------------:|----------------:|------------:|
+| ALL     | 506159 |       7784 | 0.83898 | 0.67797 |   0.064    | 0.013671 |  0.011429 |      0.015379 |              1.3455 |    3.7052e-139 |         0.33655 |     0.9799  |
+| 2008    | 161261 |       2064 | 0.84514 | 0.69028 |   0.054139 | 0.011338 |  0.010547 |      0.012799 |              1.2135 |    1.0022e-17  |         0.21939 |     0.9746  |
+| 2009    | 170386 |       2752 | 0.83738 | 0.67476 |   0.066035 | 0.014161 |  0.011797 |      0.016152 |              1.3691 |    5.1316e-56  |         0.35527 |     1.011   |
+| 2010    | 174512 |       2968 | 0.83284 | 0.66568 |   0.071124 | 0.015348 |  0.011885 |      0.017007 |              1.431  |    7.2305e-77  |         0.40717 |     0.95731 |

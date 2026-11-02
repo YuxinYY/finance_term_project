@@ -40,7 +40,7 @@ def boot(y, pn, po, firm, n_boot=200, seed=0):
 
 
 def main():
-    panel = pd.read_parquet(os.path.join(G.ROOT, "data/interim/panel.parquet"), columns=["row_id", "id", "y"])
+    panel = pd.read_parquet(os.path.join(G.ROOT, "data/interim/panel.parquet"), columns=["row_id", "id", "y"], filters=[("fs_year", "<", 2011)])  # lockbox
     tr = pd.read_parquet(os.path.join(G.ROOT, "data/splits/walkforward_test_rows.parquet"))
     base = tr.merge(panel, on="row_id")
     P = {}
@@ -74,7 +74,7 @@ def main():
 
     # round-trip: saved fold-3 model reproduces the fold-3 OOT predictions exactly
     art = G.load_model(os.path.join(HERE, "GB-01", "model_fold3"))
-    full = pd.read_parquet(os.path.join(G.ROOT, "data/interim/panel.parquet"))
+    full = pd.read_parquet(os.path.join(G.ROOT, "data/interim/panel.parquet"), filters=[("fs_year", "<", 2011)])  # lockbox
     te = full.merge(tr[tr["fold"] == 3][["row_id"]], on="row_id")
     p_rt = G.predict_pd(art, te)
     o3 = pd.read_parquet(os.path.join(HERE, "GB-01", "oot_predictions.parquet")).query("fold == 3")

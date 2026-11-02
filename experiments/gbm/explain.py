@@ -79,7 +79,7 @@ def pdp(art, X, feat):
 
 
 def main(exps):
-    panel = pd.read_parquet(os.path.join(ROOT, "data/interim/panel.parquet"))
+    panel = pd.read_parquet(os.path.join(ROOT, "data/interim/panel.parquet"), filters=[("fs_year", "<", 2011)])  # lockbox (round 2)
     te = panel[(panel["fs_year"] == 2010) & (panel["label_status"] == "ok")].reset_index(drop=True)
     rng = np.random.default_rng(0)
     signs = B.expected_signs()

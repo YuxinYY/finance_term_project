@@ -24,7 +24,7 @@ ROOT = G.ROOT
 
 
 def load():
-    panel = pd.read_parquet(os.path.join(ROOT, "data/interim/panel.parquet"))
+    panel = pd.read_parquet(os.path.join(ROOT, "data/interim/panel.parquet"), filters=[("fs_year", "<", 2011)])  # lockbox (round 2)
     with open(os.path.join(ROOT, "data/splits/walkforward.json")) as fh:
         wf = json.load(fh)
     tr = pd.read_parquet(os.path.join(ROOT, "data/splits/walkforward_test_rows.parquet"))

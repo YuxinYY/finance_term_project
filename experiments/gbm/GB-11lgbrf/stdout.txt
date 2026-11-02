@@ -1,0 +1,48 @@
+# GB-11 training log
+
+random-forest benchmark (LightGBM boosting='rf', 300 trees, unconstrained), D-053 calibration
+feature set: full (26 features)
+relaxed (unconstrained) features: ['log_assets', 'equity_ratio', 'st_debt_ratio', 'bank_debt_ratio', 'st_debt_share', 'wc_ratio', 'current_ratio', 'cash_ratio', 'roa_net', 'roa_oper', 'ebitda_margin', 'interest_coverage', 'cfo_to_debt', 'interest_to_assets', 'asset_turnover', 'ar_days', 'ap_days', 'tangible_ratio', 'intangible_ratio', 'extraord_to_assets', 'neg_equity', 'debt_split_missing', 'rev_nonpositive', 'ateco_group', 'legal_group', 'macro_area']
+monotone vector: {'log_assets': 0, 'equity_ratio': 0, 'st_debt_ratio': 0, 'bank_debt_ratio': 0, 'st_debt_share': 0, 'wc_ratio': 0, 'current_ratio': 0, 'cash_ratio': 0, 'roa_net': 0, 'roa_oper': 0, 'ebitda_margin': 0, 'interest_coverage': 0, 'cfo_to_debt': 0, 'interest_to_assets': 0, 'asset_turnover': 0, 'ar_days': 0, 'ap_days': 0, 'tangible_ratio': 0, 'intangible_ratio': 0, 'extraord_to_assets': 0, 'neg_equity': 0, 'debt_split_missing': 0, 'rev_nonpositive': 0, 'ateco_group': 0, 'legal_group': 0, 'macro_area': 0}
+BASE params: {"objective": "binary", "learning_rate": 0.03, "feature_fraction": 0.8, "bagging_fraction": 0.8, "bagging_freq": 1, "lambda_l2": 10.0, "min_sum_hessian_in_leaf": 1.0, "max_bin": 255, "cat_smooth": 50.0, "cat_l2": 10.0, "min_data_per_group": 500, "max_cat_threshold": 16, "monotone_constraints_method": "intermediate", "monotone_penalty": 0.0, "seed": 0, "deterministic": true, "force_col_wise": true, "num_threads": 2, "verbose": -1}
+Lockbox: panel read with fs_year < 2011; max fs_year read = 2010
+
+
+## Fold 1: train [2007] (144,214 rows) -> test 2008; 4 candidate cfgs
+  [GB-11] #0 best_iter=300 A_ll=0.13028 A_auc=0.8341 B_ll=0.11821 B_auc=0.8327 (6.8s) cfg={'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 200, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #1 best_iter=300 A_ll=0.10271 A_auc=0.8288 B_ll=0.09295 B_auc=0.8245 (6.4s) cfg={'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 1000, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #2 best_iter=300 A_ll=0.13034 A_auc=0.8341 B_ll=0.11826 B_auc=0.8308 (12.4s) cfg={'num_leaves': 255, 'max_depth': -1, 'min_data_in_leaf': 200, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #3 best_iter=300 A_ll=0.10271 A_auc=0.8288 B_ll=0.09295 B_auc=0.8245 (4.3s) cfg={'num_leaves': 255, 'max_depth': -1, 'min_data_in_leaf': 1000, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
+  CHOSEN #1 {'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 1000, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001} best_iter=300 final_trees=300
+  inner: A_ll 0.10271 A_auc 0.8288 | B_ll 0.09295 B_auc 0.8245
+  Platt on B b=0.415; in-sample AUC 0.8682
+  OUTER test 2008 (scored once): AUC 0.8429 log loss 0.05812 mean pd 0.0108 vs DR 0.0128 (58.4s)
+
+## Fold 2: train [2007, 2008] (305,475 rows) -> test 2009; 4 candidate cfgs
+  [GB-11] #0 best_iter=300 A_ll=0.15151 A_auc=0.8508 B_ll=0.15119 B_auc=0.8376 (6.4s) cfg={'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 200, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #1 best_iter=300 A_ll=0.13365 A_auc=0.8498 B_ll=0.13569 B_auc=0.8360 (7.5s) cfg={'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 1000, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #2 best_iter=300 A_ll=0.15170 A_auc=0.8525 B_ll=0.15131 B_auc=0.8408 (12.7s) cfg={'num_leaves': 255, 'max_depth': -1, 'min_data_in_leaf': 200, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #3 best_iter=300 A_ll=0.13366 A_auc=0.8498 B_ll=0.13569 B_auc=0.8360 (7.8s) cfg={'num_leaves': 255, 'max_depth': -1, 'min_data_in_leaf': 1000, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  CHOSEN #1 {'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 1000, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001} best_iter=300 final_trees=300
+  inner: A_ll 0.13365 A_auc 0.8498 | B_ll 0.13569 B_auc 0.8360
+  Platt on B b=0.335; in-sample AUC 0.8645
+  OUTER test 2009 (scored once): AUC 0.8340 log loss 0.07205 mean pd 0.0121 vs DR 0.0162 (70.7s)
+
+## Fold 3: train [2007, 2008, 2009] (475,861 rows) -> test 2010; 4 candidate cfgs
+  [GB-11] #0 best_iter=300 A_ll=0.14453 A_auc=0.8283 B_ll=0.14831 B_auc=0.8343 (11.1s) cfg={'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 200, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #1 best_iter=300 A_ll=0.16837 A_auc=0.8306 B_ll=0.17353 B_auc=0.8376 (15.0s) cfg={'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 1000, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #2 best_iter=300 A_ll=0.14507 A_auc=0.8353 B_ll=0.14878 B_auc=0.8430 (21.5s) cfg={'num_leaves': 255, 'max_depth': -1, 'min_data_in_leaf': 200, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  [GB-11] #3 best_iter=300 A_ll=0.16830 A_auc=0.8312 B_ll=0.17347 B_auc=0.8388 (18.1s) cfg={'num_leaves': 255, 'max_depth': -1, 'min_data_in_leaf': 1000, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001}
+  CHOSEN #0 {'num_leaves': 63, 'max_depth': -1, 'min_data_in_leaf': 200, 'feature_fraction': 0.5, 'bagging_fraction': 0.632, 'bagging_freq': 1, 'lambda_l2': 0.0, 'min_sum_hessian_in_leaf': 0.001} best_iter=300 final_trees=300
+  inner: A_ll 0.14453 A_auc 0.8283 | B_ll 0.14831 B_auc 0.8343
+  Platt on B b=0.263; in-sample AUC 0.8423
+  OUTER test 2010 (scored once): AUC 0.8229 log loss 0.07664 mean pd 0.0125 vs DR 0.0170 (123.5s)
+
+## Pooled / per-year (own calibration)
+| group   |      n |   defaults |     auc |      ar |   log_loss |    brier |   mean_pd |   observed_dr |   ratio_obs_to_pred |   binom_pvalue |   cal_intercept |   cal_slope |
+|:--------|-------:|-----------:|--------:|--------:|-----------:|---------:|----------:|--------------:|--------------------:|---------------:|----------------:|------------:|
+| ALL     | 506159 |       7784 | 0.78958 | 0.57916 |   0.069195 | 0.014141 |  0.011839 |      0.015379 |              1.2989 |    8.7973e-110 |         0.32103 |     0.84588 |
+| 2008    | 161261 |       2064 | 0.84289 | 0.68578 |   0.058117 | 0.011789 |  0.010773 |      0.012799 |              1.1881 |    1.823e-14   |         0.21342 |     0.82812 |
+| 2009    | 170386 |       2752 | 0.83405 | 0.6681  |   0.072052 | 0.014775 |  0.012147 |      0.016152 |              1.3297 |    7.5048e-47  |         0.38056 |     0.78506 |
+| 2010    | 174512 |       2968 | 0.82286 | 0.64572 |   0.076643 | 0.015694 |  0.012525 |      0.017007 |              1.3579 |    1.8355e-57  |         0.34628 |     0.99131 |

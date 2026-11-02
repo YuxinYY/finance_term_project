@@ -1,0 +1,11 @@
+{
+ "relax": [
+  "interest_coverage",
+  "cfo_to_debt",
+  "ebitda_margin"
+ ],
+ "rule": "drop a monotone constraint only if (1) the ratio's denominator can approach zero for a viable firm (interest expense, total debt, revenue), so extreme values stop measuring strength, AND (2) the constraint costs held-out log loss on the inner splits (ablation_summary.csv). Ratios over total assets (roa_net, roa_oper, equity, wc, cash, debt ratios) keep their constraints: total assets >= EUR 1.5MM by construction, and these are the primary reason codes. current_ratio, ar_days, ap_days have near-zero-capable denominators but their constraint costs nothing (cost <= 0 in >= 2 of 3 folds) -> kept.",
+ "evidence": "GB-08/ablation_summary.csv (inner only), GB-08/univariate_2007.csv (fs_year 2007 only), GB-08/shapes_costly.png",
+ "decided": "2026-11-02 before any outer scoring of GB-08",
+ "correction_2026_11_02_1550": "The rule text above overstates: ar_days's cost is positive in 2 of 3 folds (+0.000004, +0.000006, -0.000002), so 'cost <= 0 in >= 2 of 3 folds' is false for it; it was kept because the cost is negligible. The rule was written after seeing ablation and shapes, i.e. post hoc. The relax list is unchanged and is what GB-08 used. See decisions.md D-102/D-103."
+}
