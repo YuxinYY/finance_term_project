@@ -1199,7 +1199,7 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Status: REJECTED
 - Decision: do not average GB-01 with GAM-01 (or RC-02) on the log-odds scale.
 - Evidence (pooled 2008-10 OOT predictions, 506,159 rows, 7,784 defaults; firm-clustered bootstrap,
-  100 draws; script in the session scratchpad, re-runnable from the saved oot_predictions files):
+  100 draws; `experiments/ensemble/ens01.py`, output `experiments/ensemble/ens01_output.txt`):
   pooled AUC GB-01 0.8375; 50/50 GB-01+GAM-01 0.8343 (dAUC -0.0032 [-0.0042, -0.0024]);
   70/30 0.8363 (dAUC -0.0012 [-0.0017, -0.0007]); three-way with RC-02 0.8322. Worse in every
   test year (2010: 50/50 dAUC -0.0033 [-0.0049, -0.0020]).
