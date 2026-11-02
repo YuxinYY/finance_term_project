@@ -398,8 +398,14 @@ def _finite_quantiles(s: pd.Series, qs) -> list[float]:
     return [float(v.quantile(q)) for q in qs] if len(v) else [float("nan"), float("nan")]
 
 
-def fit(train_df: pd.DataFrame, label_col: str = "y") -> dict:
-    """Learn all feature parameters from the training rows passed in (and nothing else)."""
+def fit(train_df: pd.DataFrame, label_col: str = "y", feature_set: str = "full",
+        id_col: str = "id") -> dict:
+    """Learn all feature parameters from the training rows passed in (and nothing else).
+
+    feature_set="full" (default) gives exactly the v1 params. feature_set="full2" additionally
+    fits the round-2 parameters (params["v2"]: sector percentile grids, shrunk default-rate
+    encodings incl. out-of-fold tables grouped by `id_col`, v2 winsor bounds and medians).
+    """
     r = _reconstruct(coerce_input(train_df))
     raw = _raw_features(r)
     params: dict[str, Any] = {"version": VERSION, "n_train_rows": int(len(r)),
@@ -446,6 +452,10 @@ def fit(train_df: pd.DataFrame, label_col: str = "y") -> dict:
         g = src.groupby(grp).median()
         params["impute_median"][c] = {"__global__": float(src.median()),
                                       **{str(k): float(v) for k, v in g.items() if pd.notna(v)}}
+    if feature_set == "full2":
+        params["v2"] = _fit_v2(train_df, r, grp, params, label_col, id_col)
+    elif feature_set not in ("full", "core"):
+        raise ValueError(f"unknown feature_set {feature_set!r}")
     return params
 
 
@@ -460,9 +470,20 @@ def _impute_block(r: pd.DataFrame, grp: pd.Series, params: dict) -> pd.DataFrame
     return r
 
 
-def transform(df: pd.DataFrame, params: dict, impute: bool = False, _clean=None) -> pd.DataFrame:
-    """Features for every input row, same order and index. Never uses statistics of `df`."""
-    r = _reconstruct(coerce_input(df)) if _clean is None else _clean
+def transform(df: pd.DataFrame, params: dict, impute: bool = False, _clean=None,
+              feature_set: str = "full", oof: bool = False, id_col: str = "id") -> pd.DataFrame:
+    """Features for every input row, same order and index. Never uses statistics of `df`.
+
+    feature_set: "full" (default, v1 columns ALL_FEATURES, unchanged) or "full2" (FULL2_FEATURES;
+    needs params fitted with fit(..., feature_set="full2")). "core" returns the full v1 frame too
+    (select CORE_FEATURES yourself, as before).
+    oof=True is for TRAINING rows only: the shrunk default-rate encodings are then taken from the
+    out-of-fold table of the row's firm (fold = crc32(firm id) mod K, stored in params), so a
+    training row never sees its own label. The harness always uses oof=False.
+    """
+    c0 = coerce_input(df) if _clean is None else None
+    r = _reconstruct(c0) if _clean is None else _clean
+    r_pre = r
     cats = _cats_raw(r)
     out = pd.DataFrame(index=r.index)
     for c in CAT_FEATURES:
@@ -487,6 +508,13 @@ def transform(df: pd.DataFrame, params: dict, impute: bool = False, _clean=None)
         out[c] = v.astype("float64")
     for c in FLAG_FEATURES:
         out[c] = flags[c]
+    if feature_set in ("full2", "full2_candidates"):
+        if "v2" not in params:
+            raise ValueError('params lack "v2": fit with feature_set="full2"')
+        v2 = _transform_v2(df, c0 if c0 is not None else r_pre, r_pre, r, out, params, impute,
+                           oof, id_col)
+        cols = FULL2_FEATURES if feature_set == "full2" else ALL_FEATURES + V2_CANDIDATES
+        return pd.concat([out[ALL_FEATURES], v2], axis=1)[cols]   # candidates: evidence scripts only
     return out[ALL_FEATURES]
 
 
@@ -522,3 +550,321 @@ def save_params(params: dict, path: str) -> None:
 def load_params(path: str) -> dict:
     with open(path) as fh:
         return json.load(fh)
+
+
+# =============================================================================================
+# ROUND 2 (features-v2, feature-architect 2026-11-02). Opt-in only: fit(..., feature_set="full2")
+# and transform(..., feature_set="full2"). Nothing above this line changes its output.
+# Decisions: reports/features/round2_decisions.md (D-090..D-099);
+# evidence: reports/features/round2_univariate.md (training rows fs_year 2007-2009 only).
+# =============================================================================================
+import zlib  # noqa: E402
+
+VERSION_V2 = "features-v2 (2026-11-02)"
+TE_FOLDS = 5                    # out-of-fold folds for the default-rate encodings (grouped by firm)
+TE_M_BOUNDS = (50.0, 50000.0)   # guard rails on the empirical-Bayes prior strength m (rows)
+PCT_MIN_ROWS = 2000             # an ATECO section needs this many training rows for its own grid
+PCT_GRID = [i / 100 for i in range(101)]
+PCT_BASE = ["equity_ratio", "roa_net", "interest_coverage", "cash_ratio", "st_debt_ratio",
+            "tangible_ratio"]
+MISS_COUNT_FIELDS = [c for c in RAW_NUM if c not in ("roe", "margin_fin")]
+CORE_NUM = [c for c in CORE_FEATURES if c in NUM_FEATURES]
+
+_R33 = "R-33 Table 3 p. 11 (input), p. 12 (direction of the Fig. 5 transform)"
+V2_FEATURES: list[dict[str, Any]] = [
+    # ---- F1: RiskCalc 4.0 France ratios -----------------------------------------------------
+    dict(name="net_debt_coverage", family="coverage", sign=-1, slog=True, src=_R33, rejected=True,
+         formula="slog(cf_operations / ((asst_tot - eqty_tot) - cash_and_equiv))", units="1/yr",
+         reason="Cash earnings (net profit + D&A) per euro of liabilities not already covered by "
+                "cash: the inverse of the years needed to pay off net liabilities. RiskCalc France's "
+                "heaviest-weighted input (19.2%, R-33 Table 4 p. 14).",
+         zero_rule="net liabilities <= 0 (cash covers every liability: the safest case) -> +inf if "
+                   "cf_operations > 0, else 0 (no cash generation); +inf clipped to the train p99",
+         missing_rule="NaN if any input missing after identity reconstruction; impute: sector median"),
+    dict(name="operating_margin", family="profitability", sign=-1, slog=True, src=_R33,
+         formula="slog(prof_operations / rev_operating)", units="share of sales",
+         reason="Operating profit per euro of sales: the buffer before costs exceed revenue. "
+                "RiskCalc France's profitability input (replaces EBITDA/sales).",
+         zero_rule="rev_operating <= 0 -> NaN (rev_nonpositive flag marks it)",
+         missing_rule="NaN; impute: sector median"),
+    dict(name="interest_to_sales", family="coverage/activity", sign=0, slog=True, src=_R33 +
+         "; R-33 shows an upward slope, our 2007-09 deciles are hump-shaped (D-092), so sign none",
+         formula="slog(exp_financing / rev_operating)", units="share of sales",
+         reason="Share of every sales euro already spent on interest: high values leave little "
+                "room before a payment is missed.",
+         zero_rule="rev_operating == 0: +inf if exp_financing > 0 else 0; rev_operating < 0 -> NaN",
+         missing_rule="NaN; impute: sector median"),
+    dict(name="payables_to_sales", family="activity", sign=+1, slog=True, src=_R33, block=True,
+         formula="slog(AP_st / rev_operating)", units="share of sales",
+         reason="Large trade payables relative to sales = suppliers are being stretched, a classic "
+                "sign of cash stress (R-33 p. 10, Table 2 gives exactly this example).",
+         zero_rule="rev_operating == 0: +inf if AP_st > 0 else 0; rev_operating < 0 -> NaN",
+         missing_rule="NaN if the debt-split block is missing; impute: sector share x debt_st, "
+                      "then sector median"),
+    dict(name="personnel_to_sales", family="activity", sign=+1, slog=True, src=_R33 +
+         "; field meaning = D-010 hypothesis (goodwill = value added), tested in D-091",
+         formula="slog((goodwill - ebitda) / rev_operating)   [HYPOTHESIS-DEPENDENT]",
+         units="share of sales",
+         reason="Staff costs are hard to cut quickly; a high wage bill per euro of sales means a "
+                "drop in sales turns straight into losses (operating leverage).",
+         zero_rule="rev_operating == 0: +inf if cost > 0 else 0; rev_operating < 0 -> NaN; "
+                   "goodwill < ebitda (negative personnel cost, 0.01% of rows) -> NaN",
+         missing_rule="NaN; impute: sector median"),
+    # ---- F2: sector-relative percentiles ---------------------------------------------------
+    *[dict(name=f"{b}_sect_pct", family="sector-relative", sign=META[b]["sign"], kind="pct",
+           src="R-01 Sec. 3.3 pp. 17-18 (industry corrects ratios whose meaning differs by sector)",
+           formula=f"percentile of {b} within the firm's ATECO section (train grid)",
+           units="0-1",
+           reason=f"Where the firm stands among peers of its own sector on {b}: the same ratio "
+                  "means different things in, e.g., real estate and retail.",
+           zero_rule="inherits the rule of the base feature; values outside the grid -> 0 or 1",
+           missing_rule="NaN if the base is NaN; impute: computed from the imputed base "
+                        f"(sector median -> about 0.5); sections with < {PCT_MIN_ROWS} train rows "
+                        "or unseen -> pooled grid")
+      for b in PCT_BASE],
+    # ---- F3: shrunk default-rate encodings -------------------------------------------------
+    dict(name="ateco_div_te", family="industry", sign=+1, kind="te",
+         src="assumption (empirical-Bayes / m-estimate encoding; no VERIFIED source in REFERENCES)",
+         formula="logit((d_l + m p0)/(n_l + m)) - logit(p0), l = ATECO division (2-digit)",
+         units="log-odds vs base rate",
+         reason="The division's own historical default rate, pulled toward the average when the "
+                "division is small: finer than the 21 sections, without 83 dummies.",
+         zero_rule="n/a", missing_rule="missing / unseen division -> 0 (= the base rate)"),
+    dict(name="province_te", family="geography", sign=+1, kind="te",
+         src="assumption (as ateco_div_te)",
+         formula="same as ateco_div_te, l = HQ_city (province)", units="log-odds vs base rate",
+         reason="Local economic conditions (e.g. local banks, courts, demand) differ by province.",
+         zero_rule="n/a", missing_rule="missing / unseen province -> 0"),
+    dict(name="region_te", family="geography", sign=+1, kind="te",
+         src="assumption (as ateco_div_te)",
+         formula="same as ateco_div_te, l = region of HQ_city", units="log-odds vs base rate",
+         reason="Regional conditions; 20 levels, so less noisy than province.",
+         zero_rule="n/a", missing_rule="missing / unseen region -> 0"),
+    # ---- F4: data quality / missingness ----------------------------------------------------
+    dict(name="n_missing_raw", family="data quality", sign=+1, kind="count", rejected=True,
+         src="R-34 / R-05 pp. 60-61 (less real data, worse/biased estimate; L1)",
+         formula=f"count of missing raw amounts among {len(MISS_COUNT_FIELDS)} fields "
+                 "(roe, margin_fin excluded: blank by construction when equity <= 0)",
+         units="count",
+         reason="A thinner statement (abbreviated filing, incomplete data) tells the bank less "
+                "and in our data comes with slightly higher default rates.",
+         zero_rule="n/a", missing_rule="never missing"),
+    dict(name="n_core_imputed", family="data quality", sign=+1, kind="count",
+         src="R-34 (L1: median fill understates PD)",
+         formula="count of core numeric features still NaN after identity reconstruction "
+                 "(= the number the GLM view fills with a sector median)", units="count",
+         reason="Flags rows whose PD rests partly on sector medians rather than the firm's own "
+                "numbers, so the model can add back the risk a median hides.",
+         zero_rule="n/a", missing_rule="never missing"),
+    dict(name="bs_gap", family="data quality", sign=0,
+         src="assumption; data-auditor 01_profile.md section 5 (omitted liability item)",
+         formula="(asst_tot - eqty_tot - debt_st - debt_lt - liab_lt - liab_lt_emp) / asst_tot",
+         units="share of assets",
+         reason="Liabilities the file does not classify (most likely accruals / deferred income "
+                "[hypothesis]). Large gaps can mean unusual balance sheets or poor data; no "
+                "monotone expectation.",
+         zero_rule="denominator is total assets (> 0)", missing_rule="NaN; impute: sector median"),
+    # ---- F5: unused fields -----------------------------------------------------------------
+    dict(name="nonbank_fin_debt", family="leverage", sign=+1, block=True, src="assumption",
+         formula="(debt_fin_st + debt_fin_lt) / asst_tot", units="share of assets",
+         reason="Financial debt owed to non-banks (leasing, factoring, other lenders, shareholder "
+                "loans): more fixed claims on the same assets.",
+         zero_rule="denominator is total assets (> 0)",
+         missing_rule="NaN if the block is missing; impute: sector share x debt totals, then median"),
+    dict(name="ap_lt_ratio", family="leverage", sign=+1, block=True, src="assumption",
+         formula="AP_lt / asst_tot", units="share of assets",
+         reason="Trade payables due after more than a year are unusual: suppliers converted into "
+                "long-term creditors, often after a renegotiation.",
+         zero_rule="denominator is total assets (> 0)",
+         missing_rule="NaN if the block is missing; impute: sector share x debt_lt, then median"),
+    dict(name="fin_fixed_ratio", family="asset structure", sign=0, src="assumption",
+         formula="asst_fixed_fin / asst_tot", units="share of assets",
+         reason="Equity stakes and loans to other firms: holding / group structure. Group support "
+                "can help or the stakes can be illiquid and tied to group trouble: no monotone sign.",
+         zero_rule="denominator is total assets (> 0)", missing_rule="NaN; impute: sector median"),
+    dict(name="tfr_ratio", family="asset structure", sign=0, src="assumption",
+         formula="liab_lt_emp / asst_tot  (TFR staff-severance fund)", units="share of assets",
+         reason="Proxy for labour intensity (and an internal funding source owed to staff). Two "
+                "opposite stories, so no monotone sign.",
+         zero_rule="denominator is total assets (> 0)", missing_rule="NaN; impute: sector median"),
+]
+V2_NUM = [f["name"] for f in V2_FEATURES if f.get("kind", "num") == "num"]
+V2_PCT = [f["name"] for f in V2_FEATURES if f.get("kind") == "pct"]
+V2_TE = [f["name"] for f in V2_FEATURES if f.get("kind") == "te"]
+V2_COUNT = [f["name"] for f in V2_FEATURES if f.get("kind") == "count"]
+V2_BLOCK = [f["name"] for f in V2_FEATURES if f.get("block")]
+V2_CANDIDATES = [f["name"] for f in V2_FEATURES]            # everything evaluated in round 2
+V2_REJECTED = [f["name"] for f in V2_FEATURES if f.get("rejected")]   # computed, not in the set
+NEW_FEATURES_V2 = [c for c in V2_CANDIDATES if c not in V2_REJECTED]
+FULL2_FEATURES = ALL_FEATURES + NEW_FEATURES_V2
+FEATURE_SETS = {"core": CORE_FEATURES, "full": ALL_FEATURES, "full2": FULL2_FEATURES}
+for _f in V2_FEATURES:                       # add (never overwrite) metadata for expected_signs()
+    assert _f["name"] not in META
+    META[_f["name"]] = {"kind": "num", "core": False, **_f}
+
+
+def _rev_ratio(num: pd.Series, rev: pd.Series) -> pd.Series:
+    """num / revenue with the ar_days rule: rev == 0 -> +inf if num > 0 else 0; rev < 0 -> NaN."""
+    v = num / rev.where(rev > 0)
+    norev = (rev == 0) & num.notna()
+    return v.mask(norev & (num > 0), np.inf).mask(norev & (num <= 0), 0.0)
+
+
+def _raw_v2(r: pd.DataFrame) -> pd.DataFrame:
+    ta, rev = r["asst_tot"], r["rev_operating"]
+    f = pd.DataFrame(index=r.index)
+    cfo = r["cf_operations"]
+    netl = (ta - r["eqty_tot"]) - r["cash_and_equiv"]
+    v = cfo / netl.where(netl > 0)
+    netcash = (netl <= 0) & cfo.notna()
+    f["net_debt_coverage"] = v.mask(netcash & (cfo > 0), np.inf).mask(netcash & (cfo <= 0), 0.0)
+    f["operating_margin"] = r["prof_operations"] / rev.where(rev > 0)
+    f["interest_to_sales"] = _rev_ratio(r["exp_financing"], rev)
+    f["payables_to_sales"] = _rev_ratio(r["AP_st"], rev)
+    pc = r["goodwill"] - r["ebitda"]
+    f["personnel_to_sales"] = _rev_ratio(pc.where(pc >= 0), rev)
+    f["bs_gap"] = _div_ta(ta - r["eqty_tot"] - r["debt_st"] - r["debt_lt"] - r["liab_lt"]
+                          - r["liab_lt_emp"], ta)
+    f["nonbank_fin_debt"] = _div_ta(r["debt_fin_st"] + r["debt_fin_lt"], ta)
+    f["ap_lt_ratio"] = _div_ta(r["AP_lt"], ta)
+    f["fin_fixed_ratio"] = _div_ta(r["asst_fixed_fin"], ta)
+    f["tfr_ratio"] = _div_ta(r["liab_lt_emp"], ta)
+    return f[V2_NUM]
+
+
+def _firm_fold(ids: pd.Series, k: int) -> np.ndarray:
+    """Deterministic firm -> fold map (crc32 of the normalised id string); no randomness to store."""
+    codes = _to_code(ids).fillna("")
+    lut = {u: zlib.crc32(str(u).encode()) % k for u in pd.unique(codes)}
+    return codes.map(lut).to_numpy(dtype=int)
+
+
+def _te_levels(r: pd.DataFrame) -> dict[str, pd.Series]:
+    def reg(c):
+        return province_region(c)
+    prov = r["HQ_city"].astype(object).where(r["HQ_city"].notna(), None)
+    div = r["ateco_sector"].astype(object).where(r["ateco_sector"].notna(), None)
+    return {"ateco_div_te": div, "province_te": prov, "region_te": _map_unique(r["HQ_city"], reg)}
+
+
+def _logit(p):
+    return float(np.log(p / (1 - p)))
+
+
+def _te_table(lv: pd.Series, y: pd.Series) -> dict:
+    """Shrunk log-odds encoding. Prior strength m by empirical Bayes (method of moments on the
+    between-level variance of default rates), clipped to TE_M_BOUNDS."""
+    ok = lv.notna() & y.notna()
+    g = y[ok].groupby(lv[ok].values).agg(["sum", "count"])
+    n_tot, d_tot = float(g["count"].sum()), float(g["sum"].sum())
+    p0 = min(max(d_tot / n_tot, 1e-6), 1 - 1e-6)
+    n, rate = g["count"].astype(float), g["sum"] / g["count"]
+    L = len(g)
+    s_between = float((n * (rate - p0) ** 2).sum())
+    denom = n_tot - float((n ** 2).sum()) / n_tot
+    tau2 = (s_between - (L - 1) * p0 * (1 - p0)) / denom if denom > 0 else 0.0
+    m = p0 * (1 - p0) / tau2 if tau2 > 0 else TE_M_BOUNDS[1]
+    m = float(np.clip(m, *TE_M_BOUNDS))
+    ps = (g["sum"] + m * p0) / (g["count"] + m)
+    enc = {str(k): float(np.log(v / (1 - v)) - _logit(p0)) for k, v in ps.items()}
+    return {"m": m, "p0": p0, "tau2": float(tau2), "n_levels": L, "enc": enc}
+
+
+def _pct_grid(v: pd.Series) -> list[float]:
+    v = v.replace([np.inf, -np.inf], np.nan).dropna()
+    return [float(x) for x in np.quantile(v.to_numpy(), PCT_GRID)] if len(v) else []
+
+
+def _pct_lookup(x: pd.Series, grid: list[float]) -> pd.Series:
+    """Percentile of x on a stored quantile grid; ties in the grid get their mid-percentile."""
+    if not grid:
+        return pd.Series(np.nan, index=x.index)
+    g = pd.Series(PCT_GRID, index=np.asarray(grid)).groupby(level=0).mean()
+    xv = x.to_numpy(dtype=float)
+    out = np.interp(xv, g.index.to_numpy(), g.to_numpy(), left=0.0, right=1.0)
+    return pd.Series(np.where(np.isnan(xv), np.nan, out), index=x.index)
+
+
+def _fit_v2(train_df, r, grp, params, label_col, id_col) -> dict:
+    v2: dict[str, Any] = {"version": VERSION_V2, "winsor": {}, "impute_median": {}, "pct": {},
+                          "te": {}, "te_folds": TE_FOLDS, "pct_min_rows": PCT_MIN_ROWS}
+    raw = _raw_v2(r)
+    for c in V2_NUM:
+        v2["winsor"][c] = _finite_quantiles(raw[c], WINSOR_Q)
+    # sector percentile grids on the v1 (winsorised, non-imputed) training features
+    X = transform(train_df, params, impute=False, _clean=r)
+    sect = _section(r["ateco_sector"])
+    for b in PCT_BASE:
+        tab = {"__global__": _pct_grid(X[b])}
+        for s_, idx in X[b].groupby(sect.fillna(OTHER).values).groups.items():
+            if s_ != OTHER and len(idx) >= PCT_MIN_ROWS:
+                tab[str(s_)] = _pct_grid(X[b].loc[idx])
+        v2["pct"][b] = tab
+    # shrunk default-rate encodings: full window (for scoring) + out-of-fold tables (training)
+    if label_col not in train_df.columns:
+        raise ValueError("feature_set='full2' needs the label column to fit the encodings")
+    y = pd.to_numeric(train_df[label_col], errors="coerce").reset_index(drop=True)
+    levels = {k: v.reset_index(drop=True) for k, v in _te_levels(r).items()}
+    fold = _firm_fold(train_df[id_col].reset_index(drop=True), TE_FOLDS) if id_col in train_df.columns else None
+    for name, lv in levels.items():
+        ent = {"full": _te_table(lv, y)}
+        if fold is not None:
+            ent["oof"] = [_te_table(lv[fold != k], y[fold != k]) for k in range(TE_FOLDS)]
+        v2["te"][name] = ent
+    # medians for the GLM view (block features: from the block-imputed rows)
+    rb = _impute_block(r, grp, params)
+    raw_b = _raw_v2(rb)
+    for c in V2_NUM:
+        src = raw_b[c] if c in V2_BLOCK else raw[c]
+        lo, hi = v2["winsor"][c]
+        src = src.clip(lower=lo, upper=hi)
+        if META[c].get("slog"):
+            src = slog(src)
+        g = src.groupby(grp).median()
+        v2["impute_median"][c] = {"__global__": float(src.median()),
+                                  **{str(k): float(v) for k, v in g.items() if pd.notna(v)}}
+    return v2
+
+
+def _transform_v2(df, c0, r_pre, r, out, params, impute, oof, id_col) -> pd.DataFrame:
+    v2 = params["v2"]
+    grp = out["ateco_group"].astype(str)
+    res = pd.DataFrame(index=r.index)
+    raw = _raw_v2(r)                      # r is block-imputed when impute=True
+    for c in V2_NUM:
+        lo, hi = v2["winsor"][c]
+        v = raw[c].clip(lower=lo, upper=hi)
+        if META[c].get("slog"):
+            v = slog(v)
+        if impute:
+            v = v.fillna(_lookup(grp, v2["impute_median"][c]))
+        res[c] = v.astype("float64")
+    sect = _section(r_pre["ateco_sector"])
+    for b in PCT_BASE:
+        tab = v2["pct"][b]
+        val = pd.Series(np.nan, index=r.index)
+        key = sect.where(sect.isin([k for k in tab if k != "__global__"]), "__global__")
+        for k in pd.unique(key):
+            m = (key == k).to_numpy()
+            val[m] = _pct_lookup(out[b][m], tab[k]).to_numpy()
+        res[f"{b}_sect_pct"] = val
+    levels = _te_levels(r_pre)
+    if oof:
+        if id_col not in df.columns:
+            raise ValueError("oof=True needs the firm id column (training rows only)")
+        fold = _firm_fold(pd.Series(np.asarray(df[id_col]), index=r.index), v2["te_folds"])
+    for name in V2_TE:
+        lv = levels[name]
+        if oof:
+            val = pd.Series(0.0, index=r.index)
+            for k in range(v2["te_folds"]):
+                m = fold == k
+                enc = v2["te"][name]["oof"][k]["enc"]
+                val[m] = lv[m].map(enc).astype(float).fillna(0.0).to_numpy()
+        else:
+            val = lv.map(v2["te"][name]["full"]["enc"]).astype(float).fillna(0.0)
+        res[name] = val.astype("float64")
+    res["n_missing_raw"] = c0[MISS_COUNT_FIELDS].isna().sum(axis=1).astype("float64")
+    res["n_core_imputed"] = _raw_features(r_pre)[CORE_NUM].replace(
+        [np.inf, -np.inf], 0.0).isna().sum(axis=1).astype("float64")
+    return res[V2_CANDIDATES]
