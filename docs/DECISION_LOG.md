@@ -183,6 +183,7 @@ This file is the backbone of the final report's "defence of choices" and "what d
 - Alternatives: raw HQ_city one-hot (too thin); no geography.
 - Risks: if the codes are not ISTAT, the region labels are wrong but the grouping is still a
   fixed partition of codes; model use should rely on fold-fitted encodings, not the names.
+- Source(s) added 2026-11-02 (literature-scout): R-53 ISTAT code list (110-province coding 2010-2016; ripartizione geografica), VERIFIED; spot check N-53. That the provider uses ISTAT codes = inference from data.
 
 ### D-013 ATECO section mapping (Roger M7)
 - Date / phase / agent: 2026-10-30 / Phase 1 / data-auditor
@@ -194,6 +195,7 @@ This file is the backbone of the final report's "defence of choices" and "what d
 - Evidence: 83 divisions, none in 64-66; sections O, P, U have < 30 defaults → pool
   (`01_profile.md` §3a, `profile_by_ateco_section.csv`). Section default rates: L 0.92%, C 1.67%,
   G 1.62%, F 1.45%, N 1.99%.
+- Source(s) added 2026-11-02 (literature-scout): R-54 pp. 10, 51-54 (Ateco 2007 = NACE Rev. 2 to 4 digits; section ranges), VERIFIED.
 
 ### D-014 Missing-value handling in the panel (no imputation)
 - Date / phase / agent: 2026-10-30 / Phase 1 / data-auditor
@@ -278,6 +280,7 @@ All numbers below come from files written by `python -m src.features.univariate`
 - Risks / what would change our mind: a challenger's within-fold selection repeatedly
   dropping a core feature; a core sign flip in the tournament models.
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): tangible_ratio / asset-structure family. Data: within-industry AUC 0.56-0.73 (SC1 T16). Mechanism: R-48 Sec. 1 p. 1 (tangible assets raise creditor recovery in default and support borrowing; US public firms; their proxy is not our balance-sheet ratio). The lower-PD link for Italian private firms is OUR EMPIRICAL FINDING; no study located (REFERENCES Contradiction 11).
 
 ### D-019 Ratio pathologies: safe division rules, winsorisation, signed log
 - Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
@@ -386,6 +389,7 @@ All numbers below come from files written by `python -m src.features.univariate`
   [UNVERIFIED] until literature-scout checks an ISTAT / Eurostat source.
 - Alternatives: region (20 levels; several < 30 defaults); raw division one-hot (36 of 83 < 30 defaults).
 - Risks: OTHER mixes low-risk (D, Q) and high-risk (U) sections; small share of rows.
+- Source(s) added 2026-11-02 (literature-scout): Provinces: R-53 (VERIFIED, spot check N-53). ATECO sections: R-54 pp. 10, 51-54 (VERIFIED).
 
 ### D-024 Rejected features, and the `taxes` field is pre-tax profit (D-010 addendum)
 - Date / phase / agent: 2026-10-30 / Phase 2 / feature-architect
@@ -435,6 +439,7 @@ All numbers below come from files written by `python -m src.features.univariate`
 - Tuning: none needed. GLMs are unpenalised (no hyper-parameter). SC-03 settings were declared before looking at results and are identical in all folds, including fold 1 (single training year): 20 initial quantile bins, pool-adjacent-violators to monotone in the expected-sign direction, minimum final bin 2% of training rows. No inner validation split was used; no fold uses a default instead of a tuned value because nothing was tuned.
 - Evidence: `experiments/scorecard/SC-0*/metrics.md`. Pooled AUC 0.746 / 0.803 / 0.817 / 0.770; log loss 0.0713 / 0.0672 / 0.0666 / 0.0699.
 - Source(s): Stein (benchmarking logic, course); Altman lineage only via R-32; Ohlson (R-12) cited only as existence of logit lineage (content unread).
+- Source(s) added 2026-11-02 (literature-scout): R-52 Sec. 2 (WoE definition), Sec. 1/3.1 (small-bin problem) (VERIFIED preprint); R-44 (PAV); R-07, R-17 Conclusions MS p. 25. Bin settings (20 bins, 2% minimum) = pre-declared design (assumption). Siddiqi R-50 not read. ('Stein (course)' is not a reference ID.)
 
 ### D-031 SC-03 (WoE scorecard) is the benchmark to beat; SC-02 is the transparent logit reference
 - Status: ADOPTED (round-1 provisional; the referee decides)
@@ -499,6 +504,7 @@ are diagnostic and come from `src/common/metrics.py`; the referee's scorecard is
 - Risks / what would change our mind: if the referee finds a monotone-GBM with clearly better power
   and comparable explanation, the RiskCalc model becomes the benchmark rather than the champion.
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-44 Sec. 4.1/4.5 (PAV = optimal monotone fit); R-05 pp. 55-57. Bins, prior and F remain our design; do not say 'as in RiskCalc' for these details.
 
 ### D-041 In-window sign rule drops `neg_equity` and `bank_debt_ratio`
 - Date / phase / agent: 2026-10-31 / Phase 3 / challenger-riskcalc
@@ -639,6 +645,7 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
   AUC (then the simpler model wins under the tie rule); the new-firm AUC gap (0.787 vs 0.844) also
   appears in the other challengers or is specific to GBM.
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-38 Sec. 2.1 p. 2 (GBDT algorithm, VERIFIED); R-39 LightGBM Parameters docs (monotone_constraints, use_missing, categorical; VERIFIED documentation); R-19 abstract (boosted-tree probabilities can be distorted); expected signs = FEATURE_SPEC.
 
 ### D-051 Monotone constraints kept despite a significant cost in power
 - Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
@@ -662,6 +669,7 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
   non-monotonicity, a partially constrained model could be revisited in round 2. The gap is about
   0.0065 AUC, about the same size as the extra power the full feature set adds over the core set (D-055).
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-01 Sec. 3.1 p. 13 (expected signs, VERIFIED); R-39 (constraint option). Face validity as the reason for the constraint = our design choice.
 
 ### D-052 Inner validation scheme, tuning grid and number of trees
 - Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
@@ -686,6 +694,7 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
 - Risks / what would change our mind: the 1.2 factor is untested; the harness refit on 2007-2010
   should use the same rule (encoded in `fit_pd_model`).
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-07 Sec. 3.2 p. 95 (VERIFIED). The 1.2 x trees factor = heuristic (assumption).
 
 ### D-053 Own calibration: Platt slope from held-out slice B, level anchored to the training default rate
 - Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
@@ -717,6 +726,7 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
   row_id, y, pd_raw_inner, fold) are provided so the common method can be fitted without touching
   test years.
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): Platt scaling as restated in R-43 Sec. 1 eqs. 1-2 (original R-20 SECONDARY); isotonic/PAV properties R-44 Sec. 4.1, 4.5 (R-21 LOCATED, name only); R-19 abstract.
 
 ### D-054 No class re-weighting or resampling
 - Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
@@ -757,6 +767,7 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
 - Source(s): assumption.
 - Risks / what would change our mind: none. Either is acceptable for the harness.
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-39 use_missing (native NaN handling, VERIFIED documentation); evidence GB-04 vs GB-01.
 
 ### D-057 LightGBM monotone method 'intermediate' (vs 'advanced')
 - Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
@@ -765,6 +776,7 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
 - Business reason: same face validity, simpler and faster; the difference is below any business relevance.
 - Source(s): assumption.
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-39 monotone_constraints_method; R-40 abstract p. 1 (un-refereed arXiv report, Adult dataset only).
 
 ### D-058 Explainability: TreeSHAP reason codes and dependence checks
 - Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
@@ -782,6 +794,7 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
   estate / asset-heavy firms; FEATURE_SPEC notes decile breaks). ar_days hits the p99 cap (~60,000
   days) for near-zero-revenue firms, so the reason code must be worded "almost no revenue".
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-41 Sec. 2.5, Methods 10.1 (Tree SHAP exact, O(TLD^2)), Sec. 2.7 (summary/dependence plots), Methods 5 (gain importance inconsistent) (VERIFIED, preprint numbering); R-23 Sec. 3 Thm 1 p. 4; R-33 Sec. 5.2-5.4 pp. 27-29 (style).
 
 ### D-059 Reusable estimation for the harness; prediction cost
 - Date / phase / agent: 2026-10-31 / Phase 3 / challenger-gbm
@@ -796,6 +809,7 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
 - Source(s): n/a.
 - Risks: the harness must call `predict_pd` with the same LightGBM major version (4.7.0 used).
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-38 Sec. 2.1 (tree ensemble); prediction cost = our derivation.
 
 ---
 
@@ -1150,6 +1164,7 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Business reason: every driver is a readable curve; RiskCalc v3.1 is "closely related to a GAM" (R-01 p. 14 fn. 11).
 - Source(s): R-01. EBM / GA2M method papers R-24 (Lou et al. 2012), R-25 (Nori et al. 2019) are NOT verified: any method claim from them is [UNVERIFIED].
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-24 p. 150 eq. 1, p. 151 Tables 1-2; R-25 Sec. 3; R-01 p. 14 fn. 11 (VERIFIED).
 
 ### D-081 GAM-01: EBM main effects, monotone constraints from the expected-sign table
 - Date / phase / agent: 2026-10-30 / round 2 / challenger-gam
@@ -1160,6 +1175,7 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Source(s): R-01 p. 14 fn. 11; assumption elsewhere.
 - Risks: the interaction-free form cannot capture sector-conditional effects (see D-083). Single seed.
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-25 Sec. 3 (EBM); monotone constraints and the D-082 reset rule = our design.
 
 ### D-082 Missing-bin reset rule (found by inspecting the shapes)
 - Date / phase / agent: 2026-10-30 / round 2 / challenger-gam
@@ -1177,6 +1193,7 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Business reason: the 0.0008 AUC does not buy back the readability; the sector-conditional asset-turnover effect is the only economically meaningful pair (turnover norms differ by industry).
 - Source(s): assumption; GA2M idea from R-24 [UNVERIFIED].
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-42 p. 623 eq. 2 (GA2M, FAST) (VERIFIED).
 
 ### D-084 Face validity of the EBM shape functions
 - Date / phase / agent: 2026-10-30 / round 2 / challenger-gam
@@ -1190,6 +1207,7 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Decision: `experiments/gam/gam_lib.py`: `fit_pd_model(train_df, "GAM-01")`, `save_model` / `load_model` (ebm.pkl, feature_params.json, calibrator.json, meta.json), `predict_pd(art, df, delta=0.0)` frozen, row-wise, clipped to [0.0003, 0.99]; `delta` = D-072 prior-shift constant (fold-wise rule-e values are in config.json; the harness would use the `harness_level_params.json` delta). Models for all three folds are saved under `GAM-0x/model_fold{k}/`.
 - Evidence: fit time per fold (feature params + inner model(s) + final fit; GAM-01 wall incl. prediction, final fit alone): fold 1 106 s (55 s), fold 2 198 s (114 s; rerun without grid), fold 3 305 s (174 s); the original grid run took 112 / 403 s / about 11 min. GAM-02 final fit 70 / 143 / 264 s. Prediction: 0.8-0.9 s per 100,000 rows (0.8 s of it is the shared feature transform), 8 threads, laptop; about 67 ms for one row (fixed pandas overhead). Complexity O(n x (F + T)) table lookups. Dependency: `interpret` 0.7.8 (pickle); an export of the term tables to JSON would remove it if GAM-01 wins.
 - Human reviewer (initials) and date:
+- Source(s) added 2026-11-02 (literature-scout): R-25 Sec. 3 (prediction = lookups + additions).
 
 ---
 
