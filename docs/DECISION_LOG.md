@@ -79,7 +79,8 @@ This file is the backbone of the final report's "defence of choices" and "what d
 ### D-005 Evaluation design
 - Status: ADOPTED (provisional)
 - Decision: expanding-window walk-forward by fs_year; paired firm-clustered bootstrap.
-- Source(s): R-07 Stein (2007), R-06 Sobehart, Keenan & Stein — VERIFY before citing detail.
+- Source(s): R-07 Sec. 3.1-3.2 pp. 92-96 (walk-forward out-of-sample, out-of-time testing);
+  R-01 Sec. 4.3 p. 28. (R-06 removed 2026-11-02: only LOCATED, not read.)
 
 ### D-006 Primary probability-accuracy metric
 - Status: ADOPTED (provisional)
@@ -1206,7 +1207,8 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Interpretation: averaging helps when models make different errors; the EBM is a restricted
   version of the same information (main effects of the same features), so it only dilutes GB-01.
   Further gains must come from new information (features) or better tuning, not from blending.
-- Source(s): assumption (standard ensemble reasoning); no citation.
+- Source(s): R-10 Sec. 4.4 p. 22 (simple averaging of the RiskCalc and PFM outputs did not add
+  stable power); otherwise standard ensemble reasoning.
 - Human reviewer (initials) and date:
 
 ### D-087 fs_year 2011 is a one-time lockbox for the final model choice
@@ -1218,8 +1220,14 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
   D-077) before the final refit that includes 2011.
 - Reason: round 2 runs many more experiments on the same three test years; the best of many
   scores is optimistically biased (selection overfitting; cf. D-062). A sealed year gives one
-  unbiased check. 2011 has so far been used only for a level statistic (D-071/D-073), not for
-  ranking models.
-- Source(s): assumption (standard validation practice); walk-forward design as in R-33 Sec. 4.8 p. 23.
+  less-biased check.
+- CORRECTION (2026-11-02, found by report-writer): 2011 is NOT untouched. The calibration round
+  already scored it: `reports/calibration/q6_2011_pseudo_test.csv` (11-month label AUC GB-01
+  0.8497, RC-02 0.8345; the seven level rules tested on 2011) and
+  `reports/calibration/q5_2011_other_labels_fold4.csv`. No model was chosen on these AUCs, so 2011
+  still works as a lockbox for the round-2 model choice; it does NOT work as an independent check
+  of the level rule (D-073 was informed by it). Say this openly in the update.
+- Source(s): R-07 Sec. 3.2 p. 95 (re-using test years during development violates out-of-time
+  testing); walk-forward design as in R-33 Sec. 4.8 p. 23.
 - Human reviewer (initials) and date:
 
