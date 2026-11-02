@@ -71,6 +71,10 @@ This file is the backbone of the final report's "defence of choices" and "what d
 - Status: OPEN (default: not used)
 - Reason: assignment requires clearance several weeks before submission; deadline Nov 16.
   Cycle effects handled via calibration study instead (see calibration-specialist).
+- Source(s) (added 2026-11-02, lesson L3): RiskCalc v1 deliberately left macro forecasting outside
+  the model (R-05, p. 41); firm-specific information dominates systematic information for
+  middle-market default (R-10, Sec. 4.1, p. 21). Cost: Moody's does use a cycle adjustment and
+  external data for the PD level (R-33, Sec. 2.4 p. 9, Sec. 3.3 p. 15), which we cannot.
 
 ### D-005 Evaluation design
 - Status: ADOPTED (provisional)
@@ -293,7 +297,9 @@ All numbers below come from files written by `python -m src.features.univariate`
 - Evidence: bounds in `reports/features/params_fold3_example.json`; unit tests
   `src/features/test_build.py::test_infinite_and_zero_denominators`, `test_messy_row`.
 - Source(s): assumption (standard practice); R-01 Sec. 3.1 fn. 8 (transforms reduce the impact
-  of noisy ratios) supports bounding outliers in general.
+  of noisy ratios) supports bounding outliers in general. Added 2026-11-02 (L3): Moody's
+  RiskCalc v1 truncated raw ratios at the 2nd/98th percentiles in estimation and testing
+  (R-05, p. 55, fn. 42); our p1/p99 is our own choice, not Moody's.
 - Human reviewer (initials) and date:
 
 ### D-020 Growth / lagged (firm-history) features
@@ -311,7 +317,10 @@ All numbers below come from files written by `python -m src.features.univariate`
 - Side finding for H5: even without history features, new-firm AUC (0.739) is well below
   seen-firm AUC (0.807) on this inner split.
 - Source(s): R-01 Sec. 3.1 p. 13 lists growth as a family (two-sided sign); we cannot build it
-  under the harness rules without approval.
+  under the harness rules without approval. Added 2026-11-02 (L3): support — levels beat trends,
+  and the latest year beats a 3-year average (R-05, pp. 38-40); cost — RiskCalc 4.0 France still
+  gives growth inputs (sales growth, change in ROA, U-shaped) 13.0% of the weight
+  (R-33, Table 4 p. 14, Fig. 5 p. 13).
 - Risks: leaves a small amount of power unused for seen firms.
 
 ### D-021 Missing-data treatment per field (Roger G2)
@@ -407,7 +416,12 @@ All numbers below come from files written by `python -m src.features.univariate`
   wc_ratio–current_ratio 0.91, roa_net–cfo_to_debt 0.80, interest_coverage–cfo_to_debt 0.76,
   roa_net–roa_oper 0.76. Actions: tax_to_assets dropped (Spearman 0.96 with roa_net, `rejected_candidates.csv`);
   cfo_to_debt, roa_oper, current_ratio kept out of core.
-- Source(s): R-01 Sec. 4.2 p. 26 (VIFs used to limit collinearity).
+- Source(s): R-01 Sec. 4.2 p. 26 (VIFs used to limit collinearity). Added 2026-11-02 (L3):
+  RiskCalc 4.0 France reports Spearman correlations on transformed inputs up to 0.66 and VIFs
+  <= 3.04, and treats VIF 4-10 as the warning zone (R-33, Sec. 4.3, Tables 7-8, fn. 13, p. 18);
+  our |rho| < 0.70 and VIF < 5 rules sit inside that practice. Panel dependence widens standard
+  errors but left RiskCalc's conclusions unchanged (R-01, Sec. 3.4.2, p. 22), hence our
+  firm-clustered bootstrap.
 
 ---
 
@@ -1175,3 +1189,37 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Decision: `experiments/gam/gam_lib.py`: `fit_pd_model(train_df, "GAM-01")`, `save_model` / `load_model` (ebm.pkl, feature_params.json, calibrator.json, meta.json), `predict_pd(art, df, delta=0.0)` frozen, row-wise, clipped to [0.0003, 0.99]; `delta` = D-072 prior-shift constant (fold-wise rule-e values are in config.json; the harness would use the `harness_level_params.json` delta). Models for all three folds are saved under `GAM-0x/model_fold{k}/`.
 - Evidence: fit time per fold (feature params + inner model(s) + final fit; GAM-01 wall incl. prediction, final fit alone): fold 1 106 s (55 s), fold 2 198 s (114 s; rerun without grid), fold 3 305 s (174 s); the original grid run took 112 / 403 s / about 11 min. GAM-02 final fit 70 / 143 / 264 s. Prediction: 0.8-0.9 s per 100,000 rows (0.8 s of it is the shared feature transform), 8 threads, laptop; about 67 ms for one row (fixed pandas overhead). Complexity O(n x (F + T)) table lookups. Dependency: `interpret` 0.7.8 (pickle); an export of the term tables to JSON would remove it if GAM-01 wins.
 - Human reviewer (initials) and date:
+
+---
+
+## Orchestrator, 2026-11-02
+
+### D-086 Ensemble of GB-01 and the EBM (ENS-01): rejected
+- Date / phase / agent: 2026-11-02 / round 2 / orchestrator
+- Status: REJECTED
+- Decision: do not average GB-01 with GAM-01 (or RC-02) on the log-odds scale.
+- Evidence (pooled 2008-10 OOT predictions, 506,159 rows, 7,784 defaults; firm-clustered bootstrap,
+  100 draws; script in the session scratchpad, re-runnable from the saved oot_predictions files):
+  pooled AUC GB-01 0.8375; 50/50 GB-01+GAM-01 0.8343 (dAUC -0.0032 [-0.0042, -0.0024]);
+  70/30 0.8363 (dAUC -0.0012 [-0.0017, -0.0007]); three-way with RC-02 0.8322. Worse in every
+  test year (2010: 50/50 dAUC -0.0033 [-0.0049, -0.0020]).
+- Interpretation: averaging helps when models make different errors; the EBM is a restricted
+  version of the same information (main effects of the same features), so it only dilutes GB-01.
+  Further gains must come from new information (features) or better tuning, not from blending.
+- Source(s): assumption (standard ensemble reasoning); no citation.
+- Human reviewer (initials) and date:
+
+### D-087 fs_year 2011 is a one-time lockbox for the final model choice
+- Date / phase / agent: 2026-11-02 / round 2 / orchestrator
+- Status: ADOPTED
+- Decision: from round 2 on, no experiment reads fs_year >= 2011 rows for selection. All tuning is on
+  inner splits inside the training window; the outer folds (test 2008/09/10) are scored once per
+  final configuration. The shortlisted finalists are scored once on fs_year 2011 (11-month label,
+  D-077) before the final refit that includes 2011.
+- Reason: round 2 runs many more experiments on the same three test years; the best of many
+  scores is optimistically biased (selection overfitting; cf. D-062). A sealed year gives one
+  unbiased check. 2011 has so far been used only for a level statistic (D-071/D-073), not for
+  ranking models.
+- Source(s): assumption (standard validation practice); walk-forward design as in R-33 Sec. 4.8 p. 23.
+- Human reviewer (initials) and date:
+
