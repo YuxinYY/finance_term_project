@@ -1,4 +1,4 @@
-# Round 2 phase B decisions (challenger-gbm, 2026-11-02): D-120 .. D-129
+# Round 2 phase B decisions (challenger-gbm, 2026-11-02): D-120 .. D-130
 
 For the orchestrator to merge into `docs/DECISION_LOG.md`. Every number is read from a file written by
 `experiments/gbm/run_round2b.py`, `explain_r2b.py` or `boot_r2b.py`, all collected in
@@ -85,12 +85,13 @@ fold-3 inner: fit 2007-08, early stop 2009 A, score 2009 B). 3 seeds, GB-01's cf
   Correction to the brief: the encodings carry expected sign + (D-094), so under the "signs from expected_signs" rule they ARE constrained in GB-20; their rising shapes are imposed, not evidence.
   The unconstrained new features are interest_to_sales, bs_gap, fin_fixed_ratio and tfr_ratio.
 - Source(s): R-47 Sec. 1.2, 2.7, 4.2-5 (regularised, cross-fitted target encoding; generic ML datasets, not credit). R-46 abstract only (origin of the idea; our m is our own design, R-46's formula is not verified).
-- Risks / what would change our mind: geography was fitted on 2007-09 conditions; level names rely on the [UNVERIFIED] ISTAT table and an assumed NACE mapping.
+- Risks / what would change our mind: geography was fitted on 2007-09 conditions.
+- Code mapping (status corrected 2026-11-02): province and division labels are VERIFIED against R-53 and R-54. All 110 province-to-region pairs in `src/data/codes.py` match R-53's file; 100 = Prato (Toscana), 63 = Napoli, 21 = Bolzano. Divisions per R-54 pp. 51-53: 13 textiles, 14 clothing, 15 leather, 29 motor vehicles, 31 furniture (all section C), 55 accommodation (I), 61 telecommunications (J), 68 real estate (L). The lists are verified, but that the data provider uses these codes is still an inference from the data (D-012, N-53). Linking Prato to its textile activity is our own reading, not a claim from these sources.
 - Human reviewer (initials) and date:
 
 ### D-125 Face validity: zero violations, but interest_to_sales can undo a constraint (decision needed)
 - Date / phase / agent: 2026-11-02 / round 2 phase B / challenger-gbm
-- Status: zero-violation finding ADOPTED; interest_to_sales sign OPEN for the team
+- Status: zero-violation finding ADOPTED; interest_to_sales sign resolved by D-130 (the about -0.001 cost below is the inner estimate; the outer cost on 2010 is about double)
 - Decision: propose restoring R-33's + sign on interest_to_sales in the final configuration, subject to one outer scoring.
 - Alternatives considered: leave free (GB-20); drop it. Inner: constrained + -0.0012 [-0.0025, -0.0001] and -0.0010 [-0.0021, -0.0000]; d log loss +0.00017, +0.00004. Drop -0.0008 and -0.0023.
 - Business reason: "more interest per euro of sales lowers PD" cannot be defended to a credit officer.
@@ -150,4 +151,23 @@ fold-3 inner: fit 2007-08, early stop 2009 A, score 2009 B). 3 seeds, GB-01's cf
 5. Prediction cost measured under CPU contention: 4.7-5.3 s per 100k rows at 4 threads vs 1.0 s for GB-01 (8 threads, D-059). The harness-engineer must re-measure; most of it is the feature transform.
 6. Disclosures. Outer folds scored once each for GB-20 and GB-23; bootstraps only re-read saved predictions. Lockbox: all reads use the fs_year < 2011 filter. GB-24 (inner-only) and GB-23's inner choice were run after GB-20's outer result was known, and the interest_to_sales proposal comes from those runs, so they are not blind. 2010 labels appear in diagnostics (encoding persistence, TFR cells, SHAP tables), no configuration choice uses them. TFR and suppression readings were developed after looking at training data and 2010 cells. Fold 1 inner is a firm split within 2007, as D-061 notes for GB-01. The driver gained subcommands after GB-20/GB-21 ran; their code path is unchanged. `score_r1.py` functions are exec'd from source (its body would rescore everything), with an L1 column mirrored and then discarded. gbm_lib.py and phase A's files were not edited.
 - Source(s): D-056, D-059, D-061, D-072.
+- Human reviewer (initials) and date:
+
+### D-130 GB-25: restoring interest_to_sales' + sign costs 0.0011 AUC pooled and 0.0021 on 2010; proposed as the GBM entry
+- Date / phase / agent: 2026-11-02 / round 2 phase B / challenger-gbm
+- Status: proposed (referee and human sign-off OPEN); supersedes GB-20 as the proposed entry in D-120
+- Decision: use GB-25 (GB-20 with interest_to_sales constrained +1, all else identical) as the GBM entry. Pre-specified before any outer score for it; nothing was changed after seeing the result. This is a paid face-validity trade, not a performance win: GB-20 is better on the pooled metrics.
+- Alternatives considered: keep GB-20 (better metrics, but a reversal we cannot defend); drop the feature (inner -0.0008, -0.0023, D-125).
+- Business reason: a decline or price must not rest on "more interest per euro of sales lowers PD". The sign also returns to its a priori direction, removing the post-hoc change in D-099 item 6.
+- Evidence (`GB-25/gb25_*.csv`, 1,000 draws):
+  Cost vs GB-20: pooled dAUC -0.0011 [-0.0017, -0.0006], d log loss +0.00013 [+0.00009, +0.00018]. 2008 -0.0007 [-0.0017, +0.0002]; 2009 -0.0005 [-0.0015, +0.0005]; 2010 -0.0021 [-0.0029, -0.0013], d log loss +0.00021 [+0.00014, +0.00028]. Common calibration pooled -0.0011 [-0.0017, -0.0006], +0.00012 [+0.00008, +0.00016]. The 2010 cost is about double the inner estimate (-0.0010).
+  Vs GB-01: pooled +0.0049 [+0.0037, +0.0062], d log loss -0.00035 [-0.00045, -0.00026]; 2008 +0.0027 [+0.0001, +0.0054]; 2009 +0.0081 [+0.0065, +0.0101]; 2010 +0.0042 [+0.0021, +0.0059]. Meets the win rule vs GB-01. New firms 2008 stays negative (-0.0101 [-0.0173, -0.0027]), 2009 and 2010 positive (ns on AUC).
+  AUC by year 0.8468 / 0.8441 / 0.8348, pooled 0.8424; log loss 0.05411 / 0.06563 / 0.07098, pooled 0.06380; slope 1.005 / 1.014 / 0.957, pooled 0.991.
+  Monotone: 36 constrained, 0 violating (ICE 500 rows, 0); neg_equity, debt_split_missing and n_core_imputed have 0 splits.
+  Same-year gap: 0.0292 / 0.0220 / 0.0172 vs GB-20 0.0349 / 0.0259 / 0.0217 and GB-01 0.0262 / 0.0173 / 0.0146. About 45-65% of the widening in D-128 goes away (final trees 461 / 576 / 548).
+  Reversal (fold 3, same 20,000 2010 rows): interest_to_sales SHAP in decile 10 -0.149 to +0.059, decile 9 -0.030 to +0.060. Partial dependence now rises (range 0.34 to 0.14; splits 297 to 66). Mean SHAP plateaus across deciles 7-10 (+0.06 to +0.07) and dips slightly in the lowest bins; these are averages over firms, not violations.
+  Partly moved, not fully: in decile 10 the feature's own SHAP rises 0.207, offset by ar_days -0.069, asset_turnover -0.029 and ateco_group -0.017; total log-odds rises 0.112, and mean raw PD goes from 1.54% to 1.67% against an observed 2.36%.
+  interest_to_assets: stays monotone + and does not take up the slack. It weakens: mean |SHAP| 0.057 to 0.045 (rank 19 to 21), partial-dependence range 0.30 to 0.23, decile 10 SHAP +0.100 to +0.082. GB-01 had 0.069 and 0.34.
+- Source(s): R-33 Table 3 p. 11, p. 12 (upward slope); R-39 (monotone_constraints); R-41 (TreeSHAP).
+- Risks / what would change our mind: the humans may weigh the 2010 cost more than the shape. The re-chosen fold-2 cfg (min_data_in_leaf 2000 vs 500) follows the same recipe, so that fold's comparison also includes a cfg change. Part of the reversal now sits in correlated unconstrained asset_turnover. GB-25 is the third full2 configuration scored on 2008-10; the sign was pre-specified, but the proposal came after GB-20's outer result (D-129). D-119's lockbox must name the chosen entry before anyone opens 2011.
 - Human reviewer (initials) and date:
