@@ -1,12 +1,14 @@
 """Create leakage-safe, expanding-window walk-forward dataset splits.
 
-The input must already contain a label for each usable firm-year. For round r,
-the test set is the next fiscal year, while the preceding years form the
+The input must already contain a 12-month default label for each usable
+firm-year. Each ``(id, fs_year)`` pair is a distinct prediction sample: a
+FY2008 statement predicts default from June 2009 through May 2010. For round
+r, the test set is the next fiscal year, while the preceding years form the
 historical window. A stratified sample of *company IDs* is held out from that
 historical window for validation, so validation and training never share a
-company ID. All learned preprocessing (imputation, target encoding, scaling,
-and feature selection) must be fit on ``train.csv`` only, then applied to the
-validation and test files for the same round.
+company ID. Each round also includes ``history.csv`` containing statements up
+to the test fiscal year; the preprocessing stage uses it to construct each
+sample's decay-weighted history without accessing future statements.
 """
 
 from __future__ import annotations
@@ -32,6 +34,7 @@ class WalkForwardSplit:
     train: pd.DataFrame
     validation: pd.DataFrame
     test: pd.DataFrame
+    history: pd.DataFrame
 
 
 def clean_dataframe(frame: pd.DataFrame) -> tuple[pd.DataFrame, list[str], int]:
@@ -104,7 +107,8 @@ def make_walk_forward_splits(
     The validation set is sampled by company ID from each historical window,
     not from the next-year test set. Test IDs may reappear from the past: this
     is valid walk-forward scoring, because their later labels are never used to
-    fit that round's preprocessing or model.
+    fit that round's preprocessing or model. ``history`` contains only records
+    from the first training fiscal year through the test fiscal year.
     """
     if rounds < 1:
         raise ValueError("rounds must be at least 1.")
@@ -138,6 +142,9 @@ def make_walk_forward_splits(
             (data[year_column] >= start_year) & (data[year_column] < test_year)
         ].copy()
         test = data.loc[data[year_column] == test_year].copy()
+        history = data.loc[
+            (data[year_column] >= start_year) & (data[year_column] <= test_year)
+        ].copy()
         if historical.empty or test.empty:
             raise ValueError(f"Round {round_number} has an empty historical window or test set.")
 
@@ -165,6 +172,7 @@ def make_walk_forward_splits(
                 train=train,
                 validation=validation,
                 test=test,
+                history=history,
             )
         )
     return splits
@@ -180,6 +188,7 @@ def _split_summary(split: WalkForwardSplit, *, id_column: str, target_column: st
         "train_rows": int(len(split.train)),
         "validation_rows": int(len(split.validation)),
         "test_rows": int(len(split.test)),
+        "history_rows": int(len(split.history)),
         "train_companies": int(len(train_ids)),
         "validation_companies": int(len(validation_ids)),
         "test_companies": int(split.test[id_column].nunique()),
@@ -205,12 +214,14 @@ def write_walk_forward_splits(
         split.train.to_csv(round_dir / "train.csv", index=False)
         split.validation.to_csv(round_dir / "validation.csv", index=False)
         split.test.to_csv(round_dir / "test.csv", index=False)
+        split.history.to_csv(round_dir / "history.csv", index=False)
 
         summary = _split_summary(split, id_column=id_column, target_column=target_column)
         summary["files"] = {
             "train": str(round_dir / "train.csv"),
             "validation": str(round_dir / "validation.csv"),
             "test": str(round_dir / "test.csv"),
+            "history": str(round_dir / "history.csv"),
         }
         manifest_rounds.append(summary)
     return manifest_rounds
@@ -226,7 +237,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         default="data/processed/walk_forward",
-        help="Directory in which to write round_XX/train.csv, validation.csv, and test.csv.",
+        help="Directory in which to write round_XX/train.csv, validation.csv, test.csv, and history.csv.",
     )
     parser.add_argument("--id-column", default="id")
     parser.add_argument("--year-column", default="fs_year")

@@ -33,28 +33,44 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Run the pipeline from the repository root. The first command uses the tracked
-1,000-row demo dataset and removes the CSV index column (for example,
-`Unnamed: 0`) safely.
+Run the walk-forward data preparation from the repository root after creating
+the 12-month `label` column. Each output row remains a distinct `(id, fs_year)`
+prediction sample; the later preprocessing step aggregates its prior financial
+statements without looking ahead.
 
 ```bash
 PYTHONPATH=src python -m finance_project.data_processing.make_dataset \
-  --input data/raw/train_demo_subset.csv
-
-# Replace profit with the approved project target column.
-PYTHONPATH=src python -m finance_project.model_development.train \
-  --data data/processed/train_demo_subset_clean.csv --target profit
-
-PYTHONPATH=src python -m finance_project.model_evaluation.evaluate \
-  --data data/processed/train_demo_subset_clean.csv --target profit
-
-PYTHONPATH=src python -m finance_project.reporting.update_report
+  --input data/processed/labeled_data.csv \
+  --output-dir data/processed/walk_forward
 ```
 
-The training and evaluation scripts intentionally require `--target`. Choose
-the target only after the project team agrees on the prediction question. The
-report updater reads JSON artifacts, so report numbers are never manually
-copied from a notebook.
+For every round, fit preprocessing only on `train.csv`, then use the saved
+artifact to transform validation and test. This is required to keep sector
+medians, target encoding, and categorical levels from leaking across splits.
+
+```bash
+PYTHONPATH=src python -m finance_project.data_processing.preprocess fit \
+  --input data/processed/walk_forward/round_01/train.csv \
+  --history data/processed/walk_forward/round_01/history.csv \
+  --output data/processed/walk_forward/round_01/features_train.csv \
+  --artifacts models/preprocessing/round_01.joblib
+
+PYTHONPATH=src python -m finance_project.data_processing.preprocess transform \
+  --input data/processed/walk_forward/round_01/validation.csv \
+  --history data/processed/walk_forward/round_01/history.csv \
+  --output data/processed/walk_forward/round_01/features_validation.csv \
+  --artifacts models/preprocessing/round_01.joblib
+
+PYTHONPATH=src python -m finance_project.data_processing.preprocess transform \
+  --input data/processed/walk_forward/round_01/test.csv \
+  --history data/processed/walk_forward/round_01/history.csv \
+  --output data/processed/walk_forward/round_01/features_test.csv \
+  --artifacts models/preprocessing/round_01.joblib
+```
+
+Repeat the three preprocessing commands for rounds 2--4. The transformed files
+retain `id`, `fs_year`, `pred_start_dt` when available, and `label`, followed
+by model features; do not use the identifier/date columns as model inputs.
 
 ## Working conventions
 
