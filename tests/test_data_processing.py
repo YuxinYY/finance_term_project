@@ -3,13 +3,14 @@
 import pandas as pd
 import pytest
 
-from finance_project.data_processing.make_dataset import (
+from finance_project.data_processing.make_walk_forward_splits import (
     clean_dataframe,
     make_walk_forward_splits,
     write_walk_forward_splits,
 )
 from finance_project.data_processing.preprocess import (
     PreprocessingConfig,
+    bootstrap_minority_class,
     fit_preprocessor,
     transform_with_preprocessor,
 )
@@ -153,3 +154,32 @@ def test_preprocessor_fits_on_train_and_uses_decay_weighted_history_for_transfor
     assert transformed_test.loc[0, "ateco_sector_te"] == artifacts.industry_global_mean
     assert transformed_test.loc[0, "cur_asst_ratio"] == pytest.approx(7 / 30)
     assert transformed_test.loc[0, "legal_SRL"] == 0
+
+
+def test_bootstrap_minority_class_targets_requested_ratio_without_changing_features():
+    source = pd.DataFrame(
+        {
+            "id": range(12),
+            "feature": range(12),
+            "label": [0] * 10 + [1] * 2,
+        }
+    )
+
+    resampled, summary = bootstrap_minority_class(
+        source,
+        minority_to_majority_ratio=0.2,
+        random_state=7,
+    )
+
+    assert summary["applied"] is False
+    assert resampled["label"].value_counts().to_dict() == {0: 10, 1: 2}
+    # A 1:5 target with ten majority rows already needs only two minority rows.
+    # Raising the target to 1:2 forces replacement sampling.
+    resampled, summary = bootstrap_minority_class(
+        source,
+        minority_to_majority_ratio=0.5,
+        random_state=7,
+    )
+    assert summary["minority_rows_after"] == 5
+    assert resampled["label"].value_counts().to_dict() == {0: 10, 1: 5}
+    assert set(resampled.columns) == set(source.columns)

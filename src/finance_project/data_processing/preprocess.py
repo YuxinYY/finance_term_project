@@ -557,6 +557,64 @@ def transform_with_preprocessor(
     return _finalize_features(aggregated, artifacts, training=False)
 
 
+def bootstrap_minority_class(
+    frame: pd.DataFrame,
+    *,
+    target_column: str = "label",
+    minority_to_majority_ratio: float = 0.1,
+    random_state: int = 42,
+) -> tuple[pd.DataFrame, dict[str, int | float | bool]]:
+    """Bootstrap the minority class after feature construction.
+
+    ``minority_to_majority_ratio=0.1`` targets one minority sample for every
+    ten majority samples; ``0.2`` targets one for every five. The function
+    never changes validation or test data and never refits preprocessing.
+    """
+    if not 0 < minority_to_majority_ratio <= 1:
+        raise ValueError("minority_to_majority_ratio must be in the interval (0, 1].")
+    if target_column not in frame.columns:
+        raise ValueError(f"Target column '{target_column}' is not present for bootstrapping.")
+    if frame[target_column].isna().any():
+        raise ValueError("Bootstrapping requires a non-missing training target.")
+
+    counts = frame[target_column].value_counts()
+    if len(counts) != 2:
+        raise ValueError("Bootstrapping is supported only for a binary target.")
+    minority_label = counts.idxmin()
+    majority_label = counts.idxmax()
+    minority = frame.loc[frame[target_column] == minority_label]
+    majority = frame.loc[frame[target_column] == majority_label]
+    target_minority_rows = int(np.ceil(len(majority) * minority_to_majority_ratio))
+
+    if len(minority) >= target_minority_rows:
+        return frame.sample(frac=1, random_state=random_state).reset_index(drop=True), {
+            "applied": False,
+            "minority_label": minority_label,
+            "majority_label": majority_label,
+            "minority_rows_before": int(len(minority)),
+            "minority_rows_after": int(len(minority)),
+            "majority_rows": int(len(majority)),
+            "minority_to_majority_ratio": minority_to_majority_ratio,
+        }
+
+    bootstrapped_minority = minority.sample(
+        n=target_minority_rows,
+        replace=True,
+        random_state=random_state,
+    )
+    resampled = pd.concat([majority, bootstrapped_minority], ignore_index=True)
+    resampled = resampled.sample(frac=1, random_state=random_state).reset_index(drop=True)
+    return resampled, {
+        "applied": True,
+        "minority_label": minority_label,
+        "majority_label": majority_label,
+        "minority_rows_before": int(len(minority)),
+        "minority_rows_after": int(len(bootstrapped_minority)),
+        "majority_rows": int(len(majority)),
+        "minority_to_majority_ratio": minority_to_majority_ratio,
+    }
+
+
 def _read_csv(path: str) -> pd.DataFrame:
     source = project_path(path)
     if not source.exists():
@@ -585,6 +643,14 @@ def _fit_command(args: argparse.Namespace) -> None:
         random_state=args.random_state,
     )
     transformed, artifacts = fit_preprocessor(_read_csv(args.input), _read_csv(args.history), config)
+    bootstrap_summary: dict[str, int | float | bool] = {"applied": False}
+    if args.bootstrap_minority:
+        transformed, bootstrap_summary = bootstrap_minority_class(
+            transformed,
+            target_column=config.target_column,
+            minority_to_majority_ratio=args.minority_to_majority_ratio,
+            random_state=args.random_state,
+        )
     output_path = _write_csv(transformed, args.output)
     artifact_path = project_path(args.artifacts)
     artifact_path.parent.mkdir(parents=True, exist_ok=True)
@@ -600,6 +666,7 @@ def _fit_command(args: argparse.Namespace) -> None:
             "rows": int(len(transformed)),
             "features": artifacts.feature_columns,
             "config": asdict(config),
+            "minority_bootstrap": bootstrap_summary,
         },
     )
     print(f"Wrote transformed training features: {output_path}")
@@ -621,7 +688,9 @@ def _transform_command(args: argparse.Namespace) -> None:
 
 def _add_common_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--input", required=True, help="Anchor CSV: train.csv, validation.csv, or test.csv.")
-    parser.add_argument("--history", required=True, help="Round-specific history.csv from make_dataset.")
+    parser.add_argument(
+        "--history", required=True, help="Round-specific history.csv from make_walk_forward_splits."
+    )
     parser.add_argument("--output", required=True, help="Transformed feature CSV output path.")
 
 
@@ -642,6 +711,17 @@ def parse_args() -> argparse.Namespace:
     fit.add_argument("--target-encoding-smoothing", type=float, default=20.0)
     fit.add_argument("--target-encoding-folds", type=int, default=5)
     fit.add_argument("--random-state", type=int, default=42)
+    fit.add_argument(
+        "--bootstrap-minority",
+        action="store_true",
+        help="Optionally bootstrap only the training minority class after feature transformation.",
+    )
+    fit.add_argument(
+        "--minority-to-majority-ratio",
+        type=float,
+        default=0.1,
+        help="Target positive/minority rows per majority row when bootstrapping (0.1 = 1:10; 0.2 = 1:5).",
+    )
     transform = commands.add_parser("transform", help="Transform validation/test data with fitted artifacts.")
     _add_common_arguments(transform)
     transform.add_argument("--artifacts", required=True, help="Joblib artifact input path.")

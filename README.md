@@ -39,7 +39,7 @@ prediction sample; the later preprocessing step aggregates its prior financial
 statements without looking ahead.
 
 ```bash
-PYTHONPATH=src python -m finance_project.data_processing.make_dataset \
+PYTHONPATH=src python -m finance_project.data_processing.make_walk_forward_splits \
   --input data/processed/labeled_data.csv \
   --output-dir data/processed/walk_forward
 ```
@@ -71,6 +71,45 @@ PYTHONPATH=src python -m finance_project.data_processing.preprocess transform \
 Repeat the three preprocessing commands for rounds 2--4. The transformed files
 retain `id`, `fs_year`, `pred_start_dt` when available, and `label`, followed
 by model features; do not use the identifier/date columns as model inputs.
+
+Minority-class bootstrapping is optional and applies only to the transformed
+training output. Add these arguments to the `preprocess fit` command to target
+one default for every five non-defaults; omit them to retain the original class
+distribution for comparison:
+
+```bash
+--bootstrap-minority --minority-to-majority-ratio 0.2
+```
+
+## Walk-forward model development
+
+The first model-development runner compares a training-only WoE scorecard with
+regularised logistic regression and monotone LightGBM.  It reads the already
+transformed feature files, uses the validation set for logistic-model selection
+or LightGBM early stopping, fits a Platt calibrator on validation predictions,
+and evaluates the test split once.  It does not bootstrap the minority class.
+
+Run both models for all four rounds from the repository root:
+
+```bash
+PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \
+  -m finance_project.model_development.run_walk_forward_models
+```
+
+For a quicker single-round run, or to run one model family:
+
+```bash
+PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \
+  -m finance_project.model_development.run_walk_forward_models \
+  --rounds 1 --models lightgbm
+```
+
+Generated models are written to `models/model_development/`.  Per-round JSON
+reports and validation/test prediction CSVs are written to
+`reports/model_development/`; they contain ROC-AUC, PR-AUC, raw and calibrated
+PD-quality metrics, and a calibrated test-PD decile table.  See
+`src/finance_project/model_development/MODEL_DEVELOPMENT_PLAN.md` for the
+evaluation contract and the later FURIA, GAM, and TabPFN phases.
 
 ## Working conventions
 

@@ -9,6 +9,7 @@ models/*
 !models/.gitkeep
 reports/metrics/*
 !reports/metrics/.gitkeep
+reports/model_development/
 reports/figures/*
 !reports/figures/.gitkeep
 
