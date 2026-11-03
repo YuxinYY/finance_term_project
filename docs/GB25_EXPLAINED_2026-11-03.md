@@ -621,20 +621,24 @@ There are four kinds in our setting.
 Try enough things on the same test years and something will look good by luck. **We've looked at 2008-2010 113 times** (D-142).
 
 ```python
-# 20 "models" with identical true skill; only noise differs. Keep the one that looks best.
+# 20 "models" with identical true skill; only noise differs. Keep the one that looks best on test.
 import numpy as np
 from sklearn.metrics import roc_auc_score as auc
 rng = np.random.default_rng(0)
-n, signal = 8000, rng.normal(size=8000)
-y = (signal + rng.logistic(size=n) * 1.2 > 3).astype(int)
-test, fresh = np.arange(n) < n // 2, np.arange(n) >= n // 2
-models = [signal + rng.normal(scale=2.0, size=n) for _ in range(20)]
-scores = [auc(y[test], m[test]) for m in models]
-best = int(np.argmax(scores))
-fresh_scores = [auc(y[fresh], m[fresh]) for m in models]
-print(f"on test:  average {np.mean(scores):.4f}, the one we picked {scores[best]:.4f}")
-print(f"on fresh: average {np.mean(fresh_scores):.4f}, the one we picked {fresh_scores[best]:.4f}")
-print("One run; the learning ledger's version averages 200 repeats: picked +0.0167 on test, +0.0009 on fresh.")
+test_gain, fresh_gain = [], []
+for repeat in range(100):
+    n = 4000
+    signal = rng.normal(size=n)
+    y = (signal + rng.logistic(size=n) * 1.2 > 3).astype(int)
+    test, fresh = np.arange(n) < n // 2, np.arange(n) >= n // 2
+    models = [signal + rng.normal(scale=2.0, size=n) for _ in range(20)]
+    on_test = [auc(y[test], m[test]) for m in models]
+    on_fresh = [auc(y[fresh], m[fresh]) for m in models]
+    best = int(np.argmax(on_test))
+    test_gain.append(on_test[best] - np.mean(on_test))
+    fresh_gain.append(on_fresh[best] - np.mean(on_fresh))
+print(f"The picked model beats the average model by {np.mean(test_gain):+.4f} AUC on the test set")
+print(f"...and by {np.mean(fresh_gain):+.4f} on fresh data (100 repeats)")
 ```
 
 **What we did:**
