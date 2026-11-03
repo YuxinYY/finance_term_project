@@ -1,0 +1,26 @@
+[     6s]            exp  n_rows  missing_test_rows  nan_pd  pd_outside_open_01  PASS
+0        GB-20  506159                  0       0                   0  True
+1        GB-25  506159                  0       0                   0  True
+2        GB-23  506159                  0       0                   0  True
+3        GB-08  506159                  0       0                   0  True
+4       GB-08b  506159                  0       0                   0  True
+5        GB-09  506159                  0       0                   0  True
+6        GB-10  506159                  0       0                   0  True
+7        GB-11  506159                  0       0                   0  True
+8        GB-01  506159                  0       0                   0  True
+9        GB-02  506159                  0       0                   0  True
+10      GAM-01  506159                  0       0                   0  True
+11      CAL-01  506159                  0       0                   0  True
+12   GB-20+CAL  506159                  0       0                   0  True
+13   GB-25+CAL  506159                  0       0                   0  True
+14  GAM-01+CAL  506159                  0       0                   0  True
+[     7s]      exp  fold  test_year  r_w_recomputed  tau_rule_e_ct_targets  delta_recomputed  delta_config  max_abs_diff_vs_common_cal_file
+0  GB-20     1       2008        0.009562               0.011652          0.199735      0.199735                     5.551115e-16
+1  GB-25     1       2008        0.009562               0.011652          0.199735      0.199735                     5.551115e-16
+2  GB-20     2       2009        0.011271               0.015025          0.291272      0.291272                     1.720846e-15
+3  GB-25     2       2009        0.011271               0.015025          0.291272      0.291272                     1.665335e-15
+4  GB-20     3       2010        0.013019               0.016130          0.217496      0.217496                     1.054712e-15
+5  GB-25     3       2010        0.013019               0.016130          0.217496      0.217496                     9.992007e-16
+Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
+[    19s] level done
+[    30s] ALL DONE

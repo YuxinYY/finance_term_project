@@ -1654,6 +1654,7 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Human reviewer (initials) and date:
 
 ### D-106 GB-11 random-forest benchmark: GB-01 does not clear it on ranking
+- CORRECTION (2026-11-03, D-140+): at 1,002 draws the AUC difference GB-11 minus GB-01 is +0.0020 [-0.0002, +0.0042], a tie; the log-loss gain holds.
 - Date / phase / agent: 2026-11-02 / round 2 phase A / challenger-gbm
 - Status: ADOPTED as a benchmark, not a candidate. LightGBM boosting='rf' implementation (GB-11lgbrf) REJECTED.
 - Decision: report sklearn RandomForest (300 trees, sqrt features, 50% rows per tree, one-hot categoricals, D-053 calibration) as the benchmark and state plainly that the monotone GB-01 does not beat it.
@@ -1847,6 +1848,7 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Human reviewer (initials) and date:
 
 ### D-130 GB-25: restoring interest_to_sales' + sign costs 0.0011 AUC pooled and 0.0021 on 2010; proposed as the GBM entry
+- NOTE (2026-11-03, D-142): the referee finds this was not fully blind; 2010 default rates by interest_to_sales decile were on file before it ran.
 - Date / phase / agent: 2026-11-02 / round 2 phase B / challenger-gbm
 - Status: proposed (referee and human sign-off OPEN); supersedes GB-20 as the proposed entry in D-120
 - Decision: use GB-25 (GB-20 with interest_to_sales constrained +1, all else identical) as the GBM entry. Pre-specified before any outer score for it; nothing was changed after seeing the result. This is a paid face-validity trade, not a performance win: GB-20 is better on the pooled metrics.
@@ -1863,4 +1865,118 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
   interest_to_assets: stays monotone + and does not take up the slack. It weakens: mean |SHAP| 0.057 to 0.045 (rank 19 to 21), partial-dependence range 0.30 to 0.23, decile 10 SHAP +0.100 to +0.082. GB-01 had 0.069 and 0.34.
 - Source(s): R-33 Table 3 p. 11, p. 12 (upward slope); R-39 (monotone_constraints); R-41 (TreeSHAP).
 - Risks / what would change our mind: the humans may weigh the 2010 cost more than the shape. The re-chosen fold-2 cfg (min_data_in_leaf 2000 vs 500) follows the same recipe, so that fold's comparison also includes a cfg change. Part of the reversal now sits in correlated unconstrained asset_turnover. GB-25 is the third full2 configuration scored on 2008-10; the sign was pre-specified, but the proposal came after GB-20's outer result (D-129). D-119's lockbox must name the chosen entry before anyone opens 2011.
+- Human reviewer (initials) and date:
+
+---
+
+## Round 2 referee (merged by orchestrator from reports/tournament/r2_scorecard.md, 2026-11-03)
+
+### D-140 Referee scoring method, round 2
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: ADOPTED
+- Decision: score 11 models plus 4 shipped-level vectors with `metrics.py`, pooled and by year, with 2010 reported separately. Firm-clustered paired bootstrap: 1,002 draws (3 seeds) for primary models, 200 for table rows, +CAL and segments.
+- Alternatives considered: one 1,000-draw stream for all models (too slow under the deadline; stopped).
+- Business reason: comparisons must reflect that one firm contributes several years.
+- Evidence: all 15 contracts PASS (`r2_contract.csv`); fast estimator matches `metrics.paired_bootstrap` to 1.1e-16 (`r2_bootstrap_equivalence.csv`). GB-11 vs GB-01 pooled ΔAUC is +0.0020 [-0.0002, +0.0042] at 1,002 draws, correcting the 200-draw "win" in D-106.
+- Source(s): D-005, D-006, D-060; R-16 p. 32 (Brier = overall probability accuracy).
+- Risks / what would change our mind: 200-draw bounds are noisy; re-run before quoting any table-row CI near zero.
+- Human reviewer (initials) and date:
+
+### D-141 Leakage verdict on the full2 pipeline: CLEAN; harness compliant
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: ADOPTED
+- Decision: GB-20 and GB-25 CLEAN. GB-23 CLEAN on the shared path. Full2 features comply with CLAUDE.md §2.2.
+- Alternatives considered: SUSPECT because target encodings use labels. Rejected: tables come from training labels only, cross-fitted by firm.
+- Business reason: a PD built on later or other applicants' data would fail on the holdout and break the assignment's constraints.
+- Evidence: see scorecard section 2: saved models and refits reproduce submitted PDs (`r2_repro_saved.csv`, `r2_repro_refit.csv`); label flip 0.0 own-fold change (`r2_oof_label_flip.csv`); single-row vs batch 0.0 on 999 rows, also as strings (`r2_single_vs_batch.csv`); fit calls include 0 test rows (`r2_refit_call_log.csv`); params byte-equal to refit (`r2_param_provenance.csv`).
+- Source(s): CLAUDE.md §2.2, §2.4, §2.5; R-47 (cross-fitted encoding, per D-124).
+- Risks / what would change our mind: the harness must call with oof=False and re-measure cost (6.4 s per 100k rows under contention, vs 1.0 s for GB-01).
+- Human reviewer (initials) and date:
+
+### D-142 Process verdict and selection ledger, round 2
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: ADOPTED (reporting rule)
+- Decision: process ACCEPTABLE WITH DISCLOSURE. 2010 is clean in code for feature design, but not fully clean for the GB-25 choice. Ledger: 51 prediction files plus 62 calibration configurations = 113 looks; 9 new configurations, 3 on full2.
+- Alternatives considered: treating 2010 as fully clean (rejected: `GB-22/dependence_bins.csv` showed 2010 default rates by interest_to_sales decile before GB-25 ran; r1b 2010 cells predate the feature files).
+- Business reason: the deck must not present a reused year as an untouched test.
+- Evidence: `r2_selection_ledger.json`; file times 14:52 (r1b), 15:12 (feature code), 15:57 (dependence bins), 16:34 (GB-25). GB-25 is lowest of the three full2 configurations on 2010 (0.8348 vs 0.8369, 0.8389), so this choice does not inflate its number.
+- Source(s): D-062, D-099, D-100, D-118, D-125, D-129, D-130.
+- Risks / what would change our mind: selection optimism remains unquantified; only the lockbox addresses it.
+- Human reviewer (initials) and date:
+
+### D-143 Headline number for the deck
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: ADOPTED until the lockbox runs
+- Decision: quote GB-25 on 2010: AUC 0.8348 [0.8272, 0.8415], AR 0.670, log loss 0.07098 (0.07010 at the shipped level), with gain over GB-01 of +0.0042 [+0.0022, +0.0059] and -0.00038 [-0.00055, -0.00021]. Pooled AUC 0.8424 and +0.0049 go next to it, labelled.
+- Alternatives considered: pooled alone; GB-20's +0.0060; the architect's inner +0.0096 (all use years the design saw, or a model not chosen).
+- Business reason: the bank should expect the gain a new year is likely to deliver.
+- Evidence: `r2_metrics_long.csv`, `r2_marginal_ci.csv`, `r2_paired_bootstrap.csv`.
+- Source(s): D-062, D-121.
+- Risks / what would change our mind: 2010 is one cycle point; the lockbox replaces this number.
+- Human reviewer (initials) and date:
+
+### D-144 GB-25 promoted to GBM incumbent, replacing GB-01
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: ADOPTED (referee); human sign-off requested on the trade against GB-20
+- Decision: GB-25 is the GBM incumbent. GB-20 and GB-23 are not promoted, and GB-01 stays as the comparison model.
+- Alternatives considered: GB-20 (statistically better, fails the raw-interest test); GB-23; GB-08/08b; GB-09; GB-10; GB-01 stays.
+- Business reason: better ordering and accuracy than GB-01, without any firm with non-negative EBITDA getting a lower PD for more interest.
+- Evidence: vs GB-01 pooled ΔAUC +0.0049 [+0.0037, +0.0061], Δlog loss -0.00035 [-0.00044, -0.00025]; 2008 +0.0027 [+0.0001, +0.0053], -0.00012 [-0.00029, +0.00006]; 2009 +0.0081 [+0.0064, +0.0098], -0.00053 [-0.00070, -0.00038]; 2010 +0.0042 [+0.0022, +0.0059], -0.00038 [-0.00055, -0.00021]. Vs GB-20 -0.0011 [-0.0017, -0.0006], +0.00013 [+0.00009, +0.00018]. Doubling interest lowers PD for 20% of firms in GB-20, 1.7% in GB-25 (`r2_raw_interest_test.csv`).
+- Source(s): D-060, D-062, D-065 (rule); R-33 Table 3 p. 11, p. 12 (direction, via D-130); R-39.
+- Risks / what would change our mind: humans may value the 2010 cost (-0.0021 AUC vs GB-20) above the shape; a lockbox reversal; new firms in a 2008-like year.
+- Human reviewer (initials) and date:
+
+### D-145 Segment check: small firms improve, construction not on the clean year, new firms do not
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: ADOPTED (finding)
+- Decision: report weak segments as unresolved except small firms; keep the manual-review buffer idea for builders and first-time borrowers (D-113).
+- Alternatives considered: claiming a general segment gain from pooled cells (rejected: construction's 2010 gain is +0.001, CI includes 0).
+- Business reason: cutoffs for these firms still rest on weaker rankings.
+- Evidence: `r2_segments.csv` (200 draws): Q1 AR 0.626 → 0.638; F 0.559 → 0.568, 2010 +0.001; new 0.573 → 0.569, 2008 -0.020 [-0.034, -0.006]. Riskiest-10% capture in 2010: `r2_cap_points.csv`.
+- Source(s): D-113, D-128; R-33 Tables 9-14 pp. 19-21.
+- Risks / what would change our mind: the final model trains on more years, which may repair the one-training-year new-firm result; untested.
+- Human reviewer (initials) and date:
+
+### D-146 Level: the 2010 middle-book under-prediction remains
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: ADOPTED (finding); level stays with the calibration round
+- Decision: do not claim any level improvement from full2.
+- Alternatives considered: a group-level correction on these years (rejected, as in D-078).
+- Business reason: in a 2010-like year, middle-book pricing would still be about a quarter too low.
+- Evidence: GB-25+CAL obs/pred 1.03 / 1.06 / 1.19 by year; grades 6-14 in 2010: 2,108 vs 1,590 expected, 1.33; CAL-01 1.32; same firms 1.325 vs 1.319 (`r2_level_by_year.csv`, `r2_grade_bands.csv`, `r2_grade_same_firms.csv`).
+- Source(s): D-070, D-071, D-116, D-129.
+- Risks / what would change our mind: rule e inherits selection optimism (D-071) and 2011 cannot test the level (D-118).
+- Human reviewer (initials) and date:
+
+### D-147 Face validity: zero violations; free-feature review; a negative-EBITDA quirk found
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: zero violations ADOPTED; tfr_ratio and asset_turnover wording OPEN for humans; interest_coverage quirk OPEN for feature-architect
+- Decision: count GB-25 as 0 violations, and record GB-20 as 0 by spec but 1 against the a priori sign. Add the raw-input test to the referee's standard checks.
+- Alternatives considered: counting only constraint checks (rejected: they miss a free near-duplicate undoing a constrained direction).
+- Business reason: reason codes must make sense to a credit officer.
+- Evidence: ICE 0 violating rows in all folds for GB-25 (`r2_ice_refit_gb25.csv`), fold 3 for GB-20 and GB-01 (`r2_face_validity.csv`). Raw-interest test: non-negative EBITDA step-downs 0% GB-25, 0% GB-01, 77% GB-20; negative EBITDA (15% of firms) 40% GB-25, 30% GB-01, 86% GB-20 (`r2_raw_interest_by_ebitda.csv`). Unconstrained: 9 in GB-25; asset_turnover top-3 raiser 29%, tfr_ratio 21% (`r2_unconstrained_reason_codes.csv`).
+- Source(s): D-022, D-064, D-123 ([UNVERIFIED] TFR readings), D-125.
+- Risks / what would change our mind: the interest_coverage rule applies to the incumbent too; changing it means a feature change, so it needs its own inner-only test before any outer look.
+- Human reviewer (initials) and date:
+
+### D-148 Lockbox finalists (amends D-119): GB-25, GB-01, GAM-01
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: OPEN (needs orchestrator and human sign-off before anyone opens 2011)
+- Decision: replace D-119's finalists with GB-25 (primary), GB-01 (incumbent to beat), GAM-01 (transparent fallback). No other model is scored on 2011. Pre-register the new-firm cell and three shape read-outs, and freeze the code hashes listed in section 6.
+- Alternatives considered: adding GB-20/GB-23 (rejected: face-validity decision; would spend the lockbox); GB-25 alone (rejected: no comparison).
+- Business reason: one sealed check of the model the bank would actually use.
+- Evidence: scorecard sections 3 and 6; no GB-2x name in `reports/calibration`, `reports/final` or `harness` by file search.
+- Source(s): D-087, D-118, D-119; R-33 Sec. 4.8 p. 23.
+- Risks / what would change our mind: GB-01's 2011 AUC is already on file, so that side is not blind; one year, one cycle point; 2011 cannot test the level.
+- Human reviewer (initials) and date:
+
+### D-149 Revised win rule: minimum effect, clean-year CI, no bad year, multiplicity
+- Date / phase / agent: 2026-11-03 / round 2 / referee
+- Status: OPEN (proposal; applies to the lockbox and later rounds if signed off; not used for D-144)
+- Decision: adopt R1-R4 in scorecard section 6: ΔAUC ≥ +0.002 and Δlog loss ≤ -0.00015 pooled and on the clean year; clean-year 95% CIs exclude zero on both metrics; no year's CI against; pooled 99.5% CIs exclude zero on both.
+- Alternatives considered: the current rule (a +0.00003 year counts as better, per D-109); per-year CIs required in every year (too strict: one fold of 2,064 defaults decides; GB-25 itself ties on 2008 log loss).
+- Business reason: a difference too small to matter to a lending decision should not change the model.
+- Evidence: `r2_win_rule_test.csv`, `r2_win_rule_sensitivity.csv`. Threshold basis: seed s.d. 0.0006 (D-090) × about 3, scaled by GB-25's ratio. Set after seeing results; disclosed.
+- Source(s): D-100, D-109; assumption for thresholds.
+- Risks / what would change our mind: 2011 has fewer usable months under y11, so thresholds may need restating before opening, never after.
 - Human reviewer (initials) and date:

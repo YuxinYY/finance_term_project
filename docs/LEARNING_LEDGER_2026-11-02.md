@@ -1836,11 +1836,73 @@ R-33 (France only), R-34 (vendor statement), R-35.
 
 ---
 
-## 8. Round 2 (to be appended)
+## 8. Round 2 (added 2026-11-03)
 
-> **Placeholder.** Round-2 decisions are being produced in parallel: D-090+ (features),
-> D-100+ (GBM), D-110+ (referee). The orchestrator will append one block per decision here,
-> in the same format as section 2 (decided / economics / ML / alternatives / evidence with path /
-> source with status / citation gap / "if Roger asks"), and add any new gaps to section 6.
-> Reminder for that pass: per D-087, no round-2 experiment may read fs_year ≥ 2011 for selection;
-> the finalists' single 2011 score goes here when it exists.
+Full entries: `docs/DECISION_LOG.md` D-090..D-149. Scorecard: `reports/tournament/r2_scorecard.md`.
+Status: **nothing here has been checked by a human yet.** Promotion of GB-25 needs your sign-off.
+
+### 8.1 The result in five sentences
+We added 19 inputs and got GB-25: AUC 0.8348 on 2010 (+0.0042 [0.0022, 0.0059] vs GB-01). The gain came from new information; tuning gave +0.0009 and recency weights +0.0002. The riskiest 10% in 2010 capture about the same share of defaults (51.7% vs 51.8%), so this is a modest improvement, not a new view of risk. The level problem is untouched (2010 observed/predicted 1.19; middle grades 1.33). The leakage audit is clean (D-141), though the referee is also an AI agent.
+
+### 8.2 The new features: what each one means
+AUC below 0.5 means PD falls as the feature rises. Stats are on 2007-09 training rows (`reports/features/round2_univariate.md`).
+
+| Feature | Built as | Why it could matter for a lender | Source status |
+|---|---|---|---|
+| `operating_margin` | slog(prof_operations / revenue) | Thin margin leaves no buffer | R-33 VERIFIED |
+| `interest_to_sales` | slog(exp_financing / revenue) | Share of sales already spent on interest. GB-25 forces + | R-33 VERIFIED |
+| `payables_to_sales` | slog(AP_st / revenue) | Stretching suppliers signals cash shortage | R-33 VERIFIED |
+| `personnel_to_sales` | slog((goodwill − ebitda) / revenue) | Wages are hard to cut when sales fall | R-33 for the ratio; **our inference** that `goodwill` is value added (D-091) |
+| six `*_sect_pct` | Firm's percentile for equity, ROA, coverage, cash, short-term debt, tangibles within its ATECO section | 40% equity means different things in retail and real estate | R-01 Sec. 3.3 VERIFIED |
+| `ateco_div_te`, `province_te`, `region_te` | Group's default rate in log-odds vs base, shrunk by n/(n+m), m = 555 / 1,834 / 3,879; out-of-fold on training rows | Sector and place conditions a single statement misses | Method R-46, R-47; economics **assumption** |
+| `n_core_imputed` | Count of core inputs missing after rebuild | Mostly negative-revenue firms. **Has 0 splits in fold 3, so it does nothing there** | R-34, R-05 |
+| `bs_gap` | (assets − equity − listed liabilities) / assets | Liabilities the file does not classify; no expected direction | assumption |
+| `nonbank_fin_debt` | (debt_fin_st + debt_fin_lt) / assets | Fixed claims from non-bank lenders | assumption |
+| `ap_lt_ratio` | AP_lt / assets | Suppliers who became long-term creditors | assumption |
+| `fin_fixed_ratio` | asst_fixed_fin / assets | Holding or group structure; no expected direction | assumption |
+| `tfr_ratio` | liab_lt_emp / assets | See 8.4 | **[UNVERIFIED] hypothesis** |
+
+Worked example for the shrinkage. Run it:
+```python
+n, m = 1834, 1834   # rows in this province; m is the fitted province prior
+print(n / (n + m))  # 0.5: it keeps half its own rate, half the average
+```
+
+### 8.3 Decisions you must be able to defend
+
+**Why not simply use the highest score (GB-20, 0.8369 on 2010)?** (D-125, D-130, D-144.) When a firm's interest doubles, GB-20 lowers the PD for 20% of firms and GB-25 for 1.7%. GB-20 is statistically better by 0.0021 AUC on 2010. This is a face-validity judgment, and you can overrule it.
+- **If Roger asks** "you gave up accuracy?": "Yes, about 0.002 AUC, to keep the direction Moody's uses (R-33) and avoid a sign we chose after seeing data."
+- **Do not say** it was fully pre-specified. The fix had no outer score beforehand, but 2010 default rates by decile were already on file (D-142).
+
+**Why keep monotone constraints when unconstrained scores higher?** (D-102, D-103.) A firm with cash flow twice its debt would score as badly as one burning cash. Our rule for relaxing them ("only where the denominator nears zero") failed its own check. High-margin firms are partly property vehicles, but that does not excuse loss-making firms getting lower PDs.
+- **If Roger asks** "why do default rates rise among the most profitable firms?": "We see it and have no verified explanation; we constrain it." **Do not invent a reason.**
+
+**Why did tuning fail?** (D-104.) Tuning changes how the same signal is fitted, not what the model knows. The top configurations are nearly tied, and chosen settings swing widely across folds, which looks like noise.
+
+**Why are the encodings computed out-of-fold?** (D-094.) Otherwise a row sees its own default in its feature. Our test: leaky encodings scored *worse* out of time (0.8330 vs 0.8356 AUC on 2009; `reports/features/round2_target_encoding.csv`).
+
+**Why is SHAP not value?** (D-122.) Sector percentiles have the largest SHAP share, yet dropping them changes AUC insignificantly. They take credit from the base ratios they correlate with (0.88-0.98).
+
+**How did we treat the random forest?** (D-106 corrected.) GB-25 beats it pooled (+0.0029 [0.0005, 0.0050]) and ties on 2010 (+0.0013 [−0.0026, 0.0051]). GB-01 only ties it on AUC. The forest uses the forbidden patterns, so it is a benchmark and not a candidate.
+
+### 8.4 Your hardest question: `tfr_ratio`
+Univariate AUC is 0.51, yet it is the most robust new feature (dropping it costs about 0.002 AUC in both inner windows). Two reasons: half of zero-fund firms are low-default real estate, and its effect appears only next to the wage bill (logit coefficient −0.043 alone, −0.197 beside `personnel_to_sales`). Reading: more fund *for a given wage bill* means lower PD.
+- **Why? We do not know.** Our hypothesis is that it reflects staff who stayed (a proxy for firm maturity) and patient funding. It is [UNVERIFIED] and depends on the `goodwill` inference.
+- **Caveat:** firms with low turnover and a fund above 5% of assets default at 5.7-11.5% (880 rows, 62 defaults). The "labour intensity" reading in D-097 was corrected by D-123.
+
+### 8.5 Overfitting: what round 2 changed
+- **Same-year gap widened:** GB-01 0.015-0.026, GB-20 0.022-0.035, GB-25 0.017-0.029 (`experiments/gbm/comparison_r2b.md`). Only quote out-of-time numbers.
+- **About 40% of the gain buys back constraint cost** (D-126). Free features recover part of what constraints blocked.
+- **113 looks at the test years** (D-142). Quote 2010 first, with pooled beside it, labelled.
+- **Win rule tightened from the lockbox on** (D-149). It was proposed after seeing results, so it was not used for this promotion.
+
+### 8.6 Known defects
+- **Negative-EBITDA firms** (D-147): more interest mechanically improves `interest_coverage`, so PD can fall (GB-25 40%, GB-01 30% of those firms). The constraint check cannot catch this, because it arises when the ratio is built.
+- **Three "zero violations" mean nothing:** `neg_equity`, `debt_split_missing` and `n_core_imputed` have no splits in the checked model.
+- **New firms did not improve** (D-145); 2008 got worse (AR −0.020 [−0.034, −0.006]).
+
+### 8.7 Citation gaps added
+Unsourced: `bs_gap`, `nonbank_fin_debt`, `ap_lt_ratio`, `fin_fixed_ratio`, `tfr_ratio`'s reading, and the economics of all three encodings. Label them as assumptions or send them to literature-scout. Also: why default rates rise among the most profitable firms.
+
+### 8.8 Decisions waiting for you
+GB-25 vs GB-20 (D-130, D-144); EBM fallback (D-112); EBITDA constraint (D-103); lockbox finalists GB-25, GB-01, GAM-01 (D-119, D-148; GB-01's side is not blind); revised win rule (D-149).

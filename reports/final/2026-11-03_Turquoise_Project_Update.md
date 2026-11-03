@@ -5,7 +5,7 @@ DS-GA 3001 (Prof. Roger Stein) · Team Turquoise: Kiet Nguyen, Desmond Peng, Chl
 
 <!-- Numbers come from files named in the hidden comments. D-xxx = docs/DECISION_LOG.md; R-xx = docs/REFERENCES.md (VERIFIED rows only). Longer version with more detail: reports/final/2026-11-02_Turquoise_Project_Update.md (pre round 2). -->
 
-**Status.** The formulation is fixed and two modelling rounds are complete. Our leading candidate is a monotone gradient-boosted tree model on 45 inputs (GB-25). Out of time on 2010, the cleanest test year, it has AUC 0.835, against 0.812 for our weight-of-evidence scorecard. Ranking is in good shape; the PD **level** is the main open problem, because defaults rose faster than any training window could show. Round-2 results below have been recomputed from saved predictions, but the independent referee review is still in progress, so they are preliminary.
+**Status.** The formulation is fixed and two modelling rounds are complete. Our leading candidate is a monotone gradient-boosted tree model on 45 inputs (GB-25). Out of time on 2010, the cleanest test year, it has AUC 0.835 [0.827, 0.842], against 0.812 for our weight-of-evidence scorecard. Our referee step found no leakage in the new pipeline (D-141). The new inputs improve ranking modestly and give no new view of risk: the riskiest 10% of firms in 2010 capture about the same share of defaults as before (51.7% vs 51.8%). The PD **level** is the main open problem, because defaults rose faster than any training window could show. All results are preliminary, and the model choice is not final.
 
 ## 1. Formulation
 
@@ -60,8 +60,8 @@ Walk-forward on frozen folds: train up to year *t*, test on *t*+1, for 2008-2010
 | RC-02 RiskCalc-style probit | 0.8194 | 0.639 | 0.8115 | 0.06580 |
 | SC-03 weight-of-evidence scorecard | 0.8166 | 0.633 | 0.8115 | 0.06656 |
 
-- **GB-25 vs GB-01:** ΔAUC +0.0049 [0.0037, 0.0062] pooled, +0.0042 [0.0021, 0.0059] on 2010, and better in all three years (D-130).
-- **GB-25 vs the random forest:** +0.0030 [0.0009, 0.0057] pooled, but **not conclusive on 2010**: +0.0013 [−0.0023, 0.0046] (100 draws). <!-- reports/final/update_table_output.txt -->
+- **GB-25 vs GB-01:** ΔAUC +0.0049 [0.0037, 0.0061] pooled, +0.0042 [0.0022, 0.0059] on 2010. Log loss is better pooled and in 2009-2010, and tied in 2008 (D-144). <!-- reports/tournament/r2_paired_bootstrap.csv -->
+- **GB-25 vs the random forest:** +0.0029 [0.0005, 0.0050] pooled, but **tied on 2010**: +0.0013 [−0.0026, 0.0051]. Round-1's GB-01 does not separate from the forest on AUC, [−0.0002, 0.0042]. <!-- r2_paired_bootstrap.csv -->
 - **GB-20 vs GB-25:** freeing the interest/sales sign is worth +0.0021 AUC on 2010, but gives high-interest firms a *lower* score, and that setting was chosen after seeing the data. Choosing between them is still open.
 
 **What did not work:**
@@ -73,11 +73,11 @@ Walk-forward on frozen folds: train up to year *t*, test on *t*+1, for 2008-2010
 
 ## 5. Validation
 
-**Where power is weak** (GB-01; round-2 segment tables pending): AR is 0.63 for the smallest firms vs 0.74 for the largest, 0.56 in construction, and 0.57 for new firms vs 0.69 for firms seen before. <!-- reports/tournament/r1b_diagnostics.md §2 -->
+**Where power is weak** (GB-01 → GB-25): smallest firms AR 0.626 → 0.638; construction 0.559 → 0.568, but no gain on 2010 (+0.001); new firms 0.573 → 0.569, and significantly worse in 2008, when only one training year was available (−0.020 [−0.034, −0.006]) (D-145). The largest firms remain strongest (0.735 → 0.745). <!-- reports/tournament/r2_scorecard.md segments -->
 
-**Level.** Every model under-predicts: GB-01's observed/predicted is 1.21 / 1.36 / 1.43 across 2008-2010, while calibration slopes stay near 1, so the spread is right and the level is wrong. We apply a prior shift on the log-odds (R-22 eq. 4), anchored to the latest default speed available in training (D-071, D-072). This brings observed/predicted to 1.02 / 1.05 / 1.18 for GB-01. That rule was chosen after seeing these years, so the gain is optimistic. New features do not fix the level: 2010 stays at 1.19 for GB-20 (D-120). Proposed holdout target: 1.49%, which rests on an assumed random walk in the default rate (D-073). PDs are floored at 0.03% and capped at 99% (D-075).
+**Level.** Every model under-predicts: GB-01's observed/predicted is 1.21 / 1.36 / 1.43 across 2008-2010, while calibration slopes stay near 1, so the spread is right and the level is wrong. We apply a prior shift on the log-odds (R-22 eq. 4), anchored to the latest default speed available in training (D-071, D-072). This brings observed/predicted to 1.02 / 1.05 / 1.18 for GB-01. That rule was chosen after seeing these years, so the gain is optimistic. New features do not fix the level: 2010 stays at 1.19 for GB-25 (D-146). Proposed holdout target: 1.49%, which rests on an assumed random walk in the default rate (D-073). PDs are floored at 0.03% and capped at 99% (D-075).
 
-**2010, on a 16-grade scale** with edges set on training years (no grade above about 10% of firms; design target from R-33 p. 24): the safest 42.5% of firms are on target, but grades covering half the firms (PD 0.5-10%) saw observed/predicted of 1.26-1.41, about 500 extra defaults (GB-01; D-116). In a 2010-like year, mid-grade loans would be priced too low.
+**2010, on a 16-grade scale** with edges set on training years (no grade above about 10% of firms; design target from R-33 p. 24): the safest 42.5% of firms are on target, but grades covering half the firms (PD 0.5-10%) saw observed/predicted of 1.26-1.41, about 500 extra defaults (GB-01; D-116). GB-25 does not change this: 1.33 vs 1.32 across grades 6-14 (D-146). In a 2010-like year, mid-grade loans would be priced too low.
 
 **Overfitting.**
 
@@ -87,9 +87,9 @@ Walk-forward on frozen folds: train up to year *t*, test on *t*+1, for 2008-2010
 | Calibration slope, out of time | GB-25 1.005 / 1.014 / 0.957 | PDs are not over-spread overall. New firms' slopes are 0.83-0.89 for every round-1 model. |
 | Learning curve (GB-07) | Flat at its minimum | Tree count is not a sensitive choice. |
 | Constraint buy-back (D-126) | About 40% of the new features' inner gain recovers what constraints blocked | Part of the gain is not new information. |
-| Selection | About 90 looks at 2008-2010 before round 2, plus round-2 scorings (D-118) | Absolute scores carry unquantified optimism. Margins and the 2010 rows matter more. |
+| Selection | 113 looks at 2008-2010 so far (D-142) | Absolute scores carry unquantified optimism. Margins and the 2010 rows matter more. |
 
-**Fiscal 2011 is a partly spent check.** The calibration round already scored GB-01 and RC-02 on it, and the level target uses its default rate (D-118). Planned use (D-119, not yet signed off): freeze the finalists, score them once on 2011, report the result whatever it says, and use it only for the model choice, never to test the level.
+**Fiscal 2011 is a partly spent check.** The calibration round already scored GB-01 and RC-02 on it, and the level target uses its default rate (D-118). Planned use (D-119, D-148, not yet signed off): freeze the finalists (proposed: GB-25, GB-01, GAM-01), score them once on 2011, report the result whatever it says, and use it only for the model choice, never to test the level.
 
 ## 6. Hypotheses
 
@@ -108,12 +108,13 @@ Walk-forward on frozen folds: train up to year *t*, test on *t*+1, for 2008-2010
 2. **The level comes from the sample only.** Moody's sets its central tendency above the sample rate using external data, because samples miss defaults (R-33 Sec. 2.4 p. 9). We cannot, so a holdout more stressed than 2010 would be under-predicted.
 3. **Unsourced economics.** Our top driver, tangible-asset share, has verified support only for creditor recovery and borrowing capacity (R-48), not for lower PD; we present the link as our data finding. The staff-severance fund's effect (more fund, lower PD, given the wage bill) is our unverified hypothesis, possibly reflecting firm maturity (D-123). Its reading also depends on the `goodwill` inference.
 4. **Unexplained pattern.** Actual default rates rise among the most profitable firms. We constrain this away and do not yet have an explanation (D-102).
-5. **Process limits.** Some round-2 choices followed outer scores and are disclosed (D-100, D-129). Features were designed on 2007-09 data, so 2010 is the clean year (D-062).
-6. **Thin cells.** Several sectors have 30-66 test defaults, so we neither rank models nor correct levels there (D-078).
+5. **Process limits.** Some round-2 choices followed outer scores and are disclosed (D-100, D-129). The GB-25 sign fix was not fully blind, because 2010 default rates by interest/sales decile were already on file; GB-25 is nonetheless the lowest of the three new-feature configurations on 2010 (D-142). Features were designed on 2007-09 data, so 2010 is the clean year (D-062).
+6. **A known defect.** For firms with negative EBITDA, more interest mechanically improves `interest_coverage`, so the PD can fall (GB-25 40%, GB-01 30% of those firms; D-147). A fix needs its own inner-only test.
+7. **Thin cells.** Several sectors have 30-66 test defaults, so we neither rank models nor correct levels there (D-078).
 
 ## 8. Next steps to 16 November
 
-1. Finish the independent referee review of round 2, including the leakage audit.
+1. Test the negative-EBITDA fix on inner splits.
 2. Team sign-off on the finalists and the one-time 2011 check; then choose the final model (GB-25 vs GB-20; EBM as transparent fallback, which needs its missing-value rule repaired first, D-114).
 3. Final fit on 2007-2011 with the 11-month label (D-077); freeze all parameters.
 4. Harness and stress tests on messy input; document computational complexity.
@@ -121,7 +122,7 @@ Walk-forward on frozen folds: train up to year *t*, test on *t*+1, for 2008-2010
 
 ## 9. AI use
 
-We used Anthropic's Claude (Claude Code) as a set of agents: data audit, literature verification, feature, model and calibration code, referee scoring, and drafting, including this update. No language model is inside the PD model. Numbers are generated by repository code and traced to files, and citations are limited to sources an agent located and read (`docs/REFERENCES.md`). **Most AI output in `docs/AI_USE_LOG.md` is still pending human verification.** Before 16 November we will re-run the key scripts, spot-check the cited pages and initial each check.
+We used Anthropic's Claude (Claude Code) as a set of agents: data audit, literature verification, feature, model and calibration code, referee scoring, and drafting, including this update. The referee is an AI agent, not an independent human review. No language model is inside the PD model. Numbers are generated by repository code and traced to files, and citations are limited to sources an agent located and read (`docs/REFERENCES.md`). **Most AI output in `docs/AI_USE_LOG.md` is still pending human verification.** Before 16 November we will re-run the key scripts, spot-check the cited pages and initial each check.
 
 ## References (verified sources only)
 

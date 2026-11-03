@@ -1,0 +1,9 @@
+Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
+[    45s] {'exp': 'GB-25', 'fold': 1, 'n_test': 161261, 'max_abs_diff_vs_submitted': 0.0, 'chosen_cfg_same': True, 'n_final_trees': 461, 'n_final_trees_config': 461, 'rows_of_test_fold_in_fit_calls': 0, 'max_year_in_fit_calls': 2007, 'train_max_year': 2007, 'oof_true_rows_outside_train': 0, 'test_scoring_oof_flags': ['False'], 'wall_secs': 42.8}
+[    65s] ICE fold 1 violations 0
+[   167s] {'exp': 'GB-25', 'fold': 2, 'n_test': 170386, 'max_abs_diff_vs_submitted': 0.0, 'chosen_cfg_same': True, 'n_final_trees': 576, 'n_final_trees_config': 576, 'rows_of_test_fold_in_fit_calls': 0, 'max_year_in_fit_calls': 2008, 'train_max_year': 2008, 'oof_true_rows_outside_train': 0, 'test_scoring_oof_flags': ['False'], 'wall_secs': 102.9}
+[   179s] ICE fold 2 violations 0
+[   316s] {'exp': 'GB-25', 'fold': 3, 'n_test': 174512, 'max_abs_diff_vs_submitted': 0.0, 'chosen_cfg_same': True, 'n_final_trees': 548, 'n_final_trees_config': 548, 'rows_of_test_fold_in_fit_calls': 0, 'max_year_in_fit_calls': 2009, 'train_max_year': 2009, 'oof_true_rows_outside_train': 0, 'test_scoring_oof_flags': ['False'], 'wall_secs': 137.4}
+[   331s] ICE fold 3 violations 0
+[   363s] {'exp': 'GB-20', 'fold': 1, 'n_test': 161261, 'max_abs_diff_vs_submitted': 0.0, 'chosen_cfg_same': True, 'n_final_trees': 444, 'n_final_trees_config': 444, 'rows_of_test_fold_in_fit_calls': 0, 'max_year_in_fit_calls': 2007, 'train_max_year': 2007, 'oof_true_rows_outside_train': 0, 'test_scoring_oof_flags': ['False'], 'wall_secs': 32.0}
+[   363s] REFIT DONE

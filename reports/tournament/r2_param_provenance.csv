@@ -1,0 +1,3 @@
+exp,params_identical_to_refit_on_train_rows,train_years_in_params,n_train_rows_params,n_train_expected,record_train_years,te_p0_division,train_rate,n_levels_division,m_division,m_province,m_region,calibrator_target_equals_train_rate,features_equal_FULL2,banned_in_features
+GB-25,True,"[2007, 2008, 2009]",475861,475861,"[2007, 2008, 2009]",0.013018507505342947,0.013018507505342947,83,554.7468097804018,1834.1786565883287,3878.739086900889,True,True,[]
+GB-20,True,"[2007, 2008, 2009]",475861,475861,"[2007, 2008, 2009]",0.013018507505342947,0.013018507505342947,83,554.7468097804018,1834.1786565883287,3878.739086900889,True,True,[]
