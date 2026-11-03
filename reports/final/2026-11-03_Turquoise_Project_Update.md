@@ -73,7 +73,7 @@ Walk-forward on frozen folds: train up to year *t*, test on *t*+1, for 2008-2010
 
 ## 5. Validation
 
-**Where power is weak** (GB-01 → GB-25): smallest firms AR 0.626 → 0.638; construction 0.559 → 0.568, but no gain on 2010 (+0.001); new firms 0.573 → 0.569, and significantly worse in 2008, when only one training year was available (−0.020 [−0.034, −0.006]) (D-145). The largest firms remain strongest (0.735 → 0.745). <!-- reports/tournament/r2_scorecard.md segments -->
+**Where power is weak** (GB-01 → GB-25): smallest firms AR 0.626 → 0.638; construction 0.559 → 0.568, but no gain on 2010 (+0.001); new firms 0.573 → 0.569, and significantly worse in 2008, when only one training year was available (−0.020 [−0.034, −0.006]) (D-145). The largest firms remain strongest (0.735 → 0.741). <!-- reports/tournament/r2_scorecard.md segments -->
 
 **Level.** Every model under-predicts: GB-01's observed/predicted is 1.21 / 1.36 / 1.43 across 2008-2010, while calibration slopes stay near 1, so the spread is right and the level is wrong. We apply a prior shift on the log-odds (R-22 eq. 4), anchored to the latest default speed available in training (D-071, D-072). This brings observed/predicted to 1.02 / 1.05 / 1.18 for GB-01. That rule was chosen after seeing these years, so the gain is optimistic. New features do not fix the level: 2010 stays at 1.19 for GB-25 (D-146). Proposed holdout target: 1.49%, which rests on an assumed random walk in the default rate (D-073). PDs are floored at 0.03% and capped at 99% (D-075).
 
