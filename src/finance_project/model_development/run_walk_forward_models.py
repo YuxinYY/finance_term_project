@@ -26,6 +26,7 @@ from sklearn.metrics import (
 )
 
 from finance_project.common import project_path, write_json
+from finance_project.model_development.ebm_model import EBMConfig, export_ebm_explanations, fit_ebm
 from finance_project.model_development.lightgbm_model import LightGBMConfig, fit_monotone_lightgbm
 from finance_project.model_development.woe_logistic import WOELogisticConfig, fit_woe_logistic
 
@@ -244,11 +245,12 @@ def run_model_for_round(
     config: RunnerConfig | None = None,
     woe_config: WOELogisticConfig | None = None,
     lightgbm_config: LightGBMConfig | None = None,
+    ebm_config: EBMConfig | None = None,
 ) -> dict[str, Any]:
     """Train one model family for one round and write its artifacts and reports."""
     config = config or RunnerConfig()
-    if model_family not in {"woe_logistic", "lightgbm"}:
-        raise ValueError("model_family must be 'woe_logistic' or 'lightgbm'.")
+    if model_family not in {"woe_logistic", "lightgbm", "ebm"}:
+        raise ValueError("model_family must be 'woe_logistic', 'lightgbm', or 'ebm'.")
 
     train, validation, test, feature_columns = load_feature_splits(round_dir)
     x_train, y_train = _features_and_target(train, feature_columns)
@@ -257,10 +259,12 @@ def run_model_for_round(
 
     if model_family == "woe_logistic":
         model, model_details = fit_woe_logistic(x_train, y_train, x_validation, y_validation, woe_config)
-    else:
+    elif model_family == "lightgbm":
         model, model_details = fit_monotone_lightgbm(
             x_train, y_train, x_validation, y_validation, lightgbm_config
         )
+    else:
+        model, model_details = fit_ebm(x_train, y_train, ebm_config)
 
     validation_raw = model.predict_proba(x_validation)
     calibrator = ProbabilityCalibrator.fit(validation_raw, y_validation, config.calibration)
@@ -290,6 +294,15 @@ def run_model_for_round(
     _prediction_frame(validation, validation_raw, validation_calibrated).to_csv(
         validation_prediction_path, index=False
     )
+    explanation_paths = (
+        export_ebm_explanations(
+            model,
+            artifact_dir=artifact_dir,
+            figure_dir=project_path(config.figure_dir) / config.run_name / round_name / model_family,
+        )
+        if model_family == "ebm"
+        else {}
+    )
     figure_paths = (
         save_discrimination_figures(
             y_test,
@@ -305,8 +318,8 @@ def run_model_for_round(
     payload: dict[str, Any] = {
         "round": round_name,
         "model_family": model_family,
-        "feature_count": len(feature_columns),
-        "feature_columns": feature_columns,
+        "feature_count": len(model.feature_columns),
+        "feature_columns": model.feature_columns,
         "model_details": model_details,
         "calibration": {
             "method": calibrator.method,
@@ -326,6 +339,7 @@ def run_model_for_round(
             "test_predictions": str(prediction_path),
             "validation_predictions": str(validation_prediction_path),
             **figure_paths,
+            **explanation_paths,
         },
     }
     write_json(report_path, payload)
@@ -342,7 +356,11 @@ def _parse_rounds(value: str) -> list[int]:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--data-dir", default="data/processed/walk_forward")
-    parser.add_argument("--models", choices=["woe_logistic", "lightgbm", "both"], default="both")
+    parser.add_argument(
+        "--models",
+        choices=["woe_logistic", "lightgbm", "ebm", "both", "all"],
+        default="both",
+    )
     parser.add_argument("--rounds", type=_parse_rounds, default=[1, 2, 3, 4])
     parser.add_argument(
         "--output-dir",
@@ -369,6 +387,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lgbm-num-leaves", type=int, default=15)
     parser.add_argument("--lgbm-min-child-samples", type=int, default=200)
     parser.add_argument("--early-stopping-rounds", type=int, default=150)
+    parser.add_argument("--ebm-feature-set", choices=["core", "full"], default="core")
+    parser.add_argument("--ebm-interactions", type=int, default=0)
+    parser.add_argument("--ebm-outer-bags", type=int, default=4)
+    parser.add_argument("--ebm-max-rounds", type=int, default=5_000)
+    parser.add_argument("--ebm-min-samples-leaf", type=int, default=50)
     return parser.parse_args()
 
 
@@ -392,7 +415,18 @@ def main() -> None:
         early_stopping_rounds=args.early_stopping_rounds,
         random_state=args.random_state,
     )
-    model_families = ["woe_logistic", "lightgbm"] if args.models == "both" else [args.models]
+    ebm_config = EBMConfig(
+        feature_set=args.ebm_feature_set,
+        interactions=args.ebm_interactions,
+        outer_bags=args.ebm_outer_bags,
+        max_rounds=args.ebm_max_rounds,
+        min_samples_leaf=args.ebm_min_samples_leaf,
+        random_state=args.random_state,
+    )
+    model_families = {
+        "both": ["woe_logistic", "lightgbm"],
+        "all": ["woe_logistic", "lightgbm", "ebm"],
+    }.get(args.models, [args.models])
     summaries = []
     for round_number in args.rounds:
         round_dir = project_path(args.data_dir) / f"round_{round_number:02d}"
@@ -403,6 +437,7 @@ def main() -> None:
                 config=runner_config,
                 woe_config=woe_config,
                 lightgbm_config=lightgbm_config,
+                ebm_config=ebm_config,
             )
             summaries.append(
                 {

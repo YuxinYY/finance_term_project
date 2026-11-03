@@ -83,11 +83,14 @@ distribution for comparison:
 
 ## Walk-forward model development
 
-The first model-development runner compares a training-only WoE scorecard with
-regularised logistic regression and monotone LightGBM.  It reads the already
-transformed feature files, uses the validation set for logistic-model selection
-or LightGBM early stopping, fits a Platt calibrator on validation predictions,
-and evaluates the test split once.  It does not bootstrap the minority class.
+The model-development runner compares a training-only WoE scorecard with
+regularised logistic regression, monotone LightGBM, and an Explainable Boosting
+Machine (EBM).  It reads the already transformed feature files, uses validation
+data for logistic-model selection or LightGBM early stopping, fits a Platt
+calibrator on validation predictions, and evaluates the test split once.  The
+EBM uses its own training-only validation split for early stopping, while the
+outer validation split remains available for PD calibration.  It does not
+bootstrap the minority class.
 
 Run both models for all four rounds from the repository root:
 
@@ -104,6 +107,14 @@ PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \
   --rounds 1 --models lightgbm --run-name lightgbm_round_01
 ```
 
+Run the additive EBM benchmark with its core financial feature set:
+
+```bash
+PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \
+  -m finance_project.model_development.run_walk_forward_models \
+  --models ebm --run-name ebm_v1
+```
+
 Every generated artifact for the default run is written below
 `model_artifacts/baseline_v1/`, grouped by round and model family.  Supply a
 new `--run-name` to preserve earlier experiments, or `--output-dir` to place
@@ -114,7 +125,7 @@ table.  ROC and precision--recall curves for calibrated test PDs are written to
 `reports/figures/<run-name>/round_XX/<model-family>/`.  Pass `--no-figures` to
 skip those PNG outputs, or `--figure-dir` to use another figure root.  See
 `src/finance_project/model_development/MODEL_DEVELOPMENT_PLAN.md` for the
-evaluation contract and the later FURIA, GAM, and TabPFN phases.
+evaluation contract, the later FURIA phase, and the deferred TabPFN option.
 
 ### PD calibration
 

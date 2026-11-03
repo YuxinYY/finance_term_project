@@ -140,14 +140,15 @@ individual rules are readable.
 **Decision output:** the best calibrated, economically defensible LightGBM
 configuration, plus a comparison against the explainable benchmarks.
 
-## 3. GAM / Explainable Boosting Machine
+## 3. Explainable Boosting Machine (EBM)
 
 **Purpose:** determine whether smooth, one-feature risk curves recover much of
 the LightGBM performance while staying globally explainable.
 
-1. Prefer a binary logistic GAM or Explainable Boosting Machine implementation
-   that can fit smooth/binned univariate functions and export them.  Make the
-   dependency choice explicit in `requirements.txt` before implementation.
+1. Use `interpret.glassbox.ExplainableBoostingClassifier`, which fits binned,
+   boosted univariate functions and exports each learned shape.  The EBM's
+   internal validation split is drawn only from the training partition for
+   early stopping; outer validation remains for calibration.
 2. Fit the same core ratio set first; then evaluate a fuller feature set only
    if validation data supports it.  Limit complexity/number of bins and use
    regularization to avoid wiggly curves.
@@ -163,32 +164,17 @@ the LightGBM performance while staying globally explainable.
 **Decision output:** quantify the price of one-readable-curve-per-feature
 interpretability relative to LightGBM.
 
-## 4. TabPFN (optional feasibility experiment)
+## 4. TabPFN (deferred)
 
-**Purpose:** test a strong pretrained tabular classifier, not replace the
-credit-risk models by default.
+**Status:** deferred.  Do not add TabPFN or its dependencies in the current
+development phase.
 
 TabPFN is optional because the walk-forward training sets are large and highly
 imbalanced, while its computational/data-size limits and behavior on financial
 default panels must be verified.  It is also not a globally interpretable
 model.
 
-1. Before modelling, record the installed TabPFN version, supported training
-   row/feature limits, hardware requirements, random-seed behavior, and
-   probability interface.
-2. If the full training set is unsupported, use a pre-specified, reproducible
-   stratified training subsample for a clearly labelled *feasibility*
-   comparison.  Do not claim it is directly comparable to models trained on
-   all available rows.
-3. Apply the same frozen transformed features and untouched validation/test
-   sets.  Compare original versus a training-only, stratified subsample;
-   do not bootstrap validation/test data.
-4. Require a material validation improvement over monotone LightGBM to justify
-   its extra dependency, computational cost, and weaker explanation story.
-
-**Decision output:** include TabPFN only if it is reproducible, feasible at the
-available scale, calibrated after training-only calibration, and materially
-better than the simpler alternatives.
+Reconsider only after the WoE, LightGBM, FURIA, and EBM comparisons are stable.
 
 ## Implementation order
 
@@ -196,7 +182,6 @@ better than the simpler alternatives.
    prediction-writing, and per-round experiment configuration.
 2. Implement the plain logistic baseline and WoE scorecard.
 3. Implement monotone LightGBM, then FURIA feasibility/export support.
-4. Implement GAM/EBM.
-5. Run the TabPFN feasibility check last.
-6. Freeze the selected configuration, refit it on the permitted training data
+4. Implement the EBM benchmark.
+5. Freeze the selected configuration, refit it on the permitted training data
    for each round, and write a model-comparison report.

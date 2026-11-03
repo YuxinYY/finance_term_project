@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from finance_project.model_development.ebm_model import EBMConfig
 from finance_project.model_development.lightgbm_model import LightGBMConfig
 from finance_project.model_development.run_walk_forward_models import (
     RunnerConfig,
@@ -106,3 +107,27 @@ def test_lightgbm_runner_uses_validation_for_early_stopping(tmp_path):
     assert payload["model_details"]["best_iteration"] <= 30
     assert "cash_ratio" in payload["model_details"]["monotone_constraints"]
     assert payload["test"]["calibrated"]["pr_auc"] is not None
+
+
+def test_ebm_runner_writes_global_importance_and_shape_figures(tmp_path):
+    pytest.importorskip("interpret")
+    round_dir = _write_round(tmp_path)
+    payload = run_model_for_round(
+        round_dir=round_dir,
+        model_family="ebm",
+        config=RunnerConfig(
+            output_dir=str(tmp_path / "artifacts"), run_name="test_run", figure_dir=str(tmp_path / "figures")
+        ),
+        ebm_config=EBMConfig(
+            outer_bags=1,
+            max_rounds=50,
+            early_stopping_rounds=5,
+            min_samples_leaf=2,
+            n_jobs=1,
+        ),
+    )
+
+    assert payload["model_details"]["feature_set"] == "core"
+    importance_path = payload["artifacts"]["global_feature_importance"]
+    assert pd.read_csv(importance_path)["feature"].tolist()
+    assert payload["artifacts"]["feature_curve_figures"]
