@@ -101,15 +101,38 @@ For a quicker single-round run, or to run one model family:
 ```bash
 PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \
   -m finance_project.model_development.run_walk_forward_models \
-  --rounds 1 --models lightgbm
+  --rounds 1 --models lightgbm --run-name lightgbm_round_01
 ```
 
-Generated models are written to `models/model_development/`.  Per-round JSON
-reports and validation/test prediction CSVs are written to
-`reports/model_development/`; they contain ROC-AUC, PR-AUC, raw and calibrated
-PD-quality metrics, and a calibrated test-PD decile table.  See
+Every generated artifact for the default run is written below
+`model_artifacts/baseline_v1/`, grouped by round and model family.  Supply a
+new `--run-name` to preserve earlier experiments, or `--output-dir` to place
+all artifacts elsewhere.  Each model folder contains its serialised model,
+metrics JSON, and validation/test prediction CSVs; the JSON contains ROC-AUC,
+PR-AUC, raw and calibrated PD-quality metrics, and a calibrated test-PD decile
+table.  ROC and precision--recall curves for calibrated test PDs are written to
+`reports/figures/<run-name>/round_XX/<model-family>/`.  Pass `--no-figures` to
+skip those PNG outputs, or `--figure-dir` to use another figure root.  See
 `src/finance_project/model_development/MODEL_DEVELOPMENT_PLAN.md` for the
 evaluation contract and the later FURIA, GAM, and TabPFN phases.
+
+### PD calibration
+
+The runner retains the model's unadjusted probability as `pd_raw`, then fits a
+Platt calibrator on that round's validation predictions and labels.  It learns
+the two parameters in the following mapping:
+
+\[
+\operatorname{pd\_calibrated} = \sigma\!\left(a \cdot
+\operatorname{logit}(\operatorname{pd\_raw}) + b\right),
+\]
+
+where \(\sigma\) is the logistic sigmoid.  The same frozen mapping is then
+applied to the test-set `pd_raw` values; test labels are never used to fit the
+calibrator.  Raw probabilities are clipped to \([10^{-6}, 1 - 10^{-6}]\)
+before the logit is calculated.  This produces calibrated PDs, not binary
+default decisions; the runner does not use a 0.5 (or any other) classification
+threshold.
 
 ## Working conventions
 

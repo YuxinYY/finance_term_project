@@ -20,6 +20,8 @@ from sklearn.metrics import (
     average_precision_score,
     brier_score_loss,
     log_loss,
+    precision_recall_curve,
+    roc_curve,
     roc_auc_score,
 )
 
@@ -35,8 +37,10 @@ EPSILON = 1e-6
 @dataclass(frozen=True)
 class RunnerConfig:
     data_dir: str = "data/processed/walk_forward"
-    model_dir: str = "models/model_development"
-    report_dir: str = "reports/model_development"
+    output_dir: str = "model_artifacts"
+    run_name: str = "baseline_v1"
+    figure_dir: str = "reports/figures"
+    save_figures: bool = True
     calibration: str = "platt"
     random_state: int = 42
 
@@ -133,6 +137,61 @@ def pd_deciles(actual: pd.Series, probabilities: np.ndarray) -> list[dict[str, f
     ]
 
 
+def save_discrimination_figures(
+    actual: pd.Series,
+    probabilities: np.ndarray,
+    *,
+    output_dir: str | Path,
+    model_family: str,
+    round_name: str,
+) -> dict[str, str]:
+    """Write ROC and precision--recall curves for one model's test predictions."""
+    if pd.Series(actual).nunique() != 2:
+        return {}
+
+    # Import only when figures are requested so non-plotting users do not pay
+    # the import cost or need a graphical backend.
+    import matplotlib
+
+    matplotlib.use("Agg", force=True)
+    import matplotlib.pyplot as plt
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    actual = pd.Series(actual).astype(int)
+    probabilities = np.asarray(probabilities, dtype=float)
+    roc_auc = roc_auc_score(actual, probabilities)
+    pr_auc = average_precision_score(actual, probabilities)
+
+    false_positive_rate, true_positive_rate, _ = roc_curve(actual, probabilities)
+    figure, axis = plt.subplots(figsize=(6, 5))
+    axis.plot(false_positive_rate, true_positive_rate, color="#0072B2", linewidth=2, label=f"AUC = {roc_auc:.3f}")
+    axis.plot([0, 1], [0, 1], "--", color="0.45", label="No-skill")
+    axis.set(xlim=(0, 1), ylim=(0, 1.02), xlabel="False positive rate", ylabel="True positive rate")
+    axis.set_title(f"ROC curve — {model_family}, {round_name}")
+    axis.legend(loc="lower right")
+    axis.grid(alpha=0.2)
+    figure.tight_layout()
+    roc_path = output_dir / "roc_curve.png"
+    figure.savefig(roc_path, dpi=180)
+    plt.close(figure)
+
+    precision, recall, _ = precision_recall_curve(actual, probabilities)
+    baseline = actual.mean()
+    figure, axis = plt.subplots(figsize=(6, 5))
+    axis.plot(recall, precision, color="#D55E00", linewidth=2, label=f"Average precision = {pr_auc:.3f}")
+    axis.axhline(baseline, linestyle="--", color="0.45", label=f"Default rate = {baseline:.2%}")
+    axis.set(xlim=(0, 1), ylim=(0, 1.02), xlabel="Recall", ylabel="Precision")
+    axis.set_title(f"Precision–recall curve — {model_family}, {round_name}")
+    axis.legend(loc="upper right")
+    axis.grid(alpha=0.2)
+    figure.tight_layout()
+    pr_path = output_dir / "pr_curve.png"
+    figure.savefig(pr_path, dpi=180)
+    plt.close(figure)
+    return {"roc_curve": str(roc_path), "pr_curve": str(pr_path)}
+
+
 def load_feature_splits(round_dir: str | Path) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, list[str]]:
     """Load one feature round and align validation/test columns to training columns."""
     round_dir = Path(round_dir)
@@ -210,12 +269,12 @@ def run_model_for_round(
     test_calibrated = calibrator.transform(test_raw)
 
     round_name = Path(round_dir).name
-    model_path = project_path(config.model_dir) / round_name / f"{model_family}.joblib"
-    report_path = project_path(config.report_dir) / round_name / f"{model_family}.json"
-    prediction_path = project_path(config.report_dir) / round_name / f"{model_family}_test_predictions.csv"
-    validation_prediction_path = project_path(config.report_dir) / round_name / f"{model_family}_validation_predictions.csv"
-    model_path.parent.mkdir(parents=True, exist_ok=True)
-    prediction_path.parent.mkdir(parents=True, exist_ok=True)
+    artifact_dir = project_path(config.output_dir) / config.run_name / round_name / model_family
+    model_path = artifact_dir / "model.joblib"
+    report_path = artifact_dir / "metrics.json"
+    prediction_path = artifact_dir / "test_predictions.csv"
+    validation_prediction_path = artifact_dir / "validation_predictions.csv"
+    artifact_dir.mkdir(parents=True, exist_ok=True)
     joblib.dump(
         {
             "model_family": model_family,
@@ -230,6 +289,17 @@ def run_model_for_round(
     _prediction_frame(test, test_raw, test_calibrated).to_csv(prediction_path, index=False)
     _prediction_frame(validation, validation_raw, validation_calibrated).to_csv(
         validation_prediction_path, index=False
+    )
+    figure_paths = (
+        save_discrimination_figures(
+            y_test,
+            test_calibrated,
+            output_dir=project_path(config.figure_dir) / config.run_name / round_name / model_family,
+            model_family=model_family,
+            round_name=round_name,
+        )
+        if config.save_figures
+        else {}
     )
 
     payload: dict[str, Any] = {
@@ -255,6 +325,7 @@ def run_model_for_round(
             "model": str(model_path),
             "test_predictions": str(prediction_path),
             "validation_predictions": str(validation_prediction_path),
+            **figure_paths,
         },
     }
     write_json(report_path, payload)
@@ -273,8 +344,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", default="data/processed/walk_forward")
     parser.add_argument("--models", choices=["woe_logistic", "lightgbm", "both"], default="both")
     parser.add_argument("--rounds", type=_parse_rounds, default=[1, 2, 3, 4])
-    parser.add_argument("--model-dir", default="models/model_development")
-    parser.add_argument("--report-dir", default="reports/model_development")
+    parser.add_argument(
+        "--output-dir",
+        default="model_artifacts",
+        help="Root directory for generated models, metrics, and prediction files.",
+    )
+    parser.add_argument(
+        "--run-name",
+        default="baseline_v1",
+        help="Subdirectory under --output-dir; use a new name to preserve an earlier run.",
+    )
+    parser.add_argument(
+        "--figure-dir",
+        default="reports/figures",
+        help="Root directory for ROC and precision--recall figures.",
+    )
+    parser.add_argument("--no-figures", action="store_true", help="Skip writing ROC and PR-curve figures.")
     parser.add_argument("--calibration", choices=["none", "platt", "isotonic"], default="platt")
     parser.add_argument("--random-state", type=int, default=42)
     parser.add_argument("--woe-bins", type=int, default=10)
@@ -291,8 +376,10 @@ def main() -> None:
     args = parse_args()
     runner_config = RunnerConfig(
         data_dir=args.data_dir,
-        model_dir=args.model_dir,
-        report_dir=args.report_dir,
+        output_dir=args.output_dir,
+        run_name=args.run_name,
+        figure_dir=args.figure_dir,
+        save_figures=not args.no_figures,
         calibration=args.calibration,
         random_state=args.random_state,
     )
@@ -327,7 +414,10 @@ def main() -> None:
                 }
             )
             print(f"Completed {model_family} for {round_dir.name}")
-    write_json(project_path(args.report_dir) / "summary.json", {"runs": summaries})
+    write_json(
+        project_path(args.output_dir) / args.run_name / "summary.json",
+        {"run_name": args.run_name, "runs": summaries},
+    )
 
 
 if __name__ == "__main__":

@@ -70,13 +70,19 @@ def test_runner_aligns_absent_dummy_and_writes_woe_artifacts(tmp_path):
     payload = run_model_for_round(
         round_dir=round_dir,
         model_family="woe_logistic",
-        config=RunnerConfig(model_dir=str(tmp_path / "models"), report_dir=str(tmp_path / "reports")),
+        config=RunnerConfig(
+            output_dir=str(tmp_path / "artifacts"), run_name="test_run", figure_dir=str(tmp_path / "figures")
+        ),
         woe_config=WOELogisticConfig(n_bins=4, c_values=(0.1, 1.0)),
     )
 
     assert payload["test"]["calibrated"]["roc_auc"] is not None
-    assert (tmp_path / "models" / "round_01" / "woe_logistic.joblib").is_file()
-    assert (tmp_path / "reports" / "round_01" / "woe_logistic_test_predictions.csv").is_file()
+    assert (tmp_path / "artifacts" / "test_run" / "round_01" / "woe_logistic" / "model.joblib").is_file()
+    assert (
+        tmp_path / "artifacts" / "test_run" / "round_01" / "woe_logistic" / "test_predictions.csv"
+    ).is_file()
+    assert (tmp_path / "figures" / "test_run" / "round_01" / "woe_logistic" / "roc_curve.png").is_file()
+    assert (tmp_path / "figures" / "test_run" / "round_01" / "woe_logistic" / "pr_curve.png").is_file()
 
 
 def test_lightgbm_runner_uses_validation_for_early_stopping(tmp_path):
@@ -85,7 +91,9 @@ def test_lightgbm_runner_uses_validation_for_early_stopping(tmp_path):
     payload = run_model_for_round(
         round_dir=round_dir,
         model_family="lightgbm",
-        config=RunnerConfig(model_dir=str(tmp_path / "models"), report_dir=str(tmp_path / "reports")),
+        config=RunnerConfig(
+            output_dir=str(tmp_path / "artifacts"), run_name="test_run", figure_dir=str(tmp_path / "figures")
+        ),
         lightgbm_config=LightGBMConfig(
             n_estimators=30,
             early_stopping_rounds=5,

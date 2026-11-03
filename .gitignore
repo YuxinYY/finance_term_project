@@ -12,6 +12,12 @@ reports/metrics/*
 reports/model_development/
 reports/figures/*
 !reports/figures/.gitkeep
+# Keep the first shared model-review figure set under version control; other
+# generated model figures remain local artifacts.
+!reports/figures/model_test_v1/
+!reports/figures/model_test_v1/**
+model_artifacts/*
+!model_artifacts/.gitkeep
 
 __pycache__/
 .pytest_cache/
