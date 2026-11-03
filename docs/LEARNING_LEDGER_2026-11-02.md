@@ -1879,7 +1879,7 @@ print(n / (n + m))  # 0.5: it keeps half its own rate, half the average
 
 **Why did tuning fail?** (D-104.) Tuning changes how the same signal is fitted, not what the model knows. The top configurations are nearly tied, and chosen settings swing widely across folds, which looks like noise.
 
-**Why are the encodings computed out-of-fold?** (D-094.) Otherwise a row sees its own default in its feature. Our test: leaky encodings scored *worse* out of time (0.8330 vs 0.8356 AUC on 2009; `reports/features/round2_target_encoding.csv`).
+**Why are the encodings computed out-of-fold?** (D-094.) Otherwise a row sees its own default in its feature. Our test: leaky encodings scored *worse* out of time (0.8330 vs 0.8356 AUC on 2009; D-094, `reports/features/round2_decisions.md`).
 
 **Why is SHAP not value?** (D-122.) Sector percentiles have the largest SHAP share, yet dropping them changes AUC insignificantly. They take credit from the base ratios they correlate with (0.88-0.98).
 
