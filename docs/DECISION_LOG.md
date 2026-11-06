@@ -719,8 +719,10 @@ All numbers come from `experiments/gbm/<exp>/metrics.md`, `train_log.md`, `confi
   1.34; 1.21 / 1.36 / 1.43 by year), calibration slope 0.976. The level gap grows as default rates rise,
   so it is a central-tendency problem, not a shape problem.
 - Source(s): R-19 (abstract only: boosted-tree probabilities can be distorted and need post-hoc
-  calibration; we tested this and found little distortion here). Platt (R-20) is TO-VERIFY, so
-  "Platt scaling" is cited as a method name only [UNVERIFIED].
+  calibration; we tested this and found little distortion here). Platt (R-20 SECONDARY: original not
+  obtained; sigmoid formula and fitting on a separate calibration set per R-19 Sec. 2.1, eqs. 1-3, VERIFIED
+  full text 2026-11-03). The "500 defaults" rule for choosing Platt over isotonic is our own heuristic; R-19
+  Sec. 5 (Fig. 7) shows isotonic overfits small calibration sets, in cases, on non-credit data.
 - Risks / what would change our mind: the calibration-specialist's chosen central tendency. Raw OOT
   predictions (`oot_predictions_raw.parquet`) and inner-B predictions (`inner_B_predictions.parquet`:
   row_id, y, pd_raw_inner, fold) are provided so the common method can be fitted without touching
@@ -1040,7 +1042,8 @@ orchestrator should render it from these entries and the CSVs.
   the holdout batch (constraint 2).
 - Source(s): R-22 Sec. 2.2 eq. (4) pp. 5-6 (invariance assumption doubtful 2008-12; used as a level tool,
   not as a claim that the assumption holds); R-07 pp. 88-91 (monotone recalibration cannot add power);
-  Platt/isotonic named as methods only [UNVERIFIED, R-20/R-21].
+  Platt/isotonic: R-19 Secs. 2.1-2.2, 5 (VERIFIED full text) and R-44 (isotonic as a monotone nonparametric map;
+  it creates ties, so AUC can fall slightly, cf. the -0.0008 above). R-20 stays SECONDARY; R-21 not obtained, do not cite.
 - Human reviewer (initials) and date:
 
 ### D-073 Holdout central tendency: tau = 1.49% (start-6), PIT anchor plus a horizon hedge

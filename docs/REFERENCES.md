@@ -82,8 +82,13 @@ SHAP paper).
 12. **LightGBM's paper (R-38) is not the source for monotone constraints, NaN handling or
     categorical splits.** Those are documented software options (R-39) and, for the
     `intermediate`/`advanced` methods, an un-refereed arXiv report (R-40). Cite accordingly.
-13. **Platt and Zadrozny–Elkan originals were not read** (R-20 SECONDARY, R-21 LOCATED). Name
-    the methods, cite R-43 for the Platt formula and R-44 for PAV/isotonic properties.
+13. **Platt and Zadrozny–Elkan originals were not read** (R-20 SECONDARY, R-21 LOCATED; re-tried
+    2026-11-03). Name the methods; cite R-19 Sec. 2.1 / R-43 for the Platt formula and R-19
+    Secs. 2.2, 5 / R-44 for PAV/isotonic properties (R-19 full text now VERIFIED).
+    **Isotonic is a non-decreasing step function, so it creates ties and can move AUC slightly**
+    (R-19 Sec. 4 on coarse piecewise-constant output; D-072 measured −0.0008). "A monotone
+    recalibration leaves AUC unchanged" is exact only for *strictly* increasing maps (Platt with
+    b > 0, intercept shifts). Word it that way.
 
 ## Bibliography
 
@@ -107,9 +112,9 @@ SHAP paper).
 | R-16 | BCBS (2005, May, revised). *Studies on the Validation of Internal Rating Systems.* Working Paper No. 14. | **VERIFIED** | https://www.bis.org/publ/bcbs_wp14.htm → https://www.bis.org/publications/studies-validation-internal-rating-systems-revised.pdf | See notes N-16 |
 | R-17 | Lessmann, S., Baesens, B., Seow, H.-V., & Thomas, L. C. (2015). Benchmarking state-of-the-art classification algorithms for credit scoring: An update of research. *EJOR*, 247(1), 124–136. doi:10.1016/j.ejor.2015.05.030 | **VERIFIED (manuscript version)** | Crossref metadata; text read in manuscript "…A ten-year update" at https://lirias.kuleuven.be/retrieve/319952 (same authors). Accepted MS also at eprints.soton.ac.uk/377196 (403 today) | See notes N-17. Page refs are manuscript pages, not EJOR pages |
 | R-18 | Chen, T., & Guestrin, C. (2016). XGBoost: A scalable tree boosting system. *KDD '16*. | TO-VERIFY | — | Not attempted |
-| R-19 | Niculescu-Mizil, A., & Caruana, R. (2005). Predicting good probabilities with supervised learning. *ICML '05*, 625–632. doi:10.1145/1102351.1102430 | **VERIFIED (abstract-level claims only)** | https://mlanthology.org/icml/2005/niculescumizil2005icml-predicting (cs.cornell.edu PDF failed: certificate error) | See notes N-19 |
-| R-20 | Platt, J. C. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In Smola, Bartlett, Schölkopf & Schuurmans (eds.), *Advances in Large Margin Classifiers*, MIT Press, pp. 61–74. **Year: commonly cited 1999 (preprint); R-43 cites it as Platt (2000)** — book year not checked. | **SECONDARY** (2026-11-02). Original not obtained: CiteSeerX redirects to web.archive.org (blocked for us); Colorado mirror failed certificate check; MS Research .ps link is stale. Method restated in R-43 Sec. 1 eqs. (1)–(2), p. 1; named in R-19 abstract | page numbers 61–74 from secondary listings only | Cite as "Platt scaling (Platt, 1999/2000; as restated by Lin, Lin & Weng 2007, R-43)". Do **not** cite claims about Platt's hold-out/cross-validation advice: not read in the original |
-| R-21 | Zadrozny, B., & Elkan, C. (2002). Transforming classifier scores into accurate multiclass probability estimates. *Proc. 8th ACM SIGKDD (KDD '02)*, 694–699. doi:10.1145/775047.775151 | **LOCATED** (Crossref metadata matches, 2026-11-02); full text not obtained (Cornell copy and Elkan's UCSD page failed certificate checks; ACM 403). Content SECONDARY via R-44 §1, §3 (cites it as using PAV for calibration) | api.crossref.org/works/10.1145/775047.775151 | Isotonic (PAV) calibration — name the method and cite R-44 for its properties; do not attribute specific findings to R-21 |
+| R-19 | Niculescu-Mizil, A., & Caruana, R. (2005). Predicting good probabilities with supervised learning. *ICML '05*, 625–632. doi:10.1145/1102351.1102430 | **VERIFIED (full text, 2026-11-03)**: all 8 pp. read (Secs. 1–7) | Metadata https://mlanthology.org/icml/2005/niculescumizil2005icml-predicting ; full text (authors' camera-ready, "crc.rev3") https://www.cs.cornell.edu/~alexn/papers/calibration.icml05.crc.rev3.pdf (fetched OK 2026-11-03). PDF is unpaginated: proceedings page = 624 + pdf page (inferred from pp. 625–632, 8 pp.) | See notes N-19. Now also the verified source for the Platt formula (Sec. 2.1) and for isotonic vs Platt data requirements (Sec. 5) |
+| R-20 | Platt, J. C. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In Smola, Bartlett, Schölkopf & Schuurmans (eds.), *Advances in Large Margin Classifiers*, MIT Press, pp. 61–74. **Year: commonly cited 1999 (preprint); R-43 cites it as Platt (2000)** — book year not checked. | **SECONDARY** (2026-11-02). Original not obtained: CiteSeerX redirects to web.archive.org (blocked for us); Colorado mirror failed certificate check; MS Research .ps link is stale. Method restated in R-43 Sec. 1 eqs. (1)–(2), p. 1; named in R-19 abstract | page numbers 61–74 from secondary listings only (R-19's reference list also gives Platt (1999), *Advances in Large Margin Classifiers*, pp. 61–74) | Cite as "Platt scaling (Platt, 1999/2000; as restated by Niculescu-Mizil & Caruana 2005, R-19 Sec. 2.1, and Lin, Lin & Weng 2007, R-43)". **2026-11-03 re-check:** original still not obtained (FIU course file is lecture slides, not the chapter; Colorado mirror certificate error again). Claim (a) "sigmoid p = 1/(1+exp(A·f+B)) of the score, A, B by max. likelihood" is supported by TWO independent VERIFIED restatements, same sign convention: R-19 Sec. 2.1 eqs. (1)–(3), pdf p. 2; R-43 Sec. 1 eqs. (1)–(2), p. 1. Status stays SECONDARY because the original was not read. Do **not** attribute hold-out advice to Platt himself; R-19 Sec. 2.1 (pdf p. 2) is the source for "fit on an independent calibration set" |
+| R-21 | Zadrozny, B., & Elkan, C. (2002). Transforming classifier scores into accurate multiclass probability estimates. *Proc. 8th ACM SIGKDD (KDD '02)*, 694–699. doi:10.1145/775047.775151 | **LOCATED** (Crossref metadata matches, 2026-11-02); full text not obtained (Cornell copy and Elkan's UCSD page failed certificate checks; ACM 403). Content SECONDARY via R-44 §1, §3 (cites it as using PAV for calibration) | api.crossref.org/works/10.1145/775047.775151 | Isotonic (PAV) calibration — name the method; cite R-19 Sec. 2.2 + Sec. 5 and R-44 for its properties; do not attribute specific findings to R-21. **2026-11-03 re-check:** KDD '02 full text still not obtained. NB https://cseweb.ucsd.edu/~elkan/calibrated.pdf is the *other* Zadrozny & Elkan paper (ICML 2001, "Obtaining calibrated probability estimates from decision trees and naive Bayesian classifiers": smoothing, curtailment, binning; no isotonic regression in pp. 1–6 read) — **do not cite it as R-21**. Claim (b) "isotonic = monotone, nonparametric recalibration (PAV)" is supported via R-19 Sec. 2.2 eqs. (5)–(6) + Table 1, pdf p. 2 (R-19 attributes the method to Zadrozny & Elkan 2002; 2001) and R-44 §1. Status stays LOCATED |
 | R-22 | Saerens, M., Latinne, P., & Decaestecker, C. (2002). Adjusting the outputs of a classifier to new a priori probabilities: A simple procedure. *Neural Computation*, 14(1), 21–41. doi:10.1162/089976602753284446 | **VERIFIED** | https://dipot.ulb.ac.be/dspace/bitstream/2013/68391/1/Decaestecker_NeuralComp02.pdf (ULB repository preprint; preprint page numbers) | See notes N-22 |
 | R-23 | Lundberg, S. M., & Lee, S.-I. (2017). A unified approach to interpreting model predictions. *NIPS 2017* (31st Conf.). arXiv:1705.07874 | **VERIFIED** | https://arxiv.org/abs/1705.07874 (v2) | See notes N-23. **Does not contain TreeSHAP** |
 | R-24 | Lou, Y., Caruana, R., & Gehrke, J. (2012). Intelligible models for classification and regression. *Proc. 18th ACM SIGKDD (KDD '12)*, 150–158. doi:10.1145/2339530.2339556 | **VERIFIED** (2026-11-02; read pp. 150–151 = pdf pp. 1–2) | https://microsoft.com/en-us/research/wp-content/uploads/2017/06/kdd2012.pdf (Microsoft Research copy of the KDD paper); metadata Crossref | See note N-24 |
@@ -144,6 +149,11 @@ SHAP paper).
 | R-52 | Raymaekers, J., Verbeke, W., & Verdonck, T. (2021). *Weight-of-evidence 2.0 with shrinkage and spline-binning.* arXiv:2101.01494 (v3, 24 Sep 2021). The ar5iv rendering is titled "Weight-of-evidence through shrinkage and spline binning for interpretable nonlinear classification" (likely a later journal title — **journal version not checked**). | **VERIFIED (preprint text, Sec. 1–3.1)** (2026-11-02) | https://arxiv.org/abs/2101.01494 ; https://ar5iv.labs.arxiv.org/html/2101.01494 | See note N-52. WoE definition and its small-cell problem |
 | R-53 | ISTAT. *Elenco dei comuni italiani* — codici statistici delle unità amministrative territoriali (CSV; page says updated 21 Feb 2026). Includes the column "Codice Comune numerico con 110 province (dal 2010 al 2016)". | **VERIFIED (official code list)** (2026-11-02) | Landing page https://www.istat.it/it/archivio/6789 ; file https://www.istat.it/storage/codici-unita-amministrative/Elenco-comuni-italiani.csv | See note N-53 (spot check of `src/data/codes.py`) |
 | R-54 | ISTAT (2009). *Classificazione delle attività economiche Ateco 2007 derivata dalla Nace Rev. 2.* Metodi e Norme n. 40. ISBN 978-88-458-1614-7. | **VERIFIED** (2026-11-02; printed pp. 10, 51–54 read) | https://www.istat.it/wp-content/uploads/2022/03/volume_integrale_ATECO2007.pdf (listed at https://www.istat.it/classificazione/documenti-ateco/) | See note N-54 |
+| R-55 | Bryzgalova, S., Lerner, S., Lettau, M., & Pelger, M. (2025). Missing financial data. *Review of Financial Studies*, 38(3), 803–882. doi:10.1093/rfs/hhae036 | **LOCATED (abstract-level, via search summaries 2026-11-03)** | https://doi.org/10.1093/rfs/hhae036 (full text not read; OUP page truncated, arXiv:2207.13071 PDF unreadable by tool) | Stock-market firm fundamentals, not credit. Supports "missingness is systematic"; does NOT endorse sector-median fill. Do not cite beyond that until read |
+| R-56 | Kim, H., Cho, H., & Ryu, D. (2021). Predicting corporate defaults using machine learning with geometric-lag variables. *Investment Analysts Journal*, 50(3), 161–175. doi:10.1080/10293523.2021.1941554 | **LOCATED (abstract-level, 2026-11-03)** | https://doi.org/10.1080/10293523.2021.1941554 (paywalled). Decay weight formula/lag length NOT confirmed. Not to be confused with Kim, Cho & Ryu (2021) *Computational Economics* (RNN/LSTM) | Claim "geometric-lag variables help ML default models" abstract only. R-05 pp. 38-40 finds latest year beats 3-yr average |
+| R-57 | Seitshiro, M. B., & Govender, S. (2024). Credit risk prediction with and without weights of evidence using quantitative learning models. *Cogent Economics & Finance*, 12(1), 2338971. doi:10.1080/23322039.2024.2338971 | **LOCATED (abstract-level, 2026-11-03)** | https://ideas.repec.org/a/taf/oaefxx/v12y2024i1p2338971.html | Abstract: WoE did not improve logistic regression on commercial bank data; helps explain bins. Full text restricted |
+| R-58 | Saito, T., & Rehmsmeier, M. (2015). The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. *PLoS ONE*, 10(3), e0118432. doi:10.1371/journal.pone.0118432 | **VERIFIED (journal page text: abstract, Theoretical Background, Results, Conclusion; 2026-11-03)** | https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432 | PRC baseline set by positive/negative ratio; "Only PRC changes with the ratio of positives and negatives". Simulation study, not credit data |
+| R-59 | Davis, J., & Goadrich, M. (2006). The relationship between precision-recall and ROC curves. *ICML '06*, 233–240. doi:10.1145/1143844.1143874 | **LOCATED (abstract-level via search summary, 2026-11-03)** | https://mlanthology.org/icml/2006/davis2006icml-relationship | Dominance in ROC space iff dominance in PR space; optimizing AUC-ROC does not guarantee AUC-PR |
 
 ## Verified notes (claims, location, what we take, what we do differently)
 
@@ -346,9 +356,32 @@ SHAP paper).
   neural nets and bagged trees are reasonably calibrated; Platt scaling and isotonic
   regression are compared; after calibration boosted trees, RF and SVMs give the best
   probabilities.
-- NOT checked: body text on calibration-set size (isotonic vs Platt with small data).
-- *Take:* why the GBM challenger needs a post-hoc calibration step. *Differ:* calibration
-  fitted only inside the training window (inner split).
+- **Full text read 2026-11-03** (pdf pp. 1–8; proc. page = 624 + pdf page, inferred):
+- Sec. 2.1, eqs. (1)–(3), pdf p. 2: Platt passes the model output f through the sigmoid
+  P(y=1|f) = 1/(1+exp(A·f+B)); A, B minimise the log loss on a calibration set.
+- Sec. 2.1, pdf p. 2: fitting the sigmoid on the model's own training data biases it (perfect
+  separation can collapse it to a 0/1 step), so an independent calibration set is needed; to
+  limit overfitting Platt uses smoothed targets (N₊+1)/(N₊+2) and 1/(N₋+2), eq. (4).
+- Sec. 2.2, eqs. (5)–(6), Table 1, pdf p. 2: isotonic regression only requires the map to be
+  monotone increasing; it is a least-squares step function fitted by PAV; same independent
+  validation-set requirement. Attributed to Zadrozny & Elkan (2002; 2001).
+- Sec. 4, pdf p. 3: because isotonic output is piecewise constant, calibrated predictions are
+  coarse (many tied values); Platt output is smooth. Sigmoid suits max-margin/boosted models;
+  for naive Bayes (inverted-sigmoid distortion) isotonic is the better choice (pdf p. 6).
+- Sec. 5, Fig. 7, pdf pp. 6–7: calibration sets of 32–8192 cases, eight datasets. Below roughly
+  200–1000 calibration cases Platt beats isotonic for all nine methods; isotonic, being less
+  constrained, overfits small sets. From about 1000 cases up, isotonic is as good or better.
+  For already well-calibrated learners (neural nets, bagged trees, logistic regression)
+  calibration gives little and hurts with small sets.
+- Sec. 7, pdf p. 8: Platt best when data are small; isotonic stronger with enough data.
+- Caveats for us: thresholds are in *cases*, not defaults; positive rates in their data are
+  3–53% (Table 2), far from our ~1–2% default rate; metrics are squared error / log loss on
+  UCI-type problems, not credit panels.
+- *Take:* why the GBM challenger needs a post-hoc calibration step; Platt is the safer choice
+  with a small calibration set; isotonic needs more data and produces ties. *Differ:* calibration
+  fitted only inside the training window (inner split); we use plain 0/1 targets on logit(p_raw)
+  (not Platt's smoothed targets); our "≥ 500 defaults" isotonic eligibility rule (D-053) is our
+  own heuristic, not a number from R-19.
 
 **N-22 Saerens, Latinne & Decaestecker (2002) (R-22)** — preprint pages
 - Sec. 2.2, eq. (4), pp. 5–6: if the within-class densities are unchanged, posteriors can be
@@ -777,7 +810,11 @@ SHAP paper).
 | GA²M adds a few pairwise interaction terms (shown as heat maps); FAST ranks candidate pairs | R-42 | Abstract + Sec. 1, p. 623, eq. 2 | lit-scout 2026-11-02 |
 | EBM = GAM learned by bagged, round-robin, low-learning-rate gradient boosting; optional pairwise terms; prediction is lookups and additions | R-25 | Sec. 3 | lit-scout 2026-11-02 |
 | EBM accuracy was comparable to RF/XGBoost/LightGBM on five public datasets (defaults; not credit-default panels) | R-25 | Sec. 3, Figure 3 | lit-scout 2026-11-02 |
-| Platt scaling = sigmoid 1/(1+exp(A·f+B)) of the score, A and B by (regularised) maximum likelihood | R-43 (restating R-20) | R-43 Sec. 1 eqs. 1–2, p. 1 | lit-scout 2026-11-02 |
+| Platt scaling = sigmoid 1/(1+exp(A·f+B)) of the score, A and B by (regularised) maximum likelihood | R-19; R-43 (both restating R-20) | R-19 Sec. 2.1 eqs. 1–4, pdf p. 2; R-43 Sec. 1 eqs. 1–2, p. 1 | lit-scout 2026-11-02; R-19 added 2026-11-03 |
+| Calibration maps must be fitted on data independent of the model's training data | R-19 | Sec. 2.1 and 2.2, pdf p. 2 | lit-scout 2026-11-03 |
+| Isotonic regression = monotone, nonparametric (step-function) recalibration fitted by PAV | R-19; R-44 | R-19 Sec. 2.2 eqs. 5–6, Table 1, pdf p. 2; R-44 §1 | lit-scout 2026-11-03 |
+| Isotonic overfits small calibration sets; Platt better below ~200–1000 cases, isotonic as good or better above ~1000 (non-credit data, 3–53% positives) | R-19 | Sec. 5, Fig. 7, pdf pp. 6–7; Sec. 7, pdf p. 8 | lit-scout 2026-11-03 |
+| Isotonic output is piecewise constant (coarse, tied predictions); Platt output is smooth | R-19 | Sec. 4, pdf p. 3 | lit-scout 2026-11-03 |
 | PAV (isotonic regression) gives the optimal monotone calibration for log loss and Brier on the fitting data | R-44 | §4.1 Cor. 2; §4.5 Thm 11 | lit-scout 2026-11-02 |
 | Random forest = many trees grown with i.i.d. random vectors (bagging, random feature selection), voting; more trees do not overfit | R-45 | Abstract p. 1; Sec. 1.1 Def. 1.1, Sec. 1.2, p. 2 | lit-scout 2026-11-02 |
 | Target (default-rate) encoding of high-cardinality categoricals via empirical Bayes; hierarchical blending | R-46 | Abstract (Crossref) | lit-scout 2026-11-02 |
@@ -817,7 +854,9 @@ SHAP paper).
 21. Anything from Siddiqi (R-50) or Thomas, Edelman & Crook (R-51) — not read.
 22. "HQ_city is certainly ISTAT coding" — the table is verified (R-53); that the provider used it
     is still an inference from the data (110 distinct codes, frequency pattern).
-11. "Isotonic overfits with small calibration sets" — not checked in R-19 body.
+11. ~~"Isotonic overfits with small calibration sets" — not checked in R-19 body.~~ Now
+    SUPPORTED by R-19 Sec. 5 (2026-11-03), but only as "cases", on non-credit data; do NOT say
+    R-19 gives a defaults threshold (the "≥ 500 defaults" rule in D-053 is ours).
 12. RiskCalc Italy's ratio list (R-03 SECONDARY). For the Italian credit-cycle method, say only
     what R-04 slides 13–15 show: public-firm DD-based CCA combined with the national
     unemployment rate (no formula, weights or version number given).
