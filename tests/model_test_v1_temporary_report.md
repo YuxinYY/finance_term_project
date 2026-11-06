@@ -26,16 +26,16 @@ negative values mean the model underpredicts the test-period default level.
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | 1 | WoE/logistic | 1.21% | 0.8136 | 0.1064 | 0.86% | -0.34 pp |
 | 1 | LightGBM | 1.21% | **0.8219** | 0.1296 | 0.83% | -0.38 pp |
-| 1 | EBM | 1.21% | 0.8124 | **0.1333** | 0.91% | -0.30 pp |
+| 1 | GAM | 1.21% | 0.8124 | **0.1333** | 0.91% | -0.30 pp |
 | 2 | WoE/logistic | 1.58% | 0.8211 | 0.1726 | 1.55% | -0.03 pp |
 | 2 | LightGBM | 1.58% | **0.8288** | **0.2089** | 1.45% | -0.13 pp |
-| 2 | EBM | 1.58% | 0.8155 | 0.2058 | 1.53% | -0.04 pp |
+| 2 | GAM | 1.58% | 0.8155 | 0.2058 | 1.53% | -0.04 pp |
 | 3 | WoE/logistic | 1.65% | 0.8118 | 0.1450 | 1.43% | -0.22 pp |
 | 3 | LightGBM | 1.65% | **0.8247** | **0.1715** | 1.44% | -0.21 pp |
-| 3 | EBM | 1.65% | 0.8119 | 0.1608 | 1.51% | -0.14 pp |
+| 3 | GAM | 1.65% | 0.8119 | 0.1608 | 1.51% | -0.14 pp |
 | 4 | WoE/logistic | 1.39% | 0.8315 | 0.1345 | 1.40% | +0.01 pp |
 | 4 | LightGBM | 1.39% | **0.8447** | **0.1744** | 1.48% | +0.09 pp |
-| 4 | EBM | 1.39% | 0.8332 | 0.1529 | 1.50% | +0.11 pp |
+| 4 | GAM | 1.39% | 0.8332 | 0.1529 | 1.50% | +0.11 pp |
 
 **Calibration note.** Each model is fit on its training split.  The validation
 split is used for WoE/logistic selection or LightGBM early stopping.  EBM uses
