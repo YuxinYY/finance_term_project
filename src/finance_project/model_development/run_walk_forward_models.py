@@ -37,7 +37,7 @@ EPSILON = 1e-6
 
 @dataclass(frozen=True)
 class RunnerConfig:
-    data_dir: str = "data/processed/walk_forward"
+    data_dir: str = "data/processed/walk_forward_temporal"
     output_dir: str = "model_artifacts"
     run_name: str = "baseline_v1"
     figure_dir: str = "reports/figures"
@@ -355,13 +355,21 @@ def _parse_rounds(value: str) -> list[int]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data-dir", default="data/processed/walk_forward")
+    parser.add_argument("--data-dir", default="data/processed/walk_forward_temporal")
     parser.add_argument(
         "--models",
         choices=["woe_logistic", "lightgbm", "ebm", "both", "all"],
         default="both",
     )
-    parser.add_argument("--rounds", type=_parse_rounds, default=[1, 2, 3, 4])
+    parser.add_argument(
+        "--rounds",
+        type=_parse_rounds,
+        default=[1, 2, 3],
+        help=(
+            "Comma-separated round numbers. The default matches the three temporal-year split rounds; "
+            "pass 1,2,3,4 when using the legacy company-random splits."
+        ),
+    )
     parser.add_argument(
         "--output-dir",
         default="model_artifacts",

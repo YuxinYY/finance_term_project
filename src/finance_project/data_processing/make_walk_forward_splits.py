@@ -2,13 +2,13 @@
 
 The input must already contain a 12-month default label for each usable
 firm-year. Each ``(id, fs_year)`` pair is a distinct prediction sample: a
-FY2008 statement predicts default from June 2009 through May 2010. For round
-r, the test set is the next fiscal year, while the preceding years form the
-historical window. A stratified sample of *company IDs* is held out from that
-historical window for validation, so validation and training never share a
-company ID. Each round also includes ``history.csv`` containing statements up
-to the test fiscal year; the preprocessing stage uses it to construct each
-sample's decay-weighted history without accessing future statements.
+FY2008 statement predicts default from June 2009 through May 2010. For each
+round, preceding fiscal years form an expanding training window. Validation is
+either a stratified, ID-disjoint sample of that window (``company_random``) or
+the next complete fiscal year (``temporal_year``). In temporal validation, a
+firm can appear in earlier training years and later validation/test years.
+Each round also includes ``history.csv`` through the test fiscal year, so
+preprocessing can construct features without accessing future statements.
 """
 
 from __future__ import annotations
@@ -30,7 +30,9 @@ class WalkForwardSplit:
 
     round_number: int
     train_years: tuple[int, ...]
+    validation_year: int | None
     test_year: int
+    validation_strategy: str
     train: pd.DataFrame
     validation: pd.DataFrame
     test: pd.DataFrame
@@ -91,10 +93,11 @@ def make_walk_forward_splits(
     target_column: str = "label",
     first_train_year: int | None = None,
     rounds: int = 4,
+    validation_strategy: str = "company_random",
     validation_size: float = 0.2,
     random_state: int = 42,
 ) -> list[WalkForwardSplit]:
-    """Return expanding-window splits with disjoint train/validation company IDs.
+    """Return expanding-window splits using the requested validation strategy.
 
     With fiscal years 2007--2011, ``first_train_year=2007`` and ``rounds=4``,
     the output is:
@@ -104,15 +107,19 @@ def make_walk_forward_splits(
     * round 3: train/validation FY2007--2009, test FY2010;
     * round 4: train/validation FY2007--2010, test FY2011.
 
-    The validation set is sampled by company ID from each historical window,
-    not from the next-year test set. Test IDs may reappear from the past: this
-    is valid walk-forward scoring, because their later labels are never used to
-    fit that round's preprocessing or model. ``history`` contains only records
-    from the first training fiscal year through the test fiscal year.
+    ``company_random`` preserves the original ID-disjoint validation behaviour.
+    ``temporal_year`` uses the whole next fiscal year for validation and the
+    following year for test. With FY2007 as the first training year and three
+    rounds: train FY2007 / validation FY2008 / test FY2009; then train
+    FY2007--2008 / validation FY2009 / test FY2010; then train FY2007--2009 /
+    validation FY2010 / test FY2011. ``history`` contains records from the
+    first training year through the test fiscal year.
     """
     if rounds < 1:
         raise ValueError("rounds must be at least 1.")
-    if not 0 < validation_size < 1:
+    if validation_strategy not in {"company_random", "temporal_year"}:
+        raise ValueError("validation_strategy must be 'company_random' or 'temporal_year'.")
+    if validation_strategy == "company_random" and not 0 < validation_size < 1:
         raise ValueError("validation_size must be strictly between 0 and 1.")
 
     required_columns = {id_column, year_column, target_column}
@@ -127,7 +134,8 @@ def make_walk_forward_splits(
     data = frame.copy()
     data[year_column] = pd.to_numeric(data[year_column], errors="raise").astype(int)
     start_year = int(data[year_column].min()) if first_train_year is None else first_train_year
-    test_years = list(range(start_year + 1, start_year + rounds + 1))
+    first_test_year = start_year + (2 if validation_strategy == "temporal_year" else 1)
+    test_years = list(range(first_test_year, first_test_year + rounds))
     available_years = set(data[year_column].unique())
     unavailable_years = [year for year in test_years if year not in available_years]
     if unavailable_years:
@@ -138,37 +146,49 @@ def make_walk_forward_splits(
 
     splits: list[WalkForwardSplit] = []
     for round_number, test_year in enumerate(test_years, start=1):
-        historical = data.loc[
-            (data[year_column] >= start_year) & (data[year_column] < test_year)
-        ].copy()
         test = data.loc[data[year_column] == test_year].copy()
         history = data.loc[
             (data[year_column] >= start_year) & (data[year_column] <= test_year)
         ].copy()
-        if historical.empty or test.empty:
-            raise ValueError(f"Round {round_number} has an empty historical window or test set.")
-
-        validation_ids = _validation_ids(
-            historical,
-            id_column=id_column,
-            target_column=target_column,
-            validation_size=validation_size,
-            random_state=random_state + round_number - 1,
-        )
-        validation = historical.loc[historical[id_column].isin(validation_ids)].copy()
-        train = historical.loc[~historical[id_column].isin(validation_ids)].copy()
+        validation_year: int | None = None
+        if validation_strategy == "temporal_year":
+            validation_year = test_year - 1
+            train = data.loc[
+                (data[year_column] >= start_year) & (data[year_column] < validation_year)
+            ].copy()
+            validation = data.loc[data[year_column] == validation_year].copy()
+            validation_ids: set = set(validation[id_column].unique())
+        else:
+            historical = data.loc[
+                (data[year_column] >= start_year) & (data[year_column] < test_year)
+            ].copy()
+            if historical.empty:
+                raise ValueError(f"Round {round_number} has an empty historical window.")
+            validation_ids = _validation_ids(
+                historical,
+                id_column=id_column,
+                target_column=target_column,
+                validation_size=validation_size,
+                random_state=random_state + round_number - 1,
+            )
+            validation = historical.loc[historical[id_column].isin(validation_ids)].copy()
+            train = historical.loc[~historical[id_column].isin(validation_ids)].copy()
 
         train_ids = set(train[id_column].unique())
         if train.empty or validation.empty:
             raise ValueError(f"Round {round_number} has an empty train or validation set.")
-        if train_ids.intersection(validation_ids):
+        if test.empty:
+            raise ValueError(f"Round {round_number} has an empty test set.")
+        if validation_strategy == "company_random" and train_ids.intersection(validation_ids):
             raise AssertionError("Train and validation company IDs must be disjoint.")
 
         splits.append(
             WalkForwardSplit(
                 round_number=round_number,
-                train_years=tuple(range(start_year, test_year)),
+                train_years=tuple(int(year) for year in sorted(train[year_column].unique())),
+                validation_year=validation_year,
                 test_year=test_year,
+                validation_strategy=validation_strategy,
                 train=train,
                 validation=validation,
                 test=test,
@@ -183,7 +203,9 @@ def _split_summary(split: WalkForwardSplit, *, id_column: str, target_column: st
     validation_ids = set(split.validation[id_column].unique())
     return {
         "round": split.round_number,
+        "validation_strategy": split.validation_strategy,
         "train_years": list(split.train_years),
+        "validation_year": split.validation_year,
         "test_year": split.test_year,
         "train_rows": int(len(split.train)),
         "validation_rows": int(len(split.validation)),
@@ -236,14 +258,23 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--output-dir",
-        default="data/processed/walk_forward",
+        default="data/processed/walk_forward_temporal",
         help="Directory in which to write round_XX/train.csv, validation.csv, test.csv, and history.csv.",
     )
     parser.add_argument("--id-column", default="id")
     parser.add_argument("--year-column", default="fs_year")
     parser.add_argument("--target-column", default="label")
     parser.add_argument("--first-train-year", type=int, default=None)
-    parser.add_argument("--rounds", type=int, default=4)
+    parser.add_argument("--rounds", type=int, default=3)
+    parser.add_argument(
+        "--validation-strategy",
+        choices=["temporal_year", "company_random"],
+        default="temporal_year",
+        help=(
+            "temporal_year uses the complete fiscal year before test; company_random holds out "
+            "a stratified, ID-disjoint sample of the historical window."
+        ),
+    )
     parser.add_argument("--validation-size", type=float, default=0.2)
     parser.add_argument("--random-state", type=int, default=42)
     parser.add_argument(
@@ -269,6 +300,7 @@ def main() -> None:
         target_column=args.target_column,
         first_train_year=args.first_train_year,
         rounds=args.rounds,
+        validation_strategy=args.validation_strategy,
         validation_size=args.validation_size,
         random_state=args.random_state,
     )
@@ -291,6 +323,7 @@ def main() -> None:
             "id_column": args.id_column,
             "year_column": args.year_column,
             "target_column": args.target_column,
+            "validation_strategy": args.validation_strategy,
             "validation_size": args.validation_size,
             "random_state": args.random_state,
             "rounds": manifest_rounds,

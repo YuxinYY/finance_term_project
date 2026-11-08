@@ -19,7 +19,7 @@ The four model tracks are:
 
 ### Data and folds
 
-- Use the existing four walk-forward rounds.  For every round, fit model
+- Use the three default temporal walk-forward rounds. For every round, fit model
   components on `features_train.csv`, tune/select them on
   `features_validation.csv`, and make one final evaluation on
   `features_test.csv`.
@@ -27,9 +27,11 @@ The four model tracks are:
   particular, bins, WoE values, scalers, imputers, rules, target encoding,
   hyperparameters, monotonic constraints, and calibrators must not use test
   rows or test labels.
-- Training and validation company IDs are already disjoint.  A company may
-  occur in training history and later in the test year; that is deliberate
-  walk-forward evaluation, not leakage.
+- The default split is temporal: the complete fiscal year after the expanding
+  training window is validation and the following fiscal year is test. A firm
+  may occur in earlier training years and later validation/test years; this is
+  deliberate annual-monitoring evaluation, not leakage. The legacy
+  `company_random` splitter remains available for ID-disjoint sensitivity analysis.
 - Reuse the saved preprocessing artifact fitted for that round.  Do not refit
   anomaly rules, sector medians, target encoding, or category levels inside a
   model using validation or test data.

@@ -84,6 +84,7 @@ def select_ebm_features(features: pd.DataFrame, feature_set: str) -> list[str]:
         raise ValueError("feature_set must be 'core' or 'full'.")
     selected = [column for column in CORE_EBM_FEATURES if column in features.columns]
     selected.extend(column for column in features.columns if column.startswith("legal_"))
+    selected.extend(column for column in features.columns if column.startswith("city_"))
     if not selected:
         raise ValueError("None of the core EBM features were found.")
     return selected

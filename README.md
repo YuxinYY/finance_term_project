@@ -34,41 +34,54 @@ pip install -r requirements.txt
 ```
 
 Run the walk-forward data preparation from the repository root after creating
-the 12-month `label` column. Each output row remains a distinct `(id, fs_year)`
-prediction sample; the later preprocessing step aggregates its prior financial
-statements without looking ahead.
+the 12-month `label` column. The default creates three expanding **temporal**
+rounds: FY2007 train / FY2008 validation / FY2009 test, then each window moves
+forward one year. Each output row remains a distinct `(id, fs_year)` prediction
+sample. A firm can occur in earlier training years and later validation/test
+years; this is intentional temporal forecasting, not leakage.
 
 ```bash
 PYTHONPATH=src python -m finance_project.data_processing.make_walk_forward_splits \
   --input data/processed/labeled_data.csv \
-  --output-dir data/processed/walk_forward
+  --output-dir data/processed/walk_forward_temporal \
+  --validation-strategy temporal_year \
+  --rounds 3
 ```
+
+The former ID-disjoint sensitivity design remains available with
+`--validation-strategy company_random --rounds 4 --validation-size 0.2`.
 
 For every round, fit preprocessing only on `train.csv`, then use the saved
 artifact to transform validation and test. This is required to keep sector
 medians, target encoding, and categorical levels from leaking across splits.
+Use `--feature-mode decayed_history` for the existing weighted historical
+features, or `--feature-mode firm_year` for direct anchor-year features. In
+`firm_year` mode, lagged/change features still use only earlier statements.
 
 ```bash
 PYTHONPATH=src python -m finance_project.data_processing.preprocess fit \
-  --input data/processed/walk_forward/round_01/train.csv \
-  --history data/processed/walk_forward/round_01/history.csv \
-  --output data/processed/walk_forward/round_01/features_train.csv \
-  --artifacts models/preprocessing/round_01.joblib
+  --input data/processed/walk_forward_temporal/round_01/train.csv \
+  --history data/processed/walk_forward_temporal/round_01/history.csv \
+  --output data/processed/walk_forward_temporal/round_01/features_train.csv \
+  --artifacts models/preprocessing/temporal_decayed/round_01.joblib \
+  --feature-mode decayed_history
 
 PYTHONPATH=src python -m finance_project.data_processing.preprocess transform \
-  --input data/processed/walk_forward/round_01/validation.csv \
-  --history data/processed/walk_forward/round_01/history.csv \
-  --output data/processed/walk_forward/round_01/features_validation.csv \
-  --artifacts models/preprocessing/round_01.joblib
+  --input data/processed/walk_forward_temporal/round_01/validation.csv \
+  --history data/processed/walk_forward_temporal/round_01/history.csv \
+  --output data/processed/walk_forward_temporal/round_01/features_validation.csv \
+  --artifacts models/preprocessing/temporal_decayed/round_01.joblib
 
 PYTHONPATH=src python -m finance_project.data_processing.preprocess transform \
-  --input data/processed/walk_forward/round_01/test.csv \
-  --history data/processed/walk_forward/round_01/history.csv \
-  --output data/processed/walk_forward/round_01/features_test.csv \
-  --artifacts models/preprocessing/round_01.joblib
+  --input data/processed/walk_forward_temporal/round_01/test.csv \
+  --history data/processed/walk_forward_temporal/round_01/history.csv \
+  --output data/processed/walk_forward_temporal/round_01/features_test.csv \
+  --artifacts models/preprocessing/temporal_decayed/round_01.joblib
 ```
 
-Repeat the three preprocessing commands for rounds 2--4. The transformed files
+Repeat the three preprocessing commands for rounds 2--3. To compare
+`firm_year`, rerun them with `--feature-mode firm_year`, a separate output
+directory, and separate preprocessing artifacts. The transformed files
 retain `id`, `fs_year`, `pred_start_dt` when available, and `label`, followed
 by model features; do not use the identifier/date columns as model inputs.
 
@@ -92,7 +105,7 @@ EBM uses its own training-only validation split for early stopping, while the
 outer validation split remains available for PD calibration.  It does not
 bootstrap the minority class.
 
-Run both models for all four rounds from the repository root:
+Run both models for all three temporal rounds from the repository root:
 
 ```bash
 PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \

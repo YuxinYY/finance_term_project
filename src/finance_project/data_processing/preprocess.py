@@ -1,10 +1,12 @@
-"""Fit and apply leakage-safe cleaning, feature engineering, and history aggregation.
+"""Fit and apply leakage-safe cleaning and feature engineering.
 
 Each input row is a prediction anchor identified by ``(id, fs_year)``. The
-output has one row per anchor, with financial features aggregated from up to
-four statements for that company whose fiscal year is no later than the
-anchor. The weight for a statement ``k`` calendar years old is ``phi ** k``;
-available weights are re-normalized for every feature.
+output has one row per anchor. ``decayed_history`` aggregates financial
+features from up to four statements whose fiscal year is no later than the
+anchor. ``firm_year`` retains only the anchor-year features, while still using
+earlier statements to calculate backward-looking change features. The weight
+for a statement ``k`` calendar years old is ``phi ** k``; available weights
+are re-normalized for every feature in ``decayed_history`` mode.
 
 Use ``fit`` on a round's train.csv only. It learns sector-median imputation,
 industry target encoding, and legal-structure categories, writes those
@@ -47,7 +49,7 @@ ANOMALY_FLAGS = [
     "neg_goodwill_flag",
     "debt_detail_inconsistent",
 ]
-DROP_COLS = ["Unnamed: 0", "eqty_corp_family_tot", "days_rec", "roe"]
+DROP_COLS = ["Unnamed: 0", "eqty_corp_family_tot", "days_rec"]
 IMPUTE_COLS = [
     "asst_intang_fixed",
     "asst_tang_fixed",
@@ -98,9 +100,14 @@ class PreprocessingConfig:
     legal_column: str = "legal_struct"
     phi: float = 0.5
     max_history_records: int = 4
+    feature_mode: str = "decayed_history"
     target_encoding_smoothing: float = 20.0
     target_encoding_folds: int = 5
     random_state: int = 42
+
+    def __post_init__(self) -> None:
+        if self.feature_mode not in {"decayed_history", "firm_year"}:
+            raise ValueError("feature_mode must be 'decayed_history' or 'firm_year'.")
 
 
 @dataclass
@@ -112,6 +119,9 @@ class PreprocessingArtifacts:
     industry_mapping: pd.Series
     industry_global_mean: float
     legal_categories: list[str]
+    legal_reference_category: str
+    city_categories: list[str]
+    city_reference_category: str
     feature_columns: list[str]
 
 
@@ -146,6 +156,7 @@ def _coerce_raw_types(frame: pd.DataFrame, config: PreprocessingConfig) -> pd.Da
         "wc_net",
         "margin_fin",
         "roa",
+        "roe",
     }
     for column in numeric.intersection(frame.columns):
         frame[column] = pd.to_numeric(frame[column], errors="coerce")
@@ -240,6 +251,9 @@ def clean_and_impute(
     result["roa"] = result.get("roa", pd.Series(index=result.index, dtype=float)).fillna(
         result["prof_operations"].div(result["asst_tot"]).mul(100)
     )
+    result["roe"] = result.get("roe", pd.Series(index=result.index, dtype=float)).fillna(
+        result["profit"].div(result["eqty_tot"].where(result["eqty_tot"] != 0)).mul(100)
+    )
     return result
 
 
@@ -256,10 +270,15 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     long_term_capital = result["debt_lt"] + result["eqty_tot"]
 
     result["size"] = np.log(result["asst_tot"].where(result["asst_tot"] > 0))
+    result["equity_ratio"] = _positive_divide(result["eqty_tot"], result["asst_tot"])
+    result["debt_ratio"] = _positive_divide(total_debt, result["asst_tot"])
     result["st_debt_share"] = _positive_divide(result["debt_st"], total_debt)
     result["lt_debt_to_capital"] = _positive_divide(result["debt_lt"], long_term_capital)
     result["bank_debt_conc"] = _positive_divide(bank_debt, total_debt)
+    result["tangible_asset_ratio"] = _positive_divide(result["asst_tang_fixed"], result["asst_tot"])
+    result["goodwill_ratio"] = _positive_divide(result["goodwill"], result["asst_tot"])
     result["cash_ratio"] = _positive_divide(result["cash_and_equiv"], result["asst_tot"])
+    result["cash_to_debt"] = _positive_divide(result["cash_and_equiv"], total_debt)
     result["cash_to_financing_exp_ratio"] = _positive_divide(
         result["cash_and_equiv"], result["exp_financing"]
     )
@@ -271,8 +290,13 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     result["ebitda_ratio"] = _positive_divide(result["ebitda"], result["asst_tot"])
     result["op_margin"] = _positive_divide(result["prof_operations"], result["rev_operating"])
     result["net_prof_margin"] = _positive_divide(result["profit"], result["rev_operating"])
+    result["tax_ratio"] = _positive_divide(result["taxes"], result["asst_tot"])
+    result["cogs_ratio"] = _positive_divide(result["COGS"], result["rev_operating"])
     result["int_coverage"] = _positive_divide(result["ebitda"], result["exp_financing"])
-    result["cash_to_debt"] = _positive_divide(result["cf_operations"], total_debt)
+    result["financing_expense_ratio"] = _positive_divide(result["exp_financing"], result["asst_tot"])
+    result["financing_income_ratio"] = _positive_divide(result["inc_financing"], result["asst_tot"])
+    result["operating_cash_flow_ratio"] = _positive_divide(result["cf_operations"], result["asst_tot"])
+    result["operating_cash_flow_to_debt"] = _positive_divide(result["cf_operations"], total_debt)
     result["debt_to_ebitda"] = _positive_divide(total_debt, result["ebitda"])
     result["loss_flag"] = (result["profit"] < 0).astype(int)
 
@@ -293,9 +317,10 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     average_ar = (result["AR"] + previous_ar) / 2
     result["ar_turnover"] = _positive_divide(result["rev_operating"], average_ar)
     previous_ar_turnover = result.groupby(config.id_column)["ar_turnover"].shift()
-    result["change_in_ar_turnover"] = (
-        (result["ar_turnover"] - previous_ar_turnover).div(year_gap.where(year_gap > 0))
-    )
+    # The feature schema defines this as a difference in turnover, rather than
+    # an annualized change. (Unlike ROA and sales growth, it is not divided by
+    # the calendar-year gap.)
+    result["change_in_ar_turnover"] = result["ar_turnover"] - previous_ar_turnover
 
     zero_values = {
         "zero_asst_tot": result["asst_tot"],
@@ -323,11 +348,16 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
 def _period_numeric_features() -> list[str]:
     return [
         "size",
+        "equity_ratio",
+        "debt_ratio",
         "st_debt_share",
         "lt_debt_to_capital",
         "bank_debt_conc",
+        "tangible_asset_ratio",
+        "goodwill_ratio",
         "cash_ratio",
         "cash_to_financing_exp_ratio",
+        "cash_to_debt",
         "cur_asst_ratio",
         "AR_ratio",
         "change_in_ar_turnover",
@@ -335,12 +365,19 @@ def _period_numeric_features() -> list[str]:
         "wc_ratio",
         "cur_debt_ratio",
         "annualized_change_in_roa",
+        "roa",
+        "roe",
         "ebitda_ratio",
         "op_margin",
         "annualized_sales_growth",
         "net_prof_margin",
+        "tax_ratio",
+        "cogs_ratio",
         "int_coverage",
-        "cash_to_debt",
+        "financing_expense_ratio",
+        "financing_income_ratio",
+        "operating_cash_flow_ratio",
+        "operating_cash_flow_to_debt",
         "debt_to_ebitda",
     ]
 
@@ -367,6 +404,184 @@ def _period_binary_features() -> list[str]:
         "zero_cf_operations",
         "zero_exp_financing",
     ]
+
+
+# These groups mirror data/interim/Feature_Schema-Sheet1.csv. A trailing '*'
+# denotes one or more one-hot encoded columns.
+FEATURE_GROUPS: dict[str, list[str]] = {
+    "business_structural": ["ateco_sector_te", "legal_*", "city_*", "size"],
+    "leverage_capital_structure": [
+        "equity_ratio",
+        "debt_ratio",
+        "st_debt_share",
+        "lt_debt_to_capital",
+        "bank_debt_conc",
+        "cur_asst_ratio",
+        "tangible_asset_ratio",
+        "goodwill_ratio",
+        "neg_bs_flag",
+    ],
+    "liquidity_activity": [
+        "cash_ratio",
+        "cash_to_debt",
+        "AR_ratio",
+        "change_in_ar_turnover",
+        "payables_ratio",
+        "wc_ratio",
+        "cur_debt_ratio",
+    ],
+    "profitability_growth": [
+        "roa",
+        "annualized_change_in_roa",
+        "ebitda_ratio",
+        "op_margin",
+        "annualized_sales_growth",
+        "net_prof_margin",
+        "roe",
+        "tax_ratio",
+        "cogs_ratio",
+        "neg_pl_flag",
+    ],
+    "coverage_cash_flow": [
+        "int_coverage",
+        "financing_expense_ratio",
+        "cash_to_financing_exp_ratio",
+        "debt_to_ebitda",
+        "financing_income_ratio",
+        "operating_cash_flow_ratio",
+        "operating_cash_flow_to_debt",
+    ],
+}
+
+
+def feature_schema_coverage(feature_columns: list[str]) -> pd.DataFrame:
+    """Audit implemented model features against Feature_Schema-Sheet1.csv.
+
+    A one-hot categorical family is considered represented when it has at
+    least one non-reference dummy. A single observed category legitimately has
+    no dummy because it has zero variance.
+    """
+    available = set(feature_columns)
+    rows: list[dict[str, str | bool]] = []
+    for group, requirements in FEATURE_GROUPS.items():
+        for requirement in requirements:
+            if requirement.endswith("*"):
+                prefix = requirement[:-1]
+                present = any(column.startswith(prefix) for column in available)
+            else:
+                present = requirement in available
+            rows.append(
+                {
+                    "group": group,
+                    "schema_feature": requirement,
+                    "implemented": present,
+                }
+            )
+    return pd.DataFrame(rows)
+
+
+def _group_feature_columns(feature_columns: list[str], requirements: list[str]) -> list[str]:
+    """Resolve exact and prefix feature requirements for a schema group."""
+    selected: list[str] = []
+    for requirement in requirements:
+        if requirement.endswith("*"):
+            selected.extend(column for column in feature_columns if column.startswith(requirement[:-1]))
+        elif requirement in feature_columns:
+            selected.append(requirement)
+    return list(dict.fromkeys(selected))
+
+
+def calculate_vif(
+    frame: pd.DataFrame,
+    feature_columns: list[str],
+    *,
+    max_rows: int = 100_000,
+    random_state: int = 42,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Return VIF, covariance, and correlation diagnostics for numeric features.
+
+    Missing values are median-filled only for this diagnostic. All-missing and
+    constant columns are retained in the VIF table with an explanatory status
+    but excluded from the matrix inversion. To keep the diagnostic practical
+    on the full panel, it uses a reproducible row sample when needed.
+    """
+    if max_rows < 2:
+        raise ValueError("max_rows must be at least 2.")
+    values = frame.reindex(columns=feature_columns).apply(pd.to_numeric, errors="coerce")
+    values = values.replace([np.inf, -np.inf], np.nan)
+    if len(values) > max_rows:
+        values = values.sample(n=max_rows, random_state=random_state)
+
+    rows: list[dict[str, str | float | int]] = []
+    eligible: list[str] = []
+    for column in feature_columns:
+        series = values[column]
+        if series.notna().sum() == 0:
+            rows.append({"feature": column, "vif": np.nan, "status": "all_missing"})
+        elif series.nunique(dropna=True) < 2:
+            rows.append({"feature": column, "vif": np.nan, "status": "constant"})
+        else:
+            eligible.append(column)
+
+    usable = values[eligible].copy()
+    if eligible:
+        usable = usable.fillna(usable.median()).fillna(0.0)
+    covariance = usable.cov() if eligible else pd.DataFrame()
+    correlation = usable.corr() if eligible else pd.DataFrame()
+
+    if len(eligible) == 1:
+        rows.append({"feature": eligible[0], "vif": 1.0, "status": "ok"})
+    elif len(eligible) > 1:
+        matrix = correlation.to_numpy(dtype=float)
+        rank = int(np.linalg.matrix_rank(matrix))
+        if rank < len(eligible):
+            rows.extend({"feature": column, "vif": np.inf, "status": "singular_matrix"} for column in eligible)
+        else:
+            inverse = np.linalg.inv(matrix)
+            rows.extend(
+                {
+                    "feature": column,
+                    "vif": float(inverse[position, position]),
+                    "status": "ok",
+                }
+                for position, column in enumerate(eligible)
+            )
+
+    vif = pd.DataFrame(rows)
+    if not vif.empty:
+        vif.insert(1, "sample_rows", len(values))
+        vif = vif.sort_values(["vif", "feature"], ascending=[False, True], na_position="last").reset_index(drop=True)
+    return vif, covariance, correlation
+
+
+def feature_group_collinearity(
+    frame: pd.DataFrame,
+    feature_columns: list[str] | None = None,
+    *,
+    max_rows: int = 100_000,
+    random_state: int = 42,
+) -> dict[str, dict[str, pd.DataFrame]]:
+    """Calculate VIF-first diagnostics for every Feature Schema group.
+
+    Pass transformed *training* features only. This avoids using validation or
+    test data even for an exploratory diagnostic.
+    """
+    feature_columns = list(frame.columns) if feature_columns is None else feature_columns
+    diagnostics: dict[str, dict[str, pd.DataFrame]] = {}
+    for group, requirements in FEATURE_GROUPS.items():
+        columns = _group_feature_columns(feature_columns, requirements)
+        vif, covariance, correlation = calculate_vif(
+            frame,
+            columns,
+            max_rows=max_rows,
+            random_state=random_state,
+        )
+        diagnostics[group] = {
+            "vif": vif,
+            "covariance": covariance,
+            "correlation": correlation,
+        }
+    return diagnostics
 
 
 def _assert_anchor_history_compatibility(
@@ -396,7 +611,13 @@ def aggregate_histories(
     _assert_anchor_history_compatibility(anchors, history_features, config)
     id_column = config.id_column
     year_column = config.year_column
-    anchor_columns = [id_column, year_column, config.sector_column, config.legal_column]
+    anchor_columns = [
+        id_column,
+        year_column,
+        config.sector_column,
+        config.legal_column,
+        "HQ_city",
+    ]
     for optional in [config.target_column, "pred_start_dt"]:
         if optional in anchors.columns:
             anchor_columns.append(optional)
@@ -428,6 +649,45 @@ def aggregate_histories(
     output["history_records"] = matches.groupby("_anchor_row").size().reindex(output.index).astype(int)
     output["no_prior_observation"] = (output["history_records"] == 1).astype(int)
     return output.reset_index(drop=True)
+
+
+def select_firm_year_features(
+    anchors: pd.DataFrame,
+    history_features: pd.DataFrame,
+    config: PreprocessingConfig,
+) -> pd.DataFrame:
+    """Keep direct anchor-year features while retaining only backward-looking lags.
+
+    ``make_period_features`` is evaluated on the supplied history first, so a
+    change feature at fiscal year ``t`` can use only the same firm's earlier
+    statement(s). This function then selects the exact ``(id, fs_year)``
+    anchor row rather than decay-averaging earlier values.
+    """
+    _assert_anchor_history_compatibility(anchors, history_features, config)
+    id_column = config.id_column
+    year_column = config.year_column
+    key_columns = [id_column, year_column]
+    if history_features.duplicated(key_columns).any():
+        raise ValueError("History must have at most one row per (id, fs_year).")
+
+    anchor_columns = [
+        id_column,
+        year_column,
+        config.sector_column,
+        config.legal_column,
+        "HQ_city",
+    ]
+    for optional in [config.target_column, "pred_start_dt"]:
+        if optional in anchors.columns:
+            anchor_columns.append(optional)
+    period_columns = [*_period_numeric_features(), *_period_binary_features()]
+    direct_features = history_features[[*key_columns, *period_columns]]
+    return anchors[anchor_columns].merge(
+        direct_features,
+        on=key_columns,
+        how="left",
+        validate="one_to_one",
+    )
 
 
 def _oof_target_encode(
@@ -489,6 +749,9 @@ def _finalize_features(
     legal = output[config.legal_column].fillna("Unknown").astype(str)
     for category in artifacts.legal_categories:
         output[f"legal_{category}"] = legal.eq(category).astype(int)
+    city = output["HQ_city"].fillna("Unknown").astype(str)
+    for category in artifacts.city_categories:
+        output[f"city_{category}"] = city.eq(category).astype(int)
 
     metadata = [config.id_column, config.year_column]
     for optional in ["pred_start_dt", config.target_column]:
@@ -498,7 +761,7 @@ def _finalize_features(
     return output[[*metadata, *ordered_features]]
 
 
-def _build_aggregated(
+def _build_features(
     anchors: pd.DataFrame,
     history: pd.DataFrame,
     medians: pd.DataFrame,
@@ -506,7 +769,12 @@ def _build_aggregated(
 ) -> pd.DataFrame:
     clean_anchors = clean_and_impute(anchors, medians, config)
     clean_history = clean_and_impute(history, medians, config)
-    return aggregate_histories(clean_anchors, make_period_features(clean_history, config), config)
+    history_features = make_period_features(clean_history, config)
+    if config.feature_mode == "decayed_history":
+        return aggregate_histories(clean_anchors, history_features, config)
+    if config.feature_mode == "firm_year":
+        return select_firm_year_features(clean_anchors, history_features, config)
+    raise ValueError("feature_mode must be 'decayed_history' or 'firm_year'.")
 
 
 def fit_preprocessor(
@@ -520,26 +788,44 @@ def fit_preprocessor(
     _require_columns(train, include_target=True, config=config)
     _require_columns(history, include_target=False, config=config)
     medians = fit_sector_medians(train, config)
-    aggregated = _build_aggregated(train, history, medians, config)
-    _, industry_mapping, industry_global_mean = _oof_target_encode(aggregated, config)
-    legal_categories = sorted(aggregated[config.legal_column].fillna("Unknown").astype(str).unique())
+    engineered = _build_features(train, history, medians, config)
+    _, industry_mapping, industry_global_mean = _oof_target_encode(engineered, config)
+    all_legal_categories = sorted(engineered[config.legal_column].fillna("Unknown").astype(str).unique())
+    all_city_categories = sorted(engineered["HQ_city"].fillna("Unknown").astype(str).unique())
+    legal_reference_category, *legal_categories = all_legal_categories
+    city_reference_category, *city_categories = all_city_categories
     feature_columns = [
         *_period_numeric_features(),
         *_period_binary_features(),
-        "history_records",
-        "no_prior_observation",
-        "ateco_sector_te",
-        *[f"legal_{category}" for category in legal_categories],
     ]
+    if config.feature_mode == "decayed_history":
+        feature_columns.extend(["history_records", "no_prior_observation"])
+    feature_columns.extend(
+        [
+            "ateco_sector_te",
+            *[f"legal_{category}" for category in legal_categories],
+            *[f"city_{category}" for category in city_categories],
+        ]
+    )
+    schema_coverage = feature_schema_coverage(feature_columns)
+    missing_required = schema_coverage.loc[
+        ~schema_coverage["implemented"] & ~schema_coverage["schema_feature"].str.endswith("*"),
+        "schema_feature",
+    ].tolist()
+    if missing_required:
+        raise AssertionError(f"Feature Schema fields are missing: {missing_required}")
     artifacts = PreprocessingArtifacts(
         config=config,
         sector_medians=medians,
         industry_mapping=industry_mapping,
         industry_global_mean=industry_global_mean,
         legal_categories=legal_categories,
+        legal_reference_category=legal_reference_category,
+        city_categories=city_categories,
+        city_reference_category=city_reference_category,
         feature_columns=feature_columns,
     )
-    return _finalize_features(aggregated, artifacts, training=True), artifacts
+    return _finalize_features(engineered, artifacts, training=True), artifacts
 
 
 def transform_with_preprocessor(
@@ -553,8 +839,8 @@ def transform_with_preprocessor(
     history = _drop_index_columns(history)
     _require_columns(anchors, include_target=False, config=config)
     _require_columns(history, include_target=False, config=config)
-    aggregated = _build_aggregated(anchors, history, artifacts.sector_medians, config)
-    return _finalize_features(aggregated, artifacts, training=False)
+    engineered = _build_features(anchors, history, artifacts.sector_medians, config)
+    return _finalize_features(engineered, artifacts, training=False)
 
 
 def bootstrap_minority_class(
@@ -638,6 +924,7 @@ def _fit_command(args: argparse.Namespace) -> None:
         legal_column=args.legal_column,
         phi=args.phi,
         max_history_records=args.max_history_records,
+        feature_mode=args.feature_mode,
         target_encoding_smoothing=args.target_encoding_smoothing,
         target_encoding_folds=args.target_encoding_folds,
         random_state=args.random_state,
@@ -665,6 +952,9 @@ def _fit_command(args: argparse.Namespace) -> None:
             "artifacts": str(artifact_path),
             "rows": int(len(transformed)),
             "features": artifacts.feature_columns,
+            "feature_schema_coverage": feature_schema_coverage(artifacts.feature_columns).to_dict(
+                orient="records"
+            ),
             "config": asdict(config),
             "minority_bootstrap": bootstrap_summary,
         },
@@ -684,6 +974,42 @@ def _transform_command(args: argparse.Namespace) -> None:
     transformed = transform_with_preprocessor(_read_csv(args.input), _read_csv(args.history), artifacts)
     output_path = _write_csv(transformed, args.output)
     print(f"Wrote transformed features: {output_path}")
+
+
+def _collinearity_command(args: argparse.Namespace) -> None:
+    """Write VIF-first diagnostics for a transformed training feature file."""
+    frame = _read_csv(args.input)
+    metadata = {args.id_column, args.year_column, args.target_column, "pred_start_dt"}
+    feature_columns = [column for column in frame.columns if column not in metadata]
+    diagnostics = feature_group_collinearity(
+        frame,
+        feature_columns,
+        max_rows=args.max_rows,
+        random_state=args.random_state,
+    )
+    output_dir = project_path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    summary: dict[str, Any] = {
+        "input": str(project_path(args.input)),
+        "max_rows": args.max_rows,
+        "groups": {},
+    }
+    for group, diagnostic in diagnostics.items():
+        vif_path = output_dir / f"{group}_vif.csv"
+        covariance_path = output_dir / f"{group}_covariance.csv"
+        correlation_path = output_dir / f"{group}_correlation.csv"
+        diagnostic["vif"].to_csv(vif_path, index=False)
+        diagnostic["covariance"].to_csv(covariance_path)
+        diagnostic["correlation"].to_csv(correlation_path)
+        summary["groups"][group] = {
+            "features": diagnostic["vif"]["feature"].tolist() if not diagnostic["vif"].empty else [],
+            "vif": str(vif_path),
+            "covariance": str(covariance_path),
+            "correlation": str(correlation_path),
+        }
+    summary_path = write_json(args.summary_output, summary)
+    print(f"Wrote collinearity diagnostics: {output_dir}")
+    print(f"Wrote collinearity summary: {summary_path}")
 
 
 def _add_common_arguments(parser: argparse.ArgumentParser) -> None:
@@ -708,6 +1034,15 @@ def parse_args() -> argparse.Namespace:
     fit.add_argument("--legal-column", default="legal_struct")
     fit.add_argument("--phi", type=float, default=0.5)
     fit.add_argument("--max-history-records", type=int, default=4)
+    fit.add_argument(
+        "--feature-mode",
+        choices=["decayed_history", "firm_year"],
+        default="decayed_history",
+        help=(
+            "decayed_history averages up to four past/current statements; firm_year retains "
+            "only direct anchor-year features while keeping backward-looking change features."
+        ),
+    )
     fit.add_argument("--target-encoding-smoothing", type=float, default=20.0)
     fit.add_argument("--target-encoding-folds", type=int, default=5)
     fit.add_argument("--random-state", type=int, default=42)
@@ -725,6 +1060,22 @@ def parse_args() -> argparse.Namespace:
     transform = commands.add_parser("transform", help="Transform validation/test data with fitted artifacts.")
     _add_common_arguments(transform)
     transform.add_argument("--artifacts", required=True, help="Joblib artifact input path.")
+    collinearity = commands.add_parser(
+        "collinearity",
+        help="Write VIF, covariance, and correlation diagnostics for transformed training features.",
+    )
+    collinearity.add_argument("--input", required=True, help="Transformed training feature CSV.")
+    collinearity.add_argument("--output-dir", required=True, help="Directory for grouped VIF/covariance CSVs.")
+    collinearity.add_argument(
+        "--summary-output",
+        default="reports/metrics/feature_collinearity.json",
+        help="JSON diagnostic manifest path.",
+    )
+    collinearity.add_argument("--id-column", default="id")
+    collinearity.add_argument("--year-column", default="fs_year")
+    collinearity.add_argument("--target-column", default="label")
+    collinearity.add_argument("--max-rows", type=int, default=100_000)
+    collinearity.add_argument("--random-state", type=int, default=42)
     return parser.parse_args()
 
 
@@ -732,8 +1083,10 @@ def main() -> None:
     args = parse_args()
     if args.command == "fit":
         _fit_command(args)
-    else:
+    elif args.command == "transform":
         _transform_command(args)
+    else:
+        _collinearity_command(args)
 
 
 if __name__ == "__main__":
