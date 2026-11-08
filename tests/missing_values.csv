@@ -1,0 +1,46 @@
+group,col,n_missing,pct_missing,n_zero,pct_zero
+1 Identity & attributes,id,0,0.0,0,0.0
+1 Identity & attributes,stmt_date,0,0.0,0,0.0
+1 Identity & attributes,HQ_city,254,0.03,0,0.0
+1 Identity & attributes,legal_struct,0,0.0,0,0.0
+1 Identity & attributes,ateco_sector,0,0.0,0,0.0
+1 Identity & attributes,fs_year,0,0.0,0,0.0
+1 Identity & attributes,def_date,793838,95.07,0,0.0
+1 Identity & attributes,pred_start_dt,0,0.0,0,0.0
+2 Assets,asst_intang_fixed,162,0.02,185059,22.16
+2 Assets,asst_tang_fixed,103,0.01,80719,9.67
+2 Assets,asst_fixed_fin,236,0.03,306923,36.76
+2 Assets,asst_current,1,0.0,142,0.02
+2 Assets,AR,12,0.0,1619,0.19
+2 Assets,cash_and_equiv,17,0.0,10610,1.27
+2 Assets,asst_tot,0,0.0,0,0.0
+2 Assets,goodwill,21,0.0,619,0.07
+3 Equity & liabilities,eqty_tot,1,0.0,11,0.0
+3 Equity & liabilities,eqty_corp_family_tot,835016,100.0,0,0.0
+3 Equity & liabilities,liab_lt,294,0.04,520442,62.33
+3 Equity & liabilities,liab_lt_emp,162,0.02,267660,32.05
+3 Equity & liabilities,debt_bank_st,105276,12.61,201696,24.15
+3 Equity & liabilities,debt_bank_lt,78120,9.36,368437,44.12
+3 Equity & liabilities,debt_fin_st,106709,12.78,635160,76.07
+3 Equity & liabilities,debt_fin_lt,79210,9.49,690239,82.66
+3 Equity & liabilities,AP_st,104581,12.52,24609,2.95
+3 Equity & liabilities,AP_lt,79386,9.51,738767,88.47
+3 Equity & liabilities,debt_st,5,0.0,1384,0.17
+3 Equity & liabilities,debt_lt,154,0.02,231622,27.74
+4 Income statement,rev_operating,174,0.02,25613,3.07
+4 Income statement,COGS,24,0.0,510,0.06
+4 Income statement,prof_operations,21,0.0,574,0.07
+4 Income statement,inc_financing,26,0.0,5686,0.68
+4 Income statement,exp_financing,366,0.04,28790,3.45
+4 Income statement,prof_financing,655,0.08,799943,95.8
+4 Income statement,inc_extraord,305,0.04,165468,19.82
+4 Income statement,taxes,32,0.0,1265,0.15
+4 Income statement,profit,20,0.0,1580,0.19
+4 Income statement,ebitda,81,0.01,612,0.07
+5 Cash flow & derived ratios,cf_operations,88,0.01,872,0.1
+5 Cash flow & derived ratios,wc_net,6,0.0,18,0.0
+5 Cash flow & derived ratios,margin_fin,31278,3.75,9,0.0
+5 Cash flow & derived ratios,days_rec,600807,71.95,1514,0.18
+5 Cash flow & derived ratios,roa,27,0.0,1806,0.22
+5 Cash flow & derived ratios,roe,56624,6.78,2349,0.28
+6 Label,label,0,0.0,823680,98.64

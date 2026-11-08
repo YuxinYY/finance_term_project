@@ -9,8 +9,29 @@ models/*
 !models/.gitkeep
 reports/metrics/*
 !reports/metrics/.gitkeep
+reports/model_development/
 reports/figures/*
 !reports/figures/.gitkeep
+# Keep the first shared model-review figure set under version control; other
+# generated model figures remain local artifacts.
+!reports/figures/model_test_v1/
+!reports/figures/model_test_v1/**
+# The temporary cross-model review report embeds these EBM PR curves.
+!reports/figures/ebm_v1/
+!reports/figures/ebm_v1/round_01/
+!reports/figures/ebm_v1/round_01/ebm/
+!reports/figures/ebm_v1/round_01/ebm/pr_curve.png
+!reports/figures/ebm_v1/round_02/
+!reports/figures/ebm_v1/round_02/ebm/
+!reports/figures/ebm_v1/round_02/ebm/pr_curve.png
+!reports/figures/ebm_v1/round_03/
+!reports/figures/ebm_v1/round_03/ebm/
+!reports/figures/ebm_v1/round_03/ebm/pr_curve.png
+!reports/figures/ebm_v1/round_04/
+!reports/figures/ebm_v1/round_04/ebm/
+!reports/figures/ebm_v1/round_04/ebm/pr_curve.png
+model_artifacts/*
+!model_artifacts/.gitkeep
 
 __pycache__/
 .pytest_cache/

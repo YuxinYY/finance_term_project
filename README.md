@@ -33,28 +33,130 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Run the pipeline from the repository root. The first command uses the tracked
-1,000-row demo dataset and removes the CSV index column (for example,
-`Unnamed: 0`) safely.
+Run the walk-forward data preparation from the repository root after creating
+the 12-month `label` column. The default creates three expanding **temporal**
+rounds: FY2007 train / FY2008 validation / FY2009 test, then each window moves
+forward one year. Each output row remains a distinct `(id, fs_year)` prediction
+sample. A firm can occur in earlier training years and later validation/test
+years; this is intentional temporal forecasting, not leakage.
 
 ```bash
-PYTHONPATH=src python -m finance_project.data_processing.make_dataset \
-  --input data/raw/train_demo_subset.csv
-
-# Replace profit with the approved project target column.
-PYTHONPATH=src python -m finance_project.model_development.train \
-  --data data/processed/train_demo_subset_clean.csv --target profit
-
-PYTHONPATH=src python -m finance_project.model_evaluation.evaluate \
-  --data data/processed/train_demo_subset_clean.csv --target profit
-
-PYTHONPATH=src python -m finance_project.reporting.update_report
+PYTHONPATH=src python -m finance_project.data_processing.make_walk_forward_splits \
+  --input data/processed/labeled_data.csv \
+  --output-dir data/processed/walk_forward_temporal \
+  --validation-strategy temporal_year \
+  --rounds 3
 ```
 
-The training and evaluation scripts intentionally require `--target`. Choose
-the target only after the project team agrees on the prediction question. The
-report updater reads JSON artifacts, so report numbers are never manually
-copied from a notebook.
+The former ID-disjoint sensitivity design remains available with
+`--validation-strategy company_random --rounds 4 --validation-size 0.2`.
+
+For every round, fit preprocessing only on `train.csv`, then use the saved
+artifact to transform validation and test. This is required to keep sector
+medians, target encoding, and categorical levels from leaking across splits.
+Use `--feature-mode decayed_history` for the existing weighted historical
+features, or `--feature-mode firm_year` for direct anchor-year features. In
+`firm_year` mode, lagged/change features still use only earlier statements.
+
+```bash
+PYTHONPATH=src python -m finance_project.data_processing.preprocess fit \
+  --input data/processed/walk_forward_temporal/round_01/train.csv \
+  --history data/processed/walk_forward_temporal/round_01/history.csv \
+  --output data/processed/walk_forward_temporal/round_01/features_train.csv \
+  --artifacts models/preprocessing/temporal_decayed/round_01.joblib \
+  --feature-mode decayed_history
+
+PYTHONPATH=src python -m finance_project.data_processing.preprocess transform \
+  --input data/processed/walk_forward_temporal/round_01/validation.csv \
+  --history data/processed/walk_forward_temporal/round_01/history.csv \
+  --output data/processed/walk_forward_temporal/round_01/features_validation.csv \
+  --artifacts models/preprocessing/temporal_decayed/round_01.joblib
+
+PYTHONPATH=src python -m finance_project.data_processing.preprocess transform \
+  --input data/processed/walk_forward_temporal/round_01/test.csv \
+  --history data/processed/walk_forward_temporal/round_01/history.csv \
+  --output data/processed/walk_forward_temporal/round_01/features_test.csv \
+  --artifacts models/preprocessing/temporal_decayed/round_01.joblib
+```
+
+Repeat the three preprocessing commands for rounds 2--3. To compare
+`firm_year`, rerun them with `--feature-mode firm_year`, a separate output
+directory, and separate preprocessing artifacts. The transformed files
+retain `id`, `fs_year`, `pred_start_dt` when available, and `label`, followed
+by model features; do not use the identifier/date columns as model inputs.
+
+Minority-class bootstrapping is optional and applies only to the transformed
+training output. Add these arguments to the `preprocess fit` command to target
+one default for every five non-defaults; omit them to retain the original class
+distribution for comparison:
+
+```bash
+--bootstrap-minority --minority-to-majority-ratio 0.2
+```
+
+## Walk-forward model development
+
+The model-development runner compares a training-only WoE scorecard with
+regularised logistic regression, monotone LightGBM, and an Explainable Boosting
+Machine (EBM).  It reads the already transformed feature files, uses validation
+data for logistic-model selection or LightGBM early stopping, fits a Platt
+calibrator on validation predictions, and evaluates the test split once.  The
+EBM uses its own training-only validation split for early stopping, while the
+outer validation split remains available for PD calibration.  It does not
+bootstrap the minority class.
+
+Run both models for all three temporal rounds from the repository root:
+
+```bash
+PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \
+  -m finance_project.model_development.run_walk_forward_models
+```
+
+For a quicker single-round run, or to run one model family:
+
+```bash
+PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \
+  -m finance_project.model_development.run_walk_forward_models \
+  --rounds 1 --models lightgbm --run-name lightgbm_round_01
+```
+
+Run the additive EBM benchmark with its core financial feature set:
+
+```bash
+PYTHONPATH=src /opt/miniconda3/envs/daily/bin/python \
+  -m finance_project.model_development.run_walk_forward_models \
+  --models ebm --run-name ebm_v1
+```
+
+Every generated artifact for the default run is written below
+`model_artifacts/baseline_v1/`, grouped by round and model family.  Supply a
+new `--run-name` to preserve earlier experiments, or `--output-dir` to place
+all artifacts elsewhere.  Each model folder contains its serialised model,
+metrics JSON, and validation/test prediction CSVs; the JSON contains ROC-AUC,
+PR-AUC, raw and calibrated PD-quality metrics, and a calibrated test-PD decile
+table.  ROC and precision--recall curves for calibrated test PDs are written to
+`reports/figures/<run-name>/round_XX/<model-family>/`.  Pass `--no-figures` to
+skip those PNG outputs, or `--figure-dir` to use another figure root.  See
+`src/finance_project/model_development/MODEL_DEVELOPMENT_PLAN.md` for the
+evaluation contract, the later FURIA phase, and the deferred TabPFN option.
+
+### PD calibration
+
+The runner retains the model's unadjusted probability as `pd_raw`, then fits a
+Platt calibrator on that round's validation predictions and labels.  It learns
+the two parameters in the following mapping:
+
+\[
+\operatorname{pd\_calibrated} = \sigma\!\left(a \cdot
+\operatorname{logit}(\operatorname{pd\_raw}) + b\right),
+\]
+
+where \(\sigma\) is the logistic sigmoid.  The same frozen mapping is then
+applied to the test-set `pd_raw` values; test labels are never used to fit the
+calibrator.  Raw probabilities are clipped to \([10^{-6}, 1 - 10^{-6}]\)
+before the logit is calculated.  This produces calibrated PDs, not binary
+default decisions; the runner does not use a 0.5 (or any other) classification
+threshold.
 
 ## Working conventions
 
