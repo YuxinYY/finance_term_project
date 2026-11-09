@@ -35,3 +35,17 @@ Roger grades whether AI use was "appropriate and additive (or just a shortcut)".
 ## 2026-11-03 KN sections (lit review, feature importance, PR-AUC, calibration)
 - AI-generated: docs/NOV3_KN_SECTIONS_lit_importance_prauc_calibration.md and references R-55..R-59 in docs/REFERENCES.md (Claude Code). Sources R-55..R-57, R-59 checked at abstract level only; R-58 checked on the journal page text. Calibration and SHAP numbers copied from reports/calibration/summary.md and experiments/gbm/GB-25/shap_all_features_2010.csv.
 - Human verifier: pending (KN to open each source and initial).
+
+## 2026-11-08 Calibration study guide and teaching example
+- AI-generated: docs/2026-11-08_STUDY_GUIDE_calibration.md and docs/2026-11-08_study_calibration_example.py (Claude Code). Numbers copied from reports/calibration/summary.md, docs/DECISION_LOG.md (D-002, D-009, D-053, D-070..D-079, D-116, D-146), data/splits/walkforward.json, reports/tournament/r2_scorecard.md and a label-status count of data/interim/panel.parquet; example output is simulated (seed 0). Sources only those marked VERIFIED in docs/REFERENCES.md.
+- Human verifier: pending (KN to run the example and spot-check the cited numbers).
+
+## 2026-11-08 Calibration reference study on Chloe's LightGBM (round 1)
+- AI-generated: experiments/calibration/2026-11-08_chloe_lgbm_v1/ (scripts, CSVs, predictions, 2026-11-08_params_for_production.json), reports/calibration/2026-11-08_chloe_lgbm_v1_round1.md, decision entry D-150 (Claude Code, calibration-specialist sub-agent). It refit Chloe's LightGBM from her round-1 feature files with her config and constraints; all numbers are printed by those scripts. Her production model was not loaded.
+- Human verifier: pending (KN and Chloe to re-run the two r1 scripts and check the 0.8431 reproduction and the label join).
+- 2026-11-08 addendum: guide Parts 11-17 (worked math, Chloe calibration audit, lockbox, holdout rules with assignment page citations), figures `reports/calibration/fig/2026-11-08_chloe_r1_*.png` (script `experiments/calibration/2026-11-08_chloe_lgbm_v1/2026-11-08_r1_calibration_curves.py`), decision-log entry D-151 written by Claude Code from KN's instruction. Worked numbers computed in Python 2026-11-08. Human verifier: pending (KN).
+- 2026-11-09: docs/2026-11-08_STUDY_GUIDE_data_features_from_zero.md (Claude Code). Numbers copied from reports/data/01_profile.md, 02_missingness.md, reports/features/univariate.md, round2_univariate.md, docs/FEATURE_SPEC.md, experiments/gbm/GB-25/{config.json,train_log.md,shap_all_features_2010.csv,doc_examples_output.txt}, reports/tournament/r2_scorecard.md; prior-year availability counted from data/interim/panel.parquet. Alfa S.r.l. balance sheet is constructed to match the GB-25 worked-example feature values (illustrative, not a real firm). Human verifier: pending (KN).
+
+## 2026-11-08 s5 label rebuild and walk-forward splits v2 (D-151)
+- AI-generated: src/data/2026-11-08_build_labels_s5.py, data/interim/2026-11-08_panel_s5.parquet, data/splits/2026-11-08_walkforward_v2.json, data/splits/2026-11-08_walkforward_v2_test_rows.parquet, reports/data/2026-11-08_labels_s5.md, reports/data/2026-11-08_walkforward_v2_folds.csv, the v2 section of data/splits/README.md and the D-151 update (Claude Code, data-auditor sub-agent). The script reproduced the D-151 counts (835,016 / 11,336 / 2,897), and an independent recompute matched every row. v1 files were not modified.
+- Human verifier: pending (KN to re-run the script and check the sha256 values in the v2 JSON).

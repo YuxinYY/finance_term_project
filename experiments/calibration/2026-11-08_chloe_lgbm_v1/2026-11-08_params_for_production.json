@@ -1,0 +1,26 @@
+{
+ "created_by": "calibration-specialist, experiments/calibration/2026-11-08_chloe_lgbm_v1/2026-11-08_r1_fit_and_calibrate.py",
+ "model": "production_lightgbm_v1 (Chloe/Yuxin), trained FY2007-2011, 835,016 rows",
+ "status": "REFERENCE ONLY - not wired into the harness; see the decision log entry of 2026-11-08",
+ "label_window": "Chloe's: default in [1 Jun fs_year+1, 31 May fs_year+2]; rows defaulted before 1 Jun fs_year+1 excluded",
+ "pipeline": "PD = clip(expit(anchor_a + slope_b*logit(p_raw) + delta), floor, cap)",
+ "slope_b": 0.9956015355220563,
+ "slope_b_source": "round-1 Platt slope on FY2008 (model fit on FY2007); a production-specific slope needs an out-of-time slice for the 2007-2011 model, which does not exist; clean-slice check slope in fit_and_map_params.json",
+ "anchor_a": null,
+ "anchor_a_procedure": "solve anchor_a so that mean(expit(anchor_a + slope_b*logit(p_raw))) over the 835,016 training rows equals training_rate_assumed (bisection, as solve_shift in s3_methods.py). Needs the production model's in-sample raw PDs on its training rows, which were not handed over; compute once at estimation time.",
+ "training_rate_assumed": 0.013575787769336156,
+ "training_rate_recomputed_from_panel_her_window": 0.013575787769336156,
+ "tau": 0.014640906163076605,
+ "tau_rule": "D-073 logic: expected rate h=2 years after the FY2011 anchor under a driftless logit random walk",
+ "tau_anchor_fy2011": 0.013917321445055631,
+ "sigma_logit_per_year": 0.2299572335333175,
+ "tau_by_horizon": {
+  "1": 0.014275363883381033,
+  "2": 0.014640906163076605,
+  "3": 0.015014262995449376
+ },
+ "delta": 0.07661186857560587,
+ "floor": 0.0003,
+ "cap": 0.99,
+ "replaces": "her Platt calibrator fitted on pooled round 1-3 out-of-time raw PDs (default rate 1.536%, mean raw PD 1.105%, manifest calibration_raw_metrics); applying that intercept to a model refit on those same years double-counts the level (D-053 alternative b)"
+}

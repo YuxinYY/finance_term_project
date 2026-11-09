@@ -3,8 +3,11 @@ data/raw/*
 !data/raw/.gitkeep
 data/interim/*
 !data/interim/.gitkeep
+# splits: keep only the README; split files are rebuilt by src/data scripts
+data/splits/*
+!data/splits/.gitkeep
+!data/splits/README.md
 *.parquet
-!data/splits/*.json
 # python / OS
 __pycache__/
 *.pyc
@@ -12,7 +15,6 @@ __pycache__/
 .ipynb_checkpoints/
 .venv/
 .DS_Store
-!data/splits/*.parquet
 *.pkl
 .*.out
 experiments/calibration/cache/

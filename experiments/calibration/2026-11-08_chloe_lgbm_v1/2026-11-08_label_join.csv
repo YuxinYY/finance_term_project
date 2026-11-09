@@ -1,0 +1,13 @@
+file,panel_status_s6,rows,her_label_defaults
+train,ok,144214,1223
+train,already_defaulted,37,37
+train,CHECK her label rebuilt from panel matches,144251,144251
+train,REVERSE: our ok rows missing from her file,0,0
+validation,ok,161261,1823
+validation,already_defaulted,122,122
+validation,CHECK her label rebuilt from panel matches,161383,161383
+validation,REVERSE: our ok rows missing from her file,0,0
+test,ok,170386,2524
+test,already_defaulted,163,163
+test,CHECK her label rebuilt from panel matches,170549,170549
+test,REVERSE: our ok rows missing from her file,0,0

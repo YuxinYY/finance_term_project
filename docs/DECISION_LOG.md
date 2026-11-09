@@ -1983,3 +1983,46 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Source(s): D-100, D-109; assumption for thresholds.
 - Risks / what would change our mind: 2011 has fewer usable months under y11, so thresholds may need restating before opening, never after.
 - Human reviewer (initials) and date:
+
+### D-150 Reference calibration study on Chloe's LightGBM (round 1): the level step does the work; her Platt leaves FY2009 1.33x under-predicted
+- Date / phase / agent: 2026-11-08 / teammate-model review / calibration-specialist
+- Status: ADOPTED-as-reference (finding; nothing changes in our harness). Production parameters for her model: OPEN (needs the anchor solved on her training rows and human sign-off)
+- Decision: if Chloe's LightGBM is used, calibrate it with our recipe (D-053 slope + D-072 prior shift to a stated central tendency), not with a Platt map whose intercept carries a past year's rate. Her refit was reproduced (FY2009 AUC 0.84309 vs her reported 0.8431).
+- Alternatives considered: raw; her Platt fitted on FY2008; our slope + FY2007 anchor without a level step; isotonic on FY2008 (with and without the rule-e level); rule b and a random-walk hedge for the level; a clean-slice refit (early stopping and slope on separate FY2008 firm halves).
+- Business reason: pricing needs the right level. On FY2009 her Platt PDs averaged 1.19% against 1.58% observed. Firms would be priced about a quarter too cheaply.
+- Evidence (`experiments/calibration/2026-11-08_chloe_lgbm_v1/2026-11-08_metrics_fy2009.csv`, `2026-11-08_bootstrap_vs_b_platt.csv`, 1000 firm-clustered draws): her label, log loss raw 0.06459 / her Platt 0.06345 / ours + rule e 0.06278 (Δ vs Platt -6.63e-4 [-8.47, -4.88]) / isotonic + rule e 0.06275 (-6.91e-4 [-8.91, -4.99]). Obs/pred 1.62 / 1.33 / 1.00 / 1.00. Our s6 label: Δ -8.61e-4 [-10.31, -6.88]. AUC is identical across the monotone maps (0.8431 hers, 0.8343 ours); isotonic gives -0.0004 [-0.0008, +0.0001]. Platt slope on FY2008 is 0.996, so the shape step changes nothing (our (c) ≈ raw). Label-only preview on her window (`2026-11-08_rule_preview_her_window.csv`): rule e level cost (1e-4) 0.12 / 0.88 / 10.19 for 2009 / 2010 / 2011, i.e. it fails at the 2011 turn. Production (`2026-11-08_params_for_production.json`): her-window rates 2007-2011 recomputed from the panel, pooled 1.3576% = manifest; D-073 tau 1.464% (anchor FY2011 1.392%, sigma 0.23, h = 2), delta +0.077.
+- Flags (not fixed): her features `annualized_sales_growth`, `annualized_change_in_roa` and `change_in_ar_turnover` need prior-year statements, which conflicts with CLAUDE.md §2.2 / D-020. Her production Platt is fitted on pooled round 1-3 OOT PDs (raw mean 1.105% vs 1.536%) and applied to a model refit on those years: it double-counts the level (D-053 alternative b), size unmeasured. Label join: 163 of her FY2009 rows (June 2010 defaults) are already_defaulted under D-002.
+- Source(s): D-053, D-071, D-072, D-073, D-075; R-22 eq. (4) as in D-072.
+- Risks / what would change our mind: one test year. Rule e was selected on 2008-2010 (D-071), so the FY2009 hit is partly selection. The production slope is a round-1 estimate.
+- Human reviewer (initials) and date:
+
+### D-151 Adopt Chloe's 5-month label window (default between 1 Jun of fs_year+1 and 31 May of fs_year+2) for all future development (supersedes the start-6 primary of D-002)
+- Date / phase / agent: 2026-11-08 / teammate alignment / orchestrator, decision by KN
+- Status: ADOPTED (KN, 2026-11-08). Downstream rebuild PENDING: panel label column, a v2 split file (never overwrite `walkforward.json`, D-015), tau/delta (D-073/D-076), referee re-score
+- Decision: y = 1 if def_date in [1 Jun t+1, 1 Jun t+2) for fs_year t. Rows with a default before 1 Jun t+1 are dropped as already defaulted (2,897 rows FY2007-2011; 558 / 518 / 559 / 568 / 694 in Jan-May). Kept: 835,016 rows, 11,336 defaults, identical to Chloe's `labels.md` and to the panel rebuild in D-150 (100% row match).
+- Alternatives considered: keep start-6 (D-002; FY2011 only 11/12 observed, D-077 workaround); start 0 (window opens before most statements are filed); start 3.
+- Business reason: one team label. The window opens when a compliant firm's statement must be filed (approval within 120 days of year-end, filing within 30 days of approval, so by about 30 May; R-28, R-29), and the RiskCalc 3.1 lag of 3-4 months (R-01 Sec. 3.2 p. 16). FY2011 becomes a complete 12-month cohort (if the 2013 default dates are valid, D-009).
+- Evidence: counts above (panel query 2026-11-08); D-076 shows the switching cost of the level is below 0.6e-4 log loss; D-150 tau on this window 1.464% vs 1.493% start-6.
+- Source(s): R-28, R-29, R-01 Sec. 3.2 p. 16. Firms that use the 180-day extension file later than 31 May (small look-ahead): assumption, stated in Chloe's `labels.md`.
+- Risks / what would change our mind: Roger/TA name a different holdout window (email Q1); Roger says to ignore 2013 default dates (email Q2), which would make FY2011 unlabelable under any window.
+- Human reviewer (initials) and date: KN 2026-11-08 (decision); data rebuild not yet reviewed
+- **Update 2026-11-08 (data-auditor): data rebuild DONE.** Still PENDING: tau/delta recompute (D-073/D-076), referee re-score on v2 folds.
+  - Script `src/data/2026-11-08_build_labels_s5.py` (deterministic: two rebuilds gave byte-identical files) reads the v1 panel and builds
+    the label from `stmt_date`/`def_date` directly (not `make_labels`, D-011/D-068). An independent month-index recompute matches status and y on
+    all 1,023,552 rows. v1 files (`panel.parquet`, `walkforward.json`, `walkforward_test_rows.parquet`, `src/common`) were not touched.
+  - Outputs: `data/interim/2026-11-08_panel_s5.parquet` (1,023,552 x 70; primary `y`/`label_status`/`win_start`/`win_end` = s5; v1 label
+    kept in `y_s6`/`status_s6`), `data/splits/2026-11-08_walkforward_v2.json` + `2026-11-08_walkforward_v2_test_rows.parquet` (chmod 444),
+    `reports/data/2026-11-08_labels_s5.md`, `reports/data/2026-11-08_walkforward_v2_folds.csv`, v2 section in `data/splits/README.md`.
+  - Sanity check reproduced exactly: FY2007-2011 usable 835,016, defaults 11,336, already_defaulted 2,897 (Jan-May 558/518/559/568/694).
+    FY2012: 0 usable (184,989 censored + 650 already_defaulted, i.e. firms with Jan-May 2013 def_dates).
+  - Folds (test n / defaults / rate; train n / defaults): 1 test 2008 161,383 / 1,945 / 1.21% (train 144,251 / 1,260); 2 test 2009
+    170,549 / 2,687 / 1.58% (305,634 / 3,205); 3 test 2010 174,674 / 2,881 / 1.65% (476,183 / 5,892); 4 = one-time LOCKBOX (D-087/D-119, not for
+    selection) test 2011 184,159 / 2,563 / 1.39% (650,857 / 8,773); final_fit 2007-2011 835,016 / 11,336 / 1.3576%. New-firm test rows
+    29,845 / 17,186 / 16,750 / 16,492.
+  - v2 vs v1 (s6): s5 rates are lower in every common year (ratio 0.914 / 0.942 / 0.975 / 0.970 for 2007-2010; pooled 2008-2010
+    1.483% vs 1.538%). Excluding FY2011, 1,358 rows change class: 484 June-of-t+1 defaults go already_defaulted -> y=1 (+484 usable rows) and
+    874 June-of-t+2 defaults go y=1 -> y=0. FY2011 goes from censored to usable (181,596 y=0, 2,357 y=1) and 206 more FY2011 June-2012
+    defaults move already_defaulted -> y=1.
+  - D-009 sensitivity (`y_s5_d2012`): FY2007-2010 identical; FY2011 has 0 usable rows (184,159 censored). 1,015 of the 2,563 FY2011 defaults
+    are dated Jan-May 2013, and 1,548 fall in Jun-Dec 2012. So the lockbox and the 2011 part of final_fit rest entirely on the D-009 primary
+    treatment (email Q2).
