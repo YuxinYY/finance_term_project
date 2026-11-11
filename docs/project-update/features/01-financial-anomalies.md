@@ -15,10 +15,10 @@ Principle: **keep original values, only add flags, never change any value**. Row
 | Fixed + current > `asst_tot`; equity + liabilities > `asst_tot`; `cash_and_equiv > asst_current`; `eqty_tot > asst_tot` | 696 / 1,468 / 97 / 61 rows | None | Most exceed by less than 1% of `asst_tot`; rounding noise |
 | `ebitda < prof_operations` (negative D&A) | 44 rows | Merged into `neg_pl_flag` | The implied D&A = `ebitda − prof_operations` should not be negative; the `cf_operations` formula still holds for these 44 rows, so the values are consistent, just implausible |
 | Derivable columns do not match their formula: `prof_operations`, `wc_net`, `margin_fin`, `cf_operations = profit + (ebitda − prof_operations)` | 105 / 181 / 431 / 1,462 rows | None | Formulas hold for 99.85%–99.99% of rows, and we cannot tell which input is wrong; no overlap with the negative-D&A rows, and only 100 of the `cf_operations` mismatches also have another formula mismatch |
-| `goodwill` does not match its name | 10.5% negative; only 15.7% have `≤ asst_intang_fixed` | Keep original values; add `neg_goodwill_flag` | Goodwill should be a non-negative component of intangible assets (10.3.2); see [Open questions](#open-questions) |
+| `goodwill` does not match its name | 10.5% negative; only 15.7% have `≤ asst_intang_fixed` | Keep original values; `neg_goodwill_flag` is no longer used (it overlaps heavily with operating losses and adds no information) | Goodwill should be a non-negative component of intangible assets (10.3.2); see [Open questions](#open-questions) |
 | `liab_lt_emp > liab_lt`, `debt_lt > liab_lt` | 57.7% / 68.6% | None (not a violation) | `eqty_tot + debt_st + debt_lt + liab_lt + liab_lt_emp ≈ asst_tot` holds for 80%, so we infer `liab_lt` = provisions for risks and `liab_lt_emp` = employee severance pay TFR (10.3.3), not long-term liabilities and a sub-item |
 | `inc_financing` is negative | 81.7% | None (not a violation); see [Open questions](#open-questions) | Inferred to be net financial income/expense (template class C "15 + 16 − 17 ± 17bis", 10.4.1): `inc_financing + exp_financing ≥ 0` holds for 95.65% |
-| `prof_financing` is 0 in 95.7% of rows and does not match `inc_financing`, `exp_financing` | 979,660 rows are 0 | Treat 0 as a real 0; add `fin_adj_flag` | See [Open questions](#open-questions) |
+| `prof_financing` is 0 in 95.7% of rows and does not match `inc_financing`, `exp_financing` | 979,660 rows are 0 | Treat 0 as a real 0; `fin_adj_flag` is no longer used (it adds no information) | See [Open questions](#open-questions) |
 | `profit` cannot be derived from the other income-statement columns | Every combination matches < 0.2% | None | Residual correlates 0.78 with `taxes`; the definition still differs |
 | `taxes` is negative | 29.7% | None (not a violation) | Prepaid taxes and similar are recorded with a negative sign (10.4.2 item 20) |
 | `eqty_tot` is negative | 4.0% | None (not a violation) | Insolvency; a real situation |
@@ -36,8 +36,6 @@ All flag rules use fixed values, so training and holdout use the same rules.
 ```
 neg_bs_flag       = any of the 14 asset and liability columns < 0
 neg_pl_flag       = rev_operating < 0 or COGS < 0 or exp_financing < 0 or ebitda < prof_operations
-fin_adj_flag      = prof_financing != 0                                                        (43,236 rows)
-neg_goodwill_flag = goodwill < 0                                                               (107,638 rows)
 debt_detail_inconsistent = none of debt_bank_st, debt_bank_lt, debt_fin_st, debt_fin_lt, AP_st, AP_lt missing, and
                            (debt_bank_st + debt_fin_st + AP_st > debt_st + 1
                             or debt_bank_lt + debt_fin_lt + AP_lt > debt_lt + 1)               (11,620 rows)
@@ -59,12 +57,12 @@ One would expect `prof_financing = inc_financing − exp_financing`, but among t
 |---|---|---|---|
 | `inc_financing` | Class C net financial income/expense (15 + 16 − 17 ± 17bis), **already net of** financial expenses | 81.7% negative; `inc_financing + exp_financing ≥ 0` holds for 95.65%, i.e. adding back the expense gives gross financial income that is almost always non-negative | Keep original values, negatives are normal; do not subtract `exp_financing` again |
 | `exp_financing` | Item 17 interest and other financial expenses (gross) | | Keep original values; the 720 negative rows are merged into `neg_pl_flag` |
-| `prof_financing` | Class D value adjustments to financial assets (revaluations − write-downs), unrelated to class C | Most non-financial firms have no such item, which explains 95.7% being 0 | Treat 0 as a real 0, not missing; add `fin_adj_flag = prof_financing != 0`; no formula correction |
+| `prof_financing` | Class D value adjustments to financial assets (revaluations − write-downs), unrelated to class C | Most non-financial firms have no such item, which explains 95.7% being 0 | Treat 0 as a real 0, not missing; no formula correction. The considered `fin_adj_flag = prof_financing != 0` (43,236 rows) is no longer used because it adds no information |
 
-Missing values are still filled with [02-missing-value.md](02-missing-value.md) method B; the sector median ratio of `prof_financing` is 0, so filled values are 0, consistent with the hypothesis above. If the hypothesis fails (e.g. the professor confirms that a 0 in `prof_financing` means missing), `prof_financing` and `fin_adj_flag` need to be reworked.
+Missing values are still filled with [02-missing-value.md](02-missing-value.md) method B; the sector median ratio of `prof_financing` is 0, so filled values are 0, consistent with the hypothesis above. If the hypothesis fails (e.g. the professor confirms that a 0 in `prof_financing` means missing), `prof_financing` needs to be reworked.
 
 ### `goodwill`
 
 The column is named goodwill, but its values do not look like goodwill: 10.5% are negative (107,638 rows) and only 15.7% have `goodwill ≤ asst_intang_fixed`, whereas goodwill should be a non-negative component of intangible assets (10.3.2). It correlates 0.75 with `prof_operations`, and **100%** of rows with `goodwill < 0` have `prof_operations < 0`, so it looks more like some profit measure than an asset. Its true definition is unknown.
 
-Handling: keep `goodwill` unchanged and add `neg_goodwill_flag = goodwill < 0`. These rows have a default rate of 8.87%, versus 3.84% for non-negative rows (4.37% overall). Note that this flag is a subset of `prof_operations < 0` (covering 44.2% of it) and overlaps heavily with operating losses. If the professor explains what `goodwill` means, we will decide whether to handle it differently.
+Handling: keep `goodwill` unchanged. The considered `neg_goodwill_flag = goodwill < 0` (107,638 rows, default rate 8.87% versus 3.84% for non-negative rows, 4.37% overall) is no longer used: it is a subset of `prof_operations < 0` (covering 44.2% of it) and overlaps heavily with operating losses, so it adds no information. If the professor explains what `goodwill` means, we will decide whether to handle it differently.
