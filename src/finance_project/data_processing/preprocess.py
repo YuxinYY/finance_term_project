@@ -18,6 +18,7 @@ round's history.csv, but labels in history are never used as input features.
 from __future__ import annotations
 
 import argparse
+import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -31,25 +32,7 @@ from finance_project.common import project_path, write_json
 
 
 DEBT_DETAIL = ["debt_bank_st", "debt_bank_lt", "debt_fin_st", "debt_fin_lt", "AP_st", "AP_lt"]
-NEG_BS_COLS = [
-    "asst_intang_fixed",
-    "asst_tang_fixed",
-    "asst_fixed_fin",
-    "AR",
-    "liab_lt",
-    "liab_lt_emp",
-    *DEBT_DETAIL,
-    "debt_st",
-    "debt_lt",
-]
-ANOMALY_FLAGS = [
-    "neg_bs_flag",
-    "neg_pl_flag",
-    "fin_adj_flag",
-    "neg_goodwill_flag",
-    "debt_detail_inconsistent",
-]
-DROP_COLS = ["Unnamed: 0", "eqty_corp_family_tot", "days_rec"]
+ANOMALY_FLAGS = ["neg_bs_flag", "neg_pl_flag", "debt_detail_inconsistent"]
 IMPUTE_COLS = [
     "asst_intang_fixed",
     "asst_tang_fixed",
@@ -125,6 +108,22 @@ class PreprocessingArtifacts:
     feature_columns: list[str]
 
 
+def _load_notebook_functions(notebook: str) -> dict[str, Any]:
+    """Exec the code cells tagged ``export`` in notebooks/features/<notebook>.ipynb."""
+    cells = json.loads(project_path(f"notebooks/features/{notebook}.ipynb").read_text(encoding="utf-8"))["cells"]
+    namespace: dict[str, Any] = {"pd": pd, "np": np}
+    for cell in cells:
+        if "export" in cell["metadata"].get("tags", []):
+            exec("".join(cell["source"]), namespace)
+    return namespace
+
+
+_flags = _load_notebook_functions("01_flag_anomalies")
+_missing = _load_notebook_functions("02_missing_values")
+flag_anomalies = _flags["flag_anomalies"]
+fill_missing = _missing["fill_missing"]
+
+
 def _drop_index_columns(frame: pd.DataFrame) -> pd.DataFrame:
     frame = frame.copy()
     frame.columns = [str(column).lstrip("\ufeff").strip() for column in frame.columns]
@@ -143,117 +142,16 @@ def _require_columns(frame: pd.DataFrame, *, include_target: bool, config: Prepr
         raise ValueError(f"Input is missing required columns: {missing}")
 
 
-def _coerce_raw_types(frame: pd.DataFrame, config: PreprocessingConfig) -> pd.DataFrame:
-    """Convert financial fields and known numeric identifiers; preserve dates/categories."""
-    frame = _drop_index_columns(frame)
-    numeric = set(IMPUTE_COLS) | {
-        config.id_column,
-        config.year_column,
-        config.sector_column,
-        config.target_column,
-        "asst_tot",
-        "HQ_city",
-        "wc_net",
-        "margin_fin",
-        "roa",
-        "roe",
-    }
-    for column in numeric.intersection(frame.columns):
-        frame[column] = pd.to_numeric(frame[column], errors="coerce")
-    return frame
-
-
-def flag_anomalies(frame: pd.DataFrame) -> pd.DataFrame:
-    """Add binary flags for economically implausible reported values without changing them."""
-    columns = [
-        *NEG_BS_COLS,
-        "rev_operating",
-        "COGS",
-        "exp_financing",
-        "ebitda",
-        "prof_operations",
-        "prof_financing",
-        "goodwill",
-    ]
-    values = frame[columns].apply(pd.to_numeric, errors="coerce")
-    result = frame.copy()
-    result["neg_bs_flag"] = (values[NEG_BS_COLS] < 0).any(axis=1)
-    result["neg_pl_flag"] = (
-        (values["rev_operating"] < 0)
-        | (values["COGS"] < 0)
-        | (values["exp_financing"] < 0)
-        | (values["ebitda"] < values["prof_operations"])
-    )
-    result["fin_adj_flag"] = values["prof_financing"].notna() & (values["prof_financing"] != 0)
-    result["neg_goodwill_flag"] = values["goodwill"] < 0
-    short_term_detail = values["debt_bank_st"] + values["debt_fin_st"] + values["AP_st"]
-    long_term_detail = values["debt_bank_lt"] + values["debt_fin_lt"] + values["AP_lt"]
-    result["debt_detail_inconsistent"] = values[DEBT_DETAIL].notna().all(axis=1) & (
-        (short_term_detail > values["debt_st"] + 1)
-        | (long_term_detail > values["debt_lt"] + 1)
-    )
-    result[ANOMALY_FLAGS] = result[ANOMALY_FLAGS].astype(int)
-    return result
-
-
-def fit_sector_medians(train: pd.DataFrame, config: PreprocessingConfig) -> pd.DataFrame:
-    """Fit sector-level size-normalized imputation medians on training anchors only."""
-    train = _coerce_raw_types(train, config)
-    ratios = train[IMPUTE_COLS].div(train["asst_tot"], axis=0)
-    ratios["asst_tot"] = train["asst_tot"]
-    medians = ratios.groupby(train[config.sector_column]).median()
-    medians.loc["ALL"] = ratios.median()
-    return medians
-
-
 def clean_and_impute(
     frame: pd.DataFrame,
     medians: pd.DataFrame,
     config: PreprocessingConfig,
 ) -> pd.DataFrame:
     """Flag anomalies, preserve their values, and impute raw fields with training statistics."""
+    frame = _drop_index_columns(frame)
     _require_columns(frame, include_target=False, config=config)
-    result = _coerce_raw_types(frame, config)
-    result = flag_anomalies(result)
-    result = result.drop(columns=DROP_COLS, errors="ignore")
-
-    result["HQ_city"] = (
-        result["HQ_city"].map("{:.0f}".format, na_action="ignore").fillna("Unknown")
-    )
+    result = fill_missing(flag_anomalies(frame), medians)
     result[config.legal_column] = result[config.legal_column].fillna("Unknown").astype(str)
-    result["debt_detail_missing"] = result[DEBT_DETAIL].isna().any(axis=1).astype(int)
-
-    # Restore a missing component only when the other two income-statement
-    # values were reported. This happens before ratio-based imputation.
-    result["rev_operating"] = result["rev_operating"].fillna(
-        result["prof_operations"] + result["COGS"]
-    )
-    result["COGS"] = result["COGS"].fillna(
-        result["rev_operating"] - result["prof_operations"]
-    )
-    result["prof_operations"] = result["prof_operations"].fillna(
-        result["rev_operating"] - result["COGS"]
-    )
-
-    by_sector = medians.drop(index="ALL").reindex(result[config.sector_column])
-    by_sector.index = result.index
-    by_sector = by_sector.fillna(medians.loc["ALL"])
-    result["asst_tot"] = result["asst_tot"].fillna(by_sector["asst_tot"])
-    result[IMPUTE_COLS] = result[IMPUTE_COLS].fillna(
-        by_sector[IMPUTE_COLS].mul(result["asst_tot"], axis=0)
-    )
-
-    fixed_assets = (
-        result["asst_intang_fixed"] + result["asst_tang_fixed"] + result["asst_fixed_fin"]
-    )
-    result["margin_fin"] = result["margin_fin"].fillna(result["eqty_tot"] - fixed_assets)
-    result["wc_net"] = result["wc_net"].fillna(result["asst_current"] - result["debt_st"])
-    result["roa"] = result.get("roa", pd.Series(index=result.index, dtype=float)).fillna(
-        result["prof_operations"].div(result["asst_tot"]).mul(100)
-    )
-    result["roe"] = result.get("roe", pd.Series(index=result.index, dtype=float)).fillna(
-        result["profit"].div(result["eqty_tot"].where(result["eqty_tot"] != 0)).mul(100)
-    )
     return result
 
 
@@ -787,7 +685,7 @@ def fit_preprocessor(
     history = _drop_index_columns(history)
     _require_columns(train, include_target=True, config=config)
     _require_columns(history, include_target=False, config=config)
-    medians = fit_sector_medians(train, config)
+    medians = _missing["sector_medians"](_drop_index_columns(train))
     engineered = _build_features(train, history, medians, config)
     _, industry_mapping, industry_global_mean = _oof_target_encode(engineered, config)
     all_legal_categories = sorted(engineered[config.legal_column].fillna("Unknown").astype(str).unique())
