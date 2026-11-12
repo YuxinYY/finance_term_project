@@ -31,7 +31,6 @@ CORE_EBM_FEATURES = (
     "annualized_change_in_roa",
     "ebitda_ratio",
     "op_margin",
-    "annualized_sales_growth",
     "net_prof_margin",
     "int_coverage",
     "cash_to_debt",

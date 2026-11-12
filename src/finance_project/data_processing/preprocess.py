@@ -205,18 +205,12 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
         (result["roa"] - previous_roa).div(year_gap.where(year_gap > 0))
     )
 
-    previous_revenue = result.groupby(config.id_column)["rev_operating"].shift()
-    revenue_ratio = _positive_divide(result["rev_operating"], previous_revenue)
-    result["annualized_sales_growth"] = (
-        revenue_ratio.pow(1 / year_gap.where(year_gap > 0)) - 1
-    ).where((result["rev_operating"] > 0) & (previous_revenue > 0))
-
     previous_ar = result.groupby(config.id_column)["AR"].shift()
     average_ar = (result["AR"] + previous_ar) / 2
     result["ar_turnover"] = _positive_divide(result["rev_operating"], average_ar)
     previous_ar_turnover = result.groupby(config.id_column)["ar_turnover"].shift()
     # The feature schema defines this as a difference in turnover, rather than
-    # an annualized change. (Unlike ROA and sales growth, it is not divided by
+    # an annualized change. (Unlike ROA, it is not divided by
     # the calendar-year gap.)
     result["change_in_ar_turnover"] = result["ar_turnover"] - previous_ar_turnover
 
@@ -266,7 +260,6 @@ def _period_numeric_features() -> list[str]:
         "roa",
         "ebitda_ratio",
         "op_margin",
-        "annualized_sales_growth",
         "net_prof_margin",
         "tax_ratio",
         "cogs_ratio",
@@ -332,7 +325,6 @@ FEATURE_GROUPS: dict[str, list[str]] = {
         "annualized_change_in_roa",
         "ebitda_ratio",
         "op_margin",
-        "annualized_sales_growth",
         "net_prof_margin",
         "tax_ratio",
         "cogs_ratio",
