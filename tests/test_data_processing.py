@@ -193,7 +193,7 @@ def test_preprocessor_fits_on_train_and_uses_decay_weighted_history_for_transfor
     # Unseen legal structures are represented by zero across fitted dummies.
     assert "legal_SRL" not in transformed_test.columns
     assert artifacts.legal_reference_category == "SRL"
-    assert artifacts.city_reference_category == "1"
+    assert artifacts.city_reference_category == "Piemonte"
 
 
 def test_preprocessor_implements_feature_schema_and_group_collinearity_diagnostics():
@@ -205,8 +205,8 @@ def test_preprocessor_implements_feature_schema_and_group_collinearity_diagnosti
             _raw_row(4, 2007, 1, sector=20, legal="SPA"),
         ]
     )
-    train.loc[1, "HQ_city"] = 2
-    train.loc[3, "HQ_city"] = 2
+    train.loc[1, "HQ_city"] = 58
+    train.loc[3, "HQ_city"] = 58
     transformed, artifacts = fit_preprocessor(
         train,
         train.drop(columns="label"),

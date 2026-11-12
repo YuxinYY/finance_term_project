@@ -71,6 +71,39 @@ REQUIRED_COLUMNS = {
     *IMPUTE_COLS,
 }
 
+# ISTAT province code (HQ_city, Allegati_in_italiano.pdf, Allegato 2) -> region.
+_REGION_PROVINCES = {
+    "Piemonte": [1, 2, 3, 4, 5, 6, 96, 103],
+    "Valle d'Aosta": [7],
+    "Lombardia": [*range(12, 21), 97, 98, 108],
+    "Trentino-Alto Adige": [21, 22],
+    "Veneto": list(range(23, 30)),
+    "Friuli-Venezia Giulia": [30, 31, 32, 93],
+    "Liguria": [8, 9, 10, 11],
+    "Emilia-Romagna": [*range(33, 41), 99],
+    "Toscana": [*range(45, 54), 100],
+    "Umbria": [54, 55],
+    "Marche": [41, 42, 43, 44, 109],
+    "Lazio": [56, 57, 58, 59, 60],
+    "Abruzzo": [66, 67, 68, 69],
+    "Molise": [70, 94],
+    "Campania": [61, 62, 63, 64, 65],
+    "Puglia": [71, 72, 73, 74, 75, 110],
+    "Basilicata": [76, 77],
+    "Calabria": [78, 79, 80, 101, 102],
+    "Sicilia": list(range(81, 90)),
+    "Sardegna": [90, 91, 92, 95, 104, 105, 106, 107],
+}
+REGION_BY_PROVINCE = {
+    str(code): region for region, codes in _REGION_PROVINCES.items() for code in codes
+}
+assert sorted(map(int, REGION_BY_PROVINCE)) == list(range(1, 111))
+
+
+def _region(city: pd.Series) -> pd.Series:
+    """Map province codes to regions; missing or unrecognised codes become 'Unknown'."""
+    return city.astype(str).map(REGION_BY_PROVINCE).fillna("Unknown")
+
 
 @dataclass(frozen=True)
 class PreprocessingConfig:
@@ -636,7 +669,7 @@ def _finalize_features(
     legal = output[config.legal_column].fillna("Unknown").astype(str)
     for category in artifacts.legal_categories:
         output[f"legal_{category}"] = legal.eq(category).astype(int)
-    city = output["HQ_city"].fillna("Unknown").astype(str)
+    city = _region(output["HQ_city"])
     for category in artifacts.city_categories:
         output[f"city_{category}"] = city.eq(category).astype(int)
 
@@ -678,7 +711,7 @@ def fit_preprocessor(
     engineered = _build_features(train, history, medians, config)
     _, industry_mapping, industry_global_mean = _oof_target_encode(engineered, config)
     all_legal_categories = sorted(engineered[config.legal_column].fillna("Unknown").astype(str).unique())
-    all_city_categories = sorted(engineered["HQ_city"].fillna("Unknown").astype(str).unique())
+    all_city_categories = sorted(_region(engineered["HQ_city"]).unique())
     legal_reference_category, *legal_categories = all_legal_categories
     city_reference_category, *city_categories = all_city_categories
     feature_columns = [
