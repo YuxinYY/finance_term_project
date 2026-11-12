@@ -208,7 +208,6 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     result["tangible_asset_ratio"] = _positive_divide(result["asst_tang_fixed"], result["asst_tot"])
     result["goodwill_ratio"] = _positive_divide(result["goodwill"], result["asst_tot"])
     result["cash_ratio"] = _positive_divide(result["cash_and_equiv"], result["asst_tot"])
-    result["cash_to_debt"] = _positive_divide(result["cash_and_equiv"], total_debt)
     result["cash_to_financing_exp_ratio"] = _positive_divide(
         result["cash_and_equiv"], result["exp_financing"]
     )
@@ -219,7 +218,6 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     result["cur_debt_ratio"] = _positive_divide(result["asst_current"], result["debt_st"])
     result["quick_ratio"] = _positive_divide(result["cash_and_equiv"] + result["AR"], result["debt_st"])
     result["asset_turnover"] = _positive_divide(result["rev_operating"], result["asst_tot"])
-    result["ebitda_ratio"] = _positive_divide(result["ebitda"], result["asst_tot"])
     result["op_margin"] = _positive_divide(result["prof_operations"], result["rev_operating"])
     result["net_prof_margin"] = _positive_divide(result["profit"], result["rev_operating"])
     result["tax_ratio"] = _positive_divide(result["taxes"], result["asst_tot"])
@@ -227,7 +225,6 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     result["financing_expense_ratio"] = _positive_divide(result["exp_financing"], result["asst_tot"])
     result["financing_income_ratio"] = _positive_divide(result["inc_financing"], result["asst_tot"])
     result["operating_cash_flow_ratio"] = _positive_divide(result["cf_operations"], result["asst_tot"])
-    result["operating_cash_flow_to_debt"] = _positive_divide(result["cf_operations"], total_debt)
     # Inverted Debt/EBITDA: firms with EBITDA <= 0 keep a graded value instead of NaN.
     result["ebitda_to_debt"] = _positive_divide(result["ebitda"], total_debt)
     result["loss_flag"] = (result["profit"] < 0).astype(int)
@@ -282,7 +279,6 @@ def _period_numeric_features() -> list[str]:
         "goodwill_ratio",
         "cash_ratio",
         "cash_to_financing_exp_ratio",
-        "cash_to_debt",
         "cur_asst_ratio",
         "AR_ratio",
         "change_in_ar_turnover",
@@ -293,7 +289,6 @@ def _period_numeric_features() -> list[str]:
         "asset_turnover",
         "annualized_change_in_roa",
         "roa",
-        "ebitda_ratio",
         "op_margin",
         "net_prof_margin",
         "tax_ratio",
@@ -301,7 +296,6 @@ def _period_numeric_features() -> list[str]:
         "financing_expense_ratio",
         "financing_income_ratio",
         "operating_cash_flow_ratio",
-        "operating_cash_flow_to_debt",
         "ebitda_to_debt",
     ]
 
@@ -346,7 +340,6 @@ FEATURE_GROUPS: dict[str, list[str]] = {
     ],
     "liquidity_activity": [
         "cash_ratio",
-        "cash_to_debt",
         "AR_ratio",
         "change_in_ar_turnover",
         "payables_ratio",
@@ -358,7 +351,6 @@ FEATURE_GROUPS: dict[str, list[str]] = {
     "profitability_growth": [
         "roa",
         "annualized_change_in_roa",
-        "ebitda_ratio",
         "op_margin",
         "net_prof_margin",
         "tax_ratio",
@@ -370,7 +362,6 @@ FEATURE_GROUPS: dict[str, list[str]] = {
         "ebitda_to_debt",
         "financing_income_ratio",
         "operating_cash_flow_ratio",
-        "operating_cash_flow_to_debt",
     ],
 }
 
