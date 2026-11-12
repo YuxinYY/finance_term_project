@@ -37,7 +37,6 @@ CORE_EBM_FEATURES = (
     "int_coverage",
     "cash_to_debt",
     "ebitda_to_debt",
-    "accruals",
     "neg_bs_flag",
     "debt_detail_missing",
     "loss_flag",

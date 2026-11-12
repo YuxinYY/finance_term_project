@@ -230,7 +230,6 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     result["operating_cash_flow_to_debt"] = _positive_divide(result["cf_operations"], total_debt)
     # Inverted Debt/EBITDA: firms with EBITDA <= 0 keep a graded value instead of NaN.
     result["ebitda_to_debt"] = _positive_divide(result["ebitda"], total_debt)
-    result["accruals"] = _positive_divide(result["profit"] - result["cf_operations"], result["asst_tot"])
     result["loss_flag"] = (result["profit"] < 0).astype(int)
 
     previous_year = result.groupby(config.id_column)[config.year_column].shift()
@@ -303,7 +302,6 @@ def _period_numeric_features() -> list[str]:
         "financing_income_ratio",
         "operating_cash_flow_ratio",
         "operating_cash_flow_to_debt",
-        "accruals",
         "ebitda_to_debt",
     ]
 
@@ -373,7 +371,6 @@ FEATURE_GROUPS: dict[str, list[str]] = {
         "financing_income_ratio",
         "operating_cash_flow_ratio",
         "operating_cash_flow_to_debt",
-        "accruals",
     ],
 }
 
