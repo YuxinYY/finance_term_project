@@ -202,7 +202,6 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
 
     result["size"] = np.log(result["asst_tot"].where(result["asst_tot"] > 0))
     result["equity_ratio"] = _positive_divide(result["eqty_tot"], result["asst_tot"])
-    result["debt_ratio"] = _positive_divide(total_debt, result["asst_tot"])
     result["st_debt_share"] = _positive_divide(result["debt_st"], total_debt)
     result["lt_debt_to_capital"] = _positive_divide(result["debt_lt"], long_term_capital)
     result["bank_debt_conc"] = _positive_divide(bank_debt, total_debt)
@@ -218,17 +217,20 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     result["payables_ratio"] = _positive_divide(result["AP_st"], result["asst_tot"])
     result["wc_ratio"] = _positive_divide(result["wc_net"], result["asst_tot"])
     result["cur_debt_ratio"] = _positive_divide(result["asst_current"], result["debt_st"])
+    result["quick_ratio"] = _positive_divide(result["cash_and_equiv"] + result["AR"], result["debt_st"])
+    result["asset_turnover"] = _positive_divide(result["rev_operating"], result["asst_tot"])
     result["ebitda_ratio"] = _positive_divide(result["ebitda"], result["asst_tot"])
     result["op_margin"] = _positive_divide(result["prof_operations"], result["rev_operating"])
     result["net_prof_margin"] = _positive_divide(result["profit"], result["rev_operating"])
     result["tax_ratio"] = _positive_divide(result["taxes"], result["asst_tot"])
-    result["cogs_ratio"] = _positive_divide(result["COGS"], result["rev_operating"])
     result["int_coverage"] = _positive_divide(result["ebitda"], result["exp_financing"])
     result["financing_expense_ratio"] = _positive_divide(result["exp_financing"], result["asst_tot"])
     result["financing_income_ratio"] = _positive_divide(result["inc_financing"], result["asst_tot"])
     result["operating_cash_flow_ratio"] = _positive_divide(result["cf_operations"], result["asst_tot"])
     result["operating_cash_flow_to_debt"] = _positive_divide(result["cf_operations"], total_debt)
-    result["debt_to_ebitda"] = _positive_divide(total_debt, result["ebitda"])
+    # Inverted Debt/EBITDA: firms with EBITDA <= 0 keep a graded value instead of NaN.
+    result["ebitda_to_debt"] = _positive_divide(result["ebitda"], total_debt)
+    result["accruals"] = _positive_divide(result["profit"] - result["cf_operations"], result["asst_tot"])
     result["loss_flag"] = (result["profit"] < 0).astype(int)
 
     previous_year = result.groupby(config.id_column)[config.year_column].shift()
@@ -274,7 +276,6 @@ def _period_numeric_features() -> list[str]:
     return [
         "size",
         "equity_ratio",
-        "debt_ratio",
         "st_debt_share",
         "lt_debt_to_capital",
         "bank_debt_conc",
@@ -289,19 +290,21 @@ def _period_numeric_features() -> list[str]:
         "payables_ratio",
         "wc_ratio",
         "cur_debt_ratio",
+        "quick_ratio",
+        "asset_turnover",
         "annualized_change_in_roa",
         "roa",
         "ebitda_ratio",
         "op_margin",
         "net_prof_margin",
         "tax_ratio",
-        "cogs_ratio",
         "int_coverage",
         "financing_expense_ratio",
         "financing_income_ratio",
         "operating_cash_flow_ratio",
         "operating_cash_flow_to_debt",
-        "debt_to_ebitda",
+        "accruals",
+        "ebitda_to_debt",
     ]
 
 
@@ -335,7 +338,6 @@ FEATURE_GROUPS: dict[str, list[str]] = {
     "business_structural": ["ateco_sector_te", "legal_*", "city_*", "size"],
     "leverage_capital_structure": [
         "equity_ratio",
-        "debt_ratio",
         "st_debt_share",
         "lt_debt_to_capital",
         "bank_debt_conc",
@@ -352,6 +354,8 @@ FEATURE_GROUPS: dict[str, list[str]] = {
         "payables_ratio",
         "wc_ratio",
         "cur_debt_ratio",
+        "quick_ratio",
+        "asset_turnover",
     ],
     "profitability_growth": [
         "roa",
@@ -360,16 +364,16 @@ FEATURE_GROUPS: dict[str, list[str]] = {
         "op_margin",
         "net_prof_margin",
         "tax_ratio",
-        "cogs_ratio",
     ],
     "coverage_cash_flow": [
         "int_coverage",
         "financing_expense_ratio",
         "cash_to_financing_exp_ratio",
-        "debt_to_ebitda",
+        "ebitda_to_debt",
         "financing_income_ratio",
         "operating_cash_flow_ratio",
         "operating_cash_flow_to_debt",
+        "accruals",
     ],
 }
 
