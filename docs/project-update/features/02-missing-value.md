@@ -19,10 +19,12 @@ Code: [notebooks/features/02_missing_values.ipynb](../../../notebooks/features/0
 | 1 Identity & attributes | `id`, `stmt_date`, `legal_struct`, `ateco_sector`, `fs_year` | 0% | None | |
 | | `HQ_city` | 0.027% | A: fill `"Unknown"` | Rows cannot be dropped |
 | | `def_date` | 95.6% | None (NaN means no default, not missing) | |
-| 2 Assets | `asst_intang_fixed`, `asst_tang_fixed`, `asst_fixed_fin`, `asst_current`, `AR`, `cash_and_equiv`, `goodwill` | 0.0001–0.023% | B | [1] |
+| 2 Assets | `asst_intang_fixed`, `asst_tang_fixed`, `asst_fixed_fin` | 0.0001–0.023% | F: restore from `eqty_tot − margin_fin`, else 0 | Data check |
+| | `asst_current`, `AR`, `cash_and_equiv`, `goodwill` | 0.0001–0.023% | B | [1] |
 | | `asst_tot` | 0% | None; it is the scale for method B (if a holdout row lacks it, fill with the sector median, see method B) | |
-| 3 Equity & liabilities | `eqty_tot`, `liab_lt`, `liab_lt_emp`, `debt_st`, `debt_lt` | 0.0001–0.029% | B | [1] |
-| | `debt_bank_st`, `debt_bank_lt`, `debt_fin_st`, `debt_fin_lt`, `AP_st`, `AP_lt` | 8.89–11.99% | B + C: flag `debt_detail_missing` | [1][3][4][5] |
+| 3 Equity & liabilities | `eqty_tot`, `debt_st` | 0.0001–0.0005% | B | [1]; formulas exist (`eqty_tot = margin_fin + fixed assets`, `debt_st = asst_current − wc_net`) but their inputs are also missing in those 1 / 5 rows |
+| | `liab_lt`, `liab_lt_emp`, `debt_lt` | 0.015–0.029% | G: 0 if the previous year was 0; otherwise B | Data check |
+| | `debt_bank_st`, `debt_bank_lt`, `debt_fin_st`, `debt_fin_lt`, `AP_st`, `AP_lt` | 8.89–11.99% | B + C: flag `debt_detail_missing`; H: 0 if the total is 0 | [1][3][4][5] |
 | | `eqty_corp_family_tot` | 100% | Drop the column | Entirely missing |
 | 4 Income statement | `rev_operating`, `COGS`, `prof_operations` | 0.002–0.017% | D: restore by formula; B if not restorable | Data check |
 | | `inc_financing`, `exp_financing`, `prof_financing`, `inc_extraord`, `taxes`, `profit`, `ebitda` | 0.002–0.064% | B | [1] |
@@ -30,7 +32,7 @@ Code: [notebooks/features/02_missing_values.ipynb](../../../notebooks/features/0
 | | `margin_fin` | 3.98% | E: restore by formula | Data check |
 | | `wc_net` | 0.0006% | E: restore by formula | Data check |
 | | `roa` | 0.003% | E: restore by formula | Data check |
-| | `roe` | 7.13% | F: drop the column | Computable from `profit` and `eqty_tot`; problematic denominator |
+| | `roe` | 7.13% | I: drop the column | Computable from `profit` and `eqty_tot`; unstable denominator |
 | | `days_rec` | 72.31% | Drop the column | Too sparse, unclear definition |
 
 ## Methods
@@ -41,10 +43,13 @@ Code: [notebooks/features/02_missing_values.ipynb](../../../notebooks/features/0
 | B | Sector (`ateco_sector`) median of column / `asst_tot`, times the row's `asst_tot`; sectors absent from training use the overall median | `asst_tot` is never missing, so filled values scale with firm size. Early Moody's RiskCalc filled missing financial data with region and sector means [1]. We do not use region (`HQ_city` has 110 values, too few rows per cell) and use the median instead of the mean (less sensitive to extreme values) |
 | C | If any of the six columns is missing, set `debt_detail_missing = 1`, then fill with B | The gaps may come from small firms filing the short-form statement [5], and missingness may relate to financial distress [3][4]. The six columns cannot be restored from `debt_st` / `debt_lt` (the sums match for only 4% / 62% of rows). One flag and sector-only grouping for now; split into short/long flags or add a size grouping if results are poor |
 | D | `prof_operations = rev_operating − COGS`; restore whichever of the three is missing | Holds within €1 for 99.99% of rows; no other income-statement identity holds |
-| E | `margin_fin = eqty_tot − (asst_intang_fixed + asst_tang_fixed + asst_fixed_fin)`; `wc_net = asst_current − debt_st`; `roa = prof_operations / asst_tot × 100` | Match rates 99.96%, 99.98%, 99.99%. Runs after B and D, so every input to the formula is already filled and every row can be computed |
-| F | Drop `roe` | `roe = profit / eqty_tot × 100` (99.99% match), so it carries no independent information. The data provider truncates at ±150 and sets values beyond that, or with `eqty_tot ≤ 0`, to missing (72,937 rows). Filling any value (e.g. −150) creates an artificial spike that would still need handling later. Replace it in feature engineering with features whose denominator is always positive, such as `eqty_tot / asst_tot` and `profit / asst_tot` |
+| E | `margin_fin = eqty_tot − (asst_intang_fixed + asst_tang_fixed + asst_fixed_fin)`; `wc_net = asst_current − debt_st`; `roa = prof_operations / asst_tot × 100`| Match rates 99.96%, 99.98%, 99.99%. Runs after B and D, so every input to the formula is already filled and every row can be computed |
+| F | If exactly one of `asst_intang_fixed`, `asst_tang_fixed`, `asst_fixed_fin` is missing, set it to `(eqty_tot − margin_fin) − the other two` (floored at 0); if two or more are missing, or `eqty_tot` / `margin_fin` is missing, set to 0 | `margin_fin = eqty_tot − (sum of the three)` matches for 99.96% of rows. Of the 172 recoverable rows, 94% restore to exactly 0 and the rest are ±1,000 rounding. The columns are often truly 0 (36.5% / 22.8% / 9.7% of rows), so the sector-median fill of method B would turn a true 0 into a positive amount. Runs before B and before `margin_fin` itself is filled in E |
+| G | For `liab_lt`, `liab_lt_emp`, `debt_lt`: if the firm's previous-year value (same `id`, previous row by `fs_year`) is 0, fill 0; otherwise B | These are 0 in 63% / 32% / 27% of rows, so the sector-median fill of B would turn a true 0 into a positive amount. When the previous year is 0, the current value is 0 in 94% / 95% / 78% of rows (only 9% / 2% / 7% when it is not). Uses the past only, so there is no look-ahead; if the previous year is absent from the input, B applies. No identity restores these columns (e.g. `debt_lt = bank_lt + fin_lt + AP_lt` holds for 60%) |
+| H | If `debt_st` (`debt_lt`) is 0, fill its three missing detail columns (`debt_bank_*`, `debt_fin_*`, `AP_*`) with 0; otherwise B | Each detail column is at most its total (99.2–99.96%), and where the total is 0 and details exist, the details are all 0 in 97.7% (short) / 98.8% (long) of rows. Affects 103 (short) and 414 (long) training rows |
+| I | Drop `roe` | `roe = profit / eqty_tot × 100` (99.99% match), so it carries no independent information. The non-missing values lie within ±150, and every row whose computed value exceeds ±150 is blank (51,932 rows); 53% of the blank rows have `eqty_tot ≤ 0`. A restored value is unstable: a near-zero positive equity gives values up to ±9×10⁷, and with `eqty_tot ≤ 0` the sign no longer means the usual ROE (99% of those rows are losses). Clipping would pile values at ±150. Replace it in feature engineering with features whose denominator is always positive, such as `eqty_tot / asst_tot` and `profit / asst_tot` |
 
-Order of execution: unify missing spellings → drop columns → A → record the C flag (before filling) → D → B → E.
+Order of execution: unify missing spellings → drop columns → A → record the C flag (before filling) → D → F → G → H → B → E.
 
 ### Approaches not taken
 - Backing out a missing asset from `asst_tot` minus the other three: the dataset has only fixed and current assets, and lacks "subscribed capital unpaid" and "accruals and deferrals" [2], so the result would be overstated.
@@ -54,7 +59,6 @@ Order of execution: unify missing spellings → drop columns → A → record th
 ### Why `days_rec` and `roe` are dropped
 - `days_rec` is 72.31% missing, at a similar rate in every year (67–74%).
 - `days_rec` matches `AR / rev_operating × 365` for only 0.6% of rows and has negative values; the definition is unclear and it cannot be restored. If needed later, compute `AR / rev_operating × 365` ourselves.
-- `roe`: see method F.
 
 ### Safeguard added in code, not yet discussed
 - `asst_tot` has no missing values in training, but if a holdout row lacks it, method B cannot compute. The code therefore fills it with the sector median of `asst_tot` (an amount, not a ratio). Training data never triggers this.
