@@ -32,7 +32,7 @@ from finance_project.common import project_path, write_json
 
 
 DEBT_DETAIL = ["debt_bank_st", "debt_bank_lt", "debt_fin_st", "debt_fin_lt", "AP_st", "AP_lt"]
-ANOMALY_FLAGS = ["neg_bs_flag", "neg_pl_flag", "debt_detail_inconsistent"]
+ANOMALY_FLAGS = ["neg_bs_flag"]
 IMPUTE_COLS = [
     "asst_intang_fixed",
     "asst_tang_fixed",
@@ -264,7 +264,6 @@ def _period_numeric_features() -> list[str]:
         "cur_debt_ratio",
         "annualized_change_in_roa",
         "roa",
-        "roe",
         "ebitda_ratio",
         "op_margin",
         "annualized_sales_growth",
@@ -335,10 +334,8 @@ FEATURE_GROUPS: dict[str, list[str]] = {
         "op_margin",
         "annualized_sales_growth",
         "net_prof_margin",
-        "roe",
         "tax_ratio",
         "cogs_ratio",
-        "neg_pl_flag",
     ],
     "coverage_cash_flow": [
         "int_coverage",

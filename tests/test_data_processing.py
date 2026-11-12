@@ -110,14 +110,14 @@ def test_walk_forward_splits_support_temporal_year_validation_with_expected_over
         assert set(split.train["id"]) == set(split.validation["id"])
 
 
-def _raw_row(company_id, year, label=None, *, sector=10, legal="SRL", current_assets=20, ar=10):
+def _raw_row(company_id, year, label=None, *, sector=10, legal="SRL", current_assets=20, ar=10, intang=5):
     row = {
         "id": company_id,
         "fs_year": year,
         "HQ_city": 1,
         "legal_struct": legal,
         "ateco_sector": sector,
-        "asst_intang_fixed": 5,
+        "asst_intang_fixed": intang,
         "asst_tang_fixed": 10,
         "asst_fixed_fin": 0,
         "asst_current": current_assets,
@@ -170,7 +170,7 @@ def test_preprocessor_fits_on_train_and_uses_decay_weighted_history_for_transfor
     history = pd.concat(
         [
             train.drop(columns="label"),
-            pd.DataFrame([_raw_row(5, 2007, sector=99, legal="UNSEEN", current_assets=10, ar=-1)]),
+            pd.DataFrame([_raw_row(5, 2007, sector=99, legal="UNSEEN", current_assets=10, ar=-1, intang=-1)]),
             test.drop(columns="label"),
         ],
         ignore_index=True,
@@ -255,7 +255,7 @@ def test_firm_year_feature_mode_uses_direct_anchor_values_not_decay_aggregation(
     history = pd.concat(
         [
             train.drop(columns="label"),
-            pd.DataFrame([_raw_row(5, 2007, sector=10, current_assets=10, ar=-1)]),
+            pd.DataFrame([_raw_row(5, 2007, sector=10, current_assets=10, ar=-1, intang=-1)]),
             test.drop(columns="label"),
         ],
         ignore_index=True,

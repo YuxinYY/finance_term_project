@@ -55,9 +55,7 @@ The flags produced by 01, 02 and 03 (not in the current output). Following the p
 
 | Flag | From | Rows | Default rate |
 |---|---|---|---|
-| `neg_bs_flag` | 01 | 6,662 | 5.34% |
-| `neg_pl_flag` | 01 | 10,508 | 6.60% |
-| `debt_detail_inconsistent` | 01 | 11,620 | 4.58% |
+| `neg_bs_flag` | 01 | 5,117 | 5.51% |
 | `debt_detail_missing` | 02 | 134,145 | 5.29% |
 
 `handle_outliers` in 03 does nothing for now, so it produces no flags. `fin_adj_flag` and `neg_goodwill_flag` are no longer used because they add no information (see [01](01-financial-anomalies.md)).
