@@ -9,9 +9,12 @@ from finance_project.data_processing.make_walk_forward_splits import (
     write_walk_forward_splits,
 )
 from finance_project.data_processing.preprocess import (
+    FEATURE_SCHEMA_HASH,
+    FEATURE_SCHEMA_VERSION,
     PreprocessingConfig,
     bootstrap_minority_class,
     calculate_vif,
+    feature_schema_metadata,
     feature_group_collinearity,
     feature_schema_coverage,
     fit_preprocessor,
@@ -188,12 +191,17 @@ def test_preprocessor_fits_on_train_and_uses_decay_weighted_history_for_transfor
     assert transformed_test.loc[0, "history_records"] == 2
     assert transformed_test.loc[0, "neg_bs_flag"] == 1
     assert transformed_test.loc[0, "ateco_sector_te"] == artifacts.industry_global_mean
+    # Detailed codes 10 and 20 both belong to ATECO section C, so the learned
+    # target-encoding mapping is keyed by the coarse industry group, not raw codes.
+    assert artifacts.industry_mapping.index.tolist() == ["C"]
     assert transformed_test.loc[0, "cur_asst_ratio"] == pytest.approx(7 / 30)
     # SRL is the fitted reference category, so it is intentionally omitted.
     # Unseen legal structures are represented by zero across fitted dummies.
     assert "legal_SRL" not in transformed_test.columns
     assert artifacts.legal_reference_category == "SRL"
     assert artifacts.city_reference_category == "Piemonte"
+    assert artifacts.feature_schema_version == FEATURE_SCHEMA_VERSION
+    assert artifacts.feature_schema_hash == FEATURE_SCHEMA_HASH
 
 
 def test_preprocessor_implements_feature_schema_and_group_collinearity_diagnostics():
@@ -229,6 +237,34 @@ def test_preprocessor_implements_feature_schema_and_group_collinearity_diagnosti
     assert {"feature", "vif", "status", "sample_rows"}.issubset(
         diagnostics["business_structural"]["vif"].columns
     )
+
+
+def test_feature_schema_metadata_has_a_version_and_hash():
+    metadata = feature_schema_metadata()
+
+    assert metadata["version"] == FEATURE_SCHEMA_VERSION
+    assert metadata["sha256"] == FEATURE_SCHEMA_HASH
+    assert len(metadata["sha256"]) == 64
+
+
+def test_transform_rejects_an_artifact_from_a_different_feature_schema():
+    train = pd.DataFrame(
+        [
+            _raw_row(1, 2007, 0, sector=10),
+            _raw_row(2, 2007, 1, sector=10),
+            _raw_row(3, 2007, 0, sector=20),
+            _raw_row(4, 2007, 1, sector=20),
+        ]
+    )
+    _, artifacts = fit_preprocessor(
+        train,
+        train.drop(columns="label"),
+        PreprocessingConfig(target_encoding_folds=2, random_state=7),
+    )
+    artifacts.feature_schema_hash = "outdated-schema"
+
+    with pytest.raises(ValueError, match="feature schema does not match"):
+        transform_with_preprocessor(train.drop(columns="label"), train.drop(columns="label"), artifacts)
 
 
 def test_calculate_vif_marks_perfectly_collinear_features():

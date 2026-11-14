@@ -4,6 +4,57 @@ Code: [notebooks/features/04_feature_engineering.ipynb](../../../notebooks/featu
 
 Left out: features based on `exp_financing` and `inc_financing` (interest coverage, financial expenses, financial income), the NLP signals, the raw amounts the proposal says are not used directly, and ROE (`roe` was dropped in 02).
 
+## Current feature schema
+
+The current schema is defined in `data/interim/Feature_Schema_new.xlsx`. Features are grouped below; entries described as raw measures are retained directly rather than calculated as a ratio.
+
+| Feature | Definition |
+|---|---|
+| **Business and Structural Risk** | |
+| Industry | A coarser concept than sector, encoded with smoothed five-fold out-of-fold target encoding. |
+| Legal structure | Legal form of the company, one-hot encoded. |
+| City | City is grouped into 20 features corresponding to Italy's 20 regions. |
+| Size | Natural logarithm of total assets. |
+| **Leverage and Capital Structure** | |
+| Equity ratio | Percentage of company assets funded by equity. |
+| Debt-to-equity | Captures how non-equity funding is split between reported debt and other liabilities. |
+| Short-term debt share | `debt_st / (debt_st + debt_lt)`; percentage of total debt that is short term. |
+| Long-term debt to capital | `debt_lt / (debt_lt + eqty_tot)`; share of long-term capital funded by long-term debt rather than equity. |
+| Bank debt concentration | `(debt_bank_st + debt_bank_lt) / (debt_st + debt_lt)`. |
+| Current assets ratio | `asst_current / asst_tot`. |
+| Tangible asset ratio | `asst_tang_fixed / asst_tot`. |
+| Goodwill ratio | `goodwill / asst_tot`. |
+| Negative balance-sheet flag | 1 when any of the 11 asset and liability fields is negative; otherwise 0. |
+| **Liquidity and Activity** | |
+| Cash ratio | `cash_and_equiv / asst_tot`. |
+| Receivables ratio | `AR / rev_operating`. |
+| Payables ratio | `AP_st / asst_tot`. |
+| Working-capital ratio | `wc_net / asst_tot`. |
+| Current-over-debt ratio | `asst_current / debt_st`. |
+| Quick ratio | `(cash_and_equiv + AR) / debt_st`. |
+| Asset turnover | `rev_operating / asst_tot`. |
+| **Profitability and Growth** | |
+| Profit | Raw `profit` measure. |
+| Operating revenue | Raw `rev_operating` measure. |
+| EBITDA | Raw `ebitda` measure. |
+| Cost of goods sold | Raw `COGS` measure. |
+| Operating profit | Raw `prof_operations` measure. |
+| ROA | Provider-supplied `roa` measure. |
+| Operating margin | `prof_operations / rev_operating`. |
+| Net-profit margin | `profit / rev_operating`. |
+| ROE | Provider-supplied `roe` measure. |
+| Negative profit-and-loss flag | 1 when `rev_operating`, `COGS`, or `exp_financing` is negative, or when `ebitda < prof_operations`; otherwise 0. |
+| **Coverage and Cash Flow** | |
+| Financing expense | Raw `exp_financing` measure. |
+| Interest coverage | `ebitda / exp_financing`. |
+| Financing-expense ratio | `exp_financing / asst_tot`. |
+| Cash-to-financing-expense ratio | `cash_and_equiv / exp_financing`. |
+| EBITDA-to-debt | `ebitda / (debt_st + debt_lt)`. |
+| Operating cash-flow margin | `cf_operations / rev_operating`; measures cash generated per unit of profit made. |
+| Cash interest coverage | `cf_operations / exp_financing`; set to NaN when `exp_financing <= 0`. |
+| Operating cash-flow ratio | `cf_operations / asst_tot`. |
+| Operating cash-flow to debt | `cf_operations / (debt_st + debt_lt)`. |
+
 ## Problems with the features built as planned
 
 ### 1. Industry grouping (to discuss)

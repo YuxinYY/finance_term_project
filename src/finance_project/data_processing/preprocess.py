@@ -18,6 +18,7 @@ round's history.csv, but labels in history are never used as input features.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -31,44 +32,75 @@ from sklearn.model_selection import GroupKFold, StratifiedGroupKFold
 from finance_project.common import project_path, write_json
 
 
-DEBT_DETAIL = ["debt_bank_st", "debt_bank_lt", "debt_fin_st", "debt_fin_lt", "AP_st", "AP_lt"]
-ANOMALY_FLAGS = ["neg_bs_flag"]
-IMPUTE_COLS = [
-    "asst_intang_fixed",
-    "asst_tang_fixed",
-    "asst_fixed_fin",
-    "asst_current",
-    "AR",
-    "cash_and_equiv",
-    "goodwill",
-    "eqty_tot",
-    "liab_lt",
-    "liab_lt_emp",
-    *DEBT_DETAIL,
-    "debt_st",
-    "debt_lt",
-    "rev_operating",
-    "COGS",
-    "prof_operations",
-    "inc_financing",
-    "exp_financing",
-    "prof_financing",
-    "inc_extraord",
-    "taxes",
-    "profit",
-    "ebitda",
-    "cf_operations",
-]
-REQUIRED_COLUMNS = {
-    "id",
-    "fs_year",
-    "HQ_city",
-    "legal_struct",
-    "ateco_sector",
-    "asst_tot",
-    "wc_net",
-    "margin_fin",
-    *IMPUTE_COLS,
+FEATURE_SCHEMA_PATH = project_path("config/feature_schema.json")
+ATECO_INDUSTRY_LOOKUP_PATH = project_path("data/interim/ateco_sector_english.csv")
+
+
+def _load_feature_schema(path: Path = FEATURE_SCHEMA_PATH) -> tuple[dict[str, Any], str]:
+    """Load and validate the version-controlled feature contract."""
+    if not path.exists():
+        raise FileNotFoundError(f"Feature schema configuration not found: {path}")
+    schema = json.loads(path.read_text(encoding="utf-8"))
+    required_keys = {
+        "schema_version",
+        "debt_detail_columns",
+        "anomaly_flags",
+        "impute_columns",
+        "raw_required",
+        "derived_categorical_features",
+        "period_numeric_features",
+        "period_binary_features",
+        "feature_groups",
+        "mode_features",
+        "dynamic_feature_prefixes",
+    }
+    missing_keys = sorted(required_keys.difference(schema))
+    if missing_keys:
+        raise ValueError(f"Feature schema is missing required keys: {missing_keys}")
+    list_keys = required_keys.difference({"schema_version", "feature_groups", "mode_features"})
+    for key in list_keys:
+        values = schema[key]
+        if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+            raise TypeError(f"Feature schema '{key}' must be a list of strings.")
+        if len(values) != len(set(values)):
+            raise ValueError(f"Feature schema '{key}' contains duplicate names.")
+    if not isinstance(schema["schema_version"], str) or not schema["schema_version"]:
+        raise TypeError("Feature schema 'schema_version' must be a non-empty string.")
+    if not isinstance(schema["feature_groups"], dict) or not schema["feature_groups"]:
+        raise TypeError("Feature schema 'feature_groups' must be a non-empty object.")
+    if not isinstance(schema["mode_features"], dict):
+        raise TypeError("Feature schema 'mode_features' must be an object.")
+    for group, values in schema["feature_groups"].items():
+        if not isinstance(group, str) or not isinstance(values, list) or not all(
+            isinstance(value, str) for value in values
+        ):
+            raise TypeError("Every feature-group name and requirement must be a string.")
+    for mode in {"decayed_history", "firm_year"}:
+        if mode not in schema["mode_features"]:
+            raise ValueError(f"Feature schema 'mode_features' is missing '{mode}'.")
+        values = schema["mode_features"][mode]
+        if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+            raise TypeError(f"Feature schema mode '{mode}' must be a list of strings.")
+    if not set(schema["anomaly_flags"]).issubset(schema["period_binary_features"]):
+        raise ValueError("Every configured anomaly flag must be a configured binary feature.")
+    canonical_schema = json.dumps(schema, sort_keys=True, separators=(",", ":"))
+    return schema, hashlib.sha256(canonical_schema.encode("utf-8")).hexdigest()
+
+
+FEATURE_SCHEMA, FEATURE_SCHEMA_HASH = _load_feature_schema()
+FEATURE_SCHEMA_VERSION = FEATURE_SCHEMA["schema_version"]
+DEBT_DETAIL = list(FEATURE_SCHEMA["debt_detail_columns"])
+ANOMALY_FLAGS = list(FEATURE_SCHEMA["anomaly_flags"])
+IMPUTE_COLS = list(FEATURE_SCHEMA["impute_columns"])
+REQUIRED_COLUMNS = set(FEATURE_SCHEMA["raw_required"]) | set(IMPUTE_COLS)
+DERIVED_CATEGORICAL_FEATURES = list(FEATURE_SCHEMA["derived_categorical_features"])
+ATECO_INDUSTRY_COLUMN = "ateco_industry_group"
+if ATECO_INDUSTRY_COLUMN not in DERIVED_CATEGORICAL_FEATURES:
+    raise ValueError(
+        f"Feature schema must configure the derived categorical feature '{ATECO_INDUSTRY_COLUMN}'."
+    )
+FEATURE_GROUPS: dict[str, list[str]] = {
+    group: list(requirements) for group, requirements in FEATURE_SCHEMA["feature_groups"].items()
 }
 
 # ISTAT province code (HQ_city, Allegati_in_italiano.pdf, Allegato 2) -> region.
@@ -100,6 +132,37 @@ REGION_BY_PROVINCE = {
 assert sorted(map(int, REGION_BY_PROVINCE)) == list(range(1, 111))
 
 
+def _load_ateco_industry_mapping(path: Path = ATECO_INDUSTRY_LOOKUP_PATH) -> pd.Series:
+    """Map detailed two-digit ATECO codes to their 21 A--U industry sections."""
+    if not path.exists():
+        raise FileNotFoundError(f"ATECO industry lookup not found: {path}")
+    lookup = pd.read_csv(path, dtype={"code": "string"})
+    if "code" not in lookup:
+        raise ValueError("ATECO industry lookup must contain a 'code' column.")
+    codes = lookup["code"].str.strip()
+    sections = codes.where(codes.str.fullmatch(r"[A-U]")).ffill()
+    mapping = (
+        pd.DataFrame({"code": codes, ATECO_INDUSTRY_COLUMN: sections})
+        .loc[lambda frame: frame["code"].str.fullmatch(r"\d{2}")]
+        .set_index("code")[ATECO_INDUSTRY_COLUMN]
+    )
+    if mapping.isna().any() or sorted(mapping.unique()) != list("ABCDEFGHIJKLMNOPQRSTU"):
+        raise ValueError("ATECO industry lookup must map detailed codes to all 21 A--U sections.")
+    return mapping
+
+
+ATECO_TO_INDUSTRY = _load_ateco_industry_mapping()
+
+
+def _ateco_industry_group(sector: pd.Series) -> pd.Series:
+    """Convert raw numeric ATECO codes, such as 14.0, to A--U industry sections."""
+    numeric = pd.to_numeric(sector, errors="coerce")
+    two_digit_codes = (
+        numeric.where(numeric.mod(1).eq(0)).astype("Int64").astype("string").str.zfill(2)
+    )
+    return two_digit_codes.map(ATECO_TO_INDUSTRY)
+
+
 def _region(city: pd.Series) -> pd.Series:
     """Map province codes to regions; missing or unrecognised codes become 'Unknown'."""
     return city.astype(str).map(REGION_BY_PROVINCE).fillna("Unknown")
@@ -122,8 +185,9 @@ class PreprocessingConfig:
     random_state: int = 42
 
     def __post_init__(self) -> None:
-        if self.feature_mode not in {"decayed_history", "firm_year"}:
-            raise ValueError("feature_mode must be 'decayed_history' or 'firm_year'.")
+        if self.feature_mode not in FEATURE_SCHEMA["mode_features"]:
+            modes = sorted(FEATURE_SCHEMA["mode_features"])
+            raise ValueError(f"feature_mode must be one of {modes}.")
 
 
 @dataclass
@@ -131,6 +195,8 @@ class PreprocessingArtifacts:
     """Parameters learned exclusively from one round's training anchors."""
 
     config: PreprocessingConfig
+    feature_schema_version: str
+    feature_schema_hash: str
     sector_medians: pd.DataFrame
     industry_mapping: pd.Series
     industry_global_mean: float
@@ -185,6 +251,7 @@ def clean_and_impute(
     _require_columns(frame, include_target=False, config=config)
     result = fill_missing(flag_anomalies(frame), medians)
     result[config.legal_column] = result[config.legal_column].fillna("Unknown").astype(str)
+    result[ATECO_INDUSTRY_COLUMN] = _ateco_industry_group(result[config.sector_column])
     return result
 
 
@@ -265,109 +332,51 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     }
     for name, values in zero_values.items():
         result[name] = values.eq(0).astype(int)
+    _validate_period_feature_contract(result)
     return result
 
 
 def _period_numeric_features() -> list[str]:
-    return [
-        "size",
-        "equity_ratio",
-        "st_debt_share",
-        "lt_debt_to_capital",
-        "bank_debt_conc",
-        "tangible_asset_ratio",
-        "goodwill_ratio",
-        "cash_ratio",
-        "cash_to_financing_exp_ratio",
-        "cur_asst_ratio",
-        "AR_ratio",
-        "change_in_ar_turnover",
-        "payables_ratio",
-        "wc_ratio",
-        "cur_debt_ratio",
-        "quick_ratio",
-        "asset_turnover",
-        "annualized_change_in_roa",
-        "roa",
-        "op_margin",
-        "net_prof_margin",
-        "tax_ratio",
-        "int_coverage",
-        "financing_expense_ratio",
-        "financing_income_ratio",
-        "operating_cash_flow_ratio",
-        "ebitda_to_debt",
-    ]
+    return list(FEATURE_SCHEMA["period_numeric_features"])
 
 
 def _period_binary_features() -> list[str]:
-    return [
-        *ANOMALY_FLAGS,
-        "debt_detail_missing",
-        "loss_flag",
-        "zero_asst_tot",
-        "zero_total_debt",
-        "zero_debt_st",
-        "zero_debt_lt",
-        "zero_bank_debt",
-        "zero_cash",
-        "zero_asst_current",
-        "zero_ar",
-        "zero_rev_operating",
-        "zero_AP_st",
-        "zero_wc_net",
-        "zero_ebitda",
-        "zero_prof_operations",
-        "zero_profit",
-        "zero_cf_operations",
-        "zero_exp_financing",
-    ]
+    return list(FEATURE_SCHEMA["period_binary_features"])
 
 
-# These groups mirror data/interim/Feature_Schema-Sheet1.csv. A trailing '*'
-# denotes one or more one-hot encoded columns.
-FEATURE_GROUPS: dict[str, list[str]] = {
-    "business_structural": ["ateco_sector_te", "legal_*", "city_*", "size"],
-    "leverage_capital_structure": [
-        "equity_ratio",
-        "st_debt_share",
-        "lt_debt_to_capital",
-        "bank_debt_conc",
-        "cur_asst_ratio",
-        "tangible_asset_ratio",
-        "goodwill_ratio",
-        "neg_bs_flag",
-    ],
-    "liquidity_activity": [
-        "cash_ratio",
-        "AR_ratio",
-        "change_in_ar_turnover",
-        "payables_ratio",
-        "wc_ratio",
-        "cur_debt_ratio",
-        "quick_ratio",
-        "asset_turnover",
-    ],
-    "profitability_growth": [
-        "roa",
-        "annualized_change_in_roa",
-        "op_margin",
-        "net_prof_margin",
-        "tax_ratio",
-    ],
-    "coverage_cash_flow": [
-        "int_coverage",
-        "financing_expense_ratio",
-        "cash_to_financing_exp_ratio",
-        "ebitda_to_debt",
-        "financing_income_ratio",
-        "operating_cash_flow_ratio",
-    ],
-}
+def feature_schema_metadata() -> dict[str, str]:
+    """Return the schema identity stored with preprocessing/model artifacts."""
+    return {
+        "path": str(FEATURE_SCHEMA_PATH),
+        "version": FEATURE_SCHEMA_VERSION,
+        "sha256": FEATURE_SCHEMA_HASH,
+    }
+
+
+def _validate_period_feature_contract(frame: pd.DataFrame) -> None:
+    """Fail clearly when a configured engineered feature was renamed or omitted."""
+    expected = set(_period_numeric_features()) | set(_period_binary_features())
+    missing = sorted(expected.difference(frame.columns))
+    if missing:
+        raise ValueError(
+            "Feature schema does not match make_period_features output; "
+            f"missing configured features: {missing}"
+        )
+
+
+def _assert_artifact_schema_compatible(artifacts: PreprocessingArtifacts) -> None:
+    """Prevent scoring with an artifact fitted under a different feature contract."""
+    artifact_version = getattr(artifacts, "feature_schema_version", None)
+    artifact_hash = getattr(artifacts, "feature_schema_hash", None)
+    if artifact_version != FEATURE_SCHEMA_VERSION or artifact_hash != FEATURE_SCHEMA_HASH:
+        raise ValueError(
+            "Preprocessing artifact feature schema does not match the current configuration. "
+            "Refit the preprocessor/model or restore the feature_schema.json used for fitting."
+        )
 
 
 def feature_schema_coverage(feature_columns: list[str]) -> pd.DataFrame:
-    """Audit implemented model features against Feature_Schema-Sheet1.csv.
+    """Audit implemented model features against the configured feature contract.
 
     A one-hot categorical family is considered represented when it has at
     least one non-reference dummy. A single observed category legitimately has
@@ -527,6 +536,7 @@ def aggregate_histories(
         id_column,
         year_column,
         config.sector_column,
+        ATECO_INDUSTRY_COLUMN,
         config.legal_column,
         "HQ_city",
     ]
@@ -586,6 +596,7 @@ def select_firm_year_features(
         id_column,
         year_column,
         config.sector_column,
+        ATECO_INDUSTRY_COLUMN,
         config.legal_column,
         "HQ_city",
     ]
@@ -608,7 +619,7 @@ def _oof_target_encode(
 ) -> tuple[pd.Series, pd.Series, float]:
     """Group-aware, out-of-fold target encode industry for training anchors."""
     target = frame[config.target_column]
-    category = frame[config.sector_column]
+    category = frame[ATECO_INDUSTRY_COLUMN]
     global_mean = float(target.mean())
     encoded = pd.Series(index=frame.index, dtype=float)
     group_count = frame[config.id_column].nunique()
@@ -629,13 +640,13 @@ def _oof_target_encode(
     for fit_index, validation_index in fold_iterator:
         fit = frame.iloc[fit_index]
         fold_mean = float(fit[config.target_column].mean())
-        stats = fit.groupby(config.sector_column)[config.target_column].agg(["sum", "count"])
+        stats = fit.groupby(ATECO_INDUSTRY_COLUMN)[config.target_column].agg(["sum", "count"])
         mapping = (stats["sum"] + config.target_encoding_smoothing * fold_mean) / (
             stats["count"] + config.target_encoding_smoothing
         )
         encoded.iloc[validation_index] = category.iloc[validation_index].map(mapping).fillna(fold_mean)
 
-    full_stats = frame.groupby(config.sector_column)[config.target_column].agg(["sum", "count"])
+    full_stats = frame.groupby(ATECO_INDUSTRY_COLUMN)[config.target_column].agg(["sum", "count"])
     full_mapping = (full_stats["sum"] + config.target_encoding_smoothing * global_mean) / (
         full_stats["count"] + config.target_encoding_smoothing
     )
@@ -654,7 +665,7 @@ def _finalize_features(
         encoded, _, _ = _oof_target_encode(output, config)
         output["ateco_sector_te"] = encoded
     else:
-        output["ateco_sector_te"] = output[config.sector_column].map(
+        output["ateco_sector_te"] = output[ATECO_INDUSTRY_COLUMN].map(
             artifacts.industry_mapping
         ).fillna(artifacts.industry_global_mean)
 
@@ -710,8 +721,7 @@ def fit_preprocessor(
         *_period_numeric_features(),
         *_period_binary_features(),
     ]
-    if config.feature_mode == "decayed_history":
-        feature_columns.extend(["history_records", "no_prior_observation"])
+    feature_columns.extend(FEATURE_SCHEMA["mode_features"][config.feature_mode])
     feature_columns.extend(
         [
             "ateco_sector_te",
@@ -728,6 +738,8 @@ def fit_preprocessor(
         raise AssertionError(f"Feature Schema fields are missing: {missing_required}")
     artifacts = PreprocessingArtifacts(
         config=config,
+        feature_schema_version=FEATURE_SCHEMA_VERSION,
+        feature_schema_hash=FEATURE_SCHEMA_HASH,
         sector_medians=medians,
         industry_mapping=industry_mapping,
         industry_global_mean=industry_global_mean,
@@ -746,6 +758,7 @@ def transform_with_preprocessor(
     artifacts: PreprocessingArtifacts,
 ) -> pd.DataFrame:
     """Transform validation, test, or holdout anchors without refitting any statistics."""
+    _assert_artifact_schema_compatible(artifacts)
     config = artifacts.config
     anchors = _drop_index_columns(anchors)
     history = _drop_index_columns(history)
@@ -864,6 +877,7 @@ def _fit_command(args: argparse.Namespace) -> None:
             "artifacts": str(artifact_path),
             "rows": int(len(transformed)),
             "features": artifacts.feature_columns,
+            "feature_schema": feature_schema_metadata(),
             "feature_schema_coverage": feature_schema_coverage(artifacts.feature_columns).to_dict(
                 orient="records"
             ),
