@@ -18,6 +18,7 @@ round's history.csv, but labels in history are never used as input features.
 from __future__ import annotations
 
 import argparse
+import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -31,25 +32,7 @@ from finance_project.common import project_path, write_json
 
 
 DEBT_DETAIL = ["debt_bank_st", "debt_bank_lt", "debt_fin_st", "debt_fin_lt", "AP_st", "AP_lt"]
-NEG_BS_COLS = [
-    "asst_intang_fixed",
-    "asst_tang_fixed",
-    "asst_fixed_fin",
-    "AR",
-    "liab_lt",
-    "liab_lt_emp",
-    *DEBT_DETAIL,
-    "debt_st",
-    "debt_lt",
-]
-ANOMALY_FLAGS = [
-    "neg_bs_flag",
-    "neg_pl_flag",
-    "fin_adj_flag",
-    "neg_goodwill_flag",
-    "debt_detail_inconsistent",
-]
-DROP_COLS = ["Unnamed: 0", "eqty_corp_family_tot", "days_rec"]
+ANOMALY_FLAGS = ["neg_bs_flag"]
 IMPUTE_COLS = [
     "asst_intang_fixed",
     "asst_tang_fixed",
@@ -88,6 +71,39 @@ REQUIRED_COLUMNS = {
     *IMPUTE_COLS,
 }
 
+# ISTAT province code (HQ_city, Allegati_in_italiano.pdf, Allegato 2) -> region.
+_REGION_PROVINCES = {
+    "Piemonte": [1, 2, 3, 4, 5, 6, 96, 103],
+    "Valle d'Aosta": [7],
+    "Lombardia": [*range(12, 21), 97, 98, 108],
+    "Trentino-Alto Adige": [21, 22],
+    "Veneto": list(range(23, 30)),
+    "Friuli-Venezia Giulia": [30, 31, 32, 93],
+    "Liguria": [8, 9, 10, 11],
+    "Emilia-Romagna": [*range(33, 41), 99],
+    "Toscana": [*range(45, 54), 100],
+    "Umbria": [54, 55],
+    "Marche": [41, 42, 43, 44, 109],
+    "Lazio": [56, 57, 58, 59, 60],
+    "Abruzzo": [66, 67, 68, 69],
+    "Molise": [70, 94],
+    "Campania": [61, 62, 63, 64, 65],
+    "Puglia": [71, 72, 73, 74, 75, 110],
+    "Basilicata": [76, 77],
+    "Calabria": [78, 79, 80, 101, 102],
+    "Sicilia": list(range(81, 90)),
+    "Sardegna": [90, 91, 92, 95, 104, 105, 106, 107],
+}
+REGION_BY_PROVINCE = {
+    str(code): region for region, codes in _REGION_PROVINCES.items() for code in codes
+}
+assert sorted(map(int, REGION_BY_PROVINCE)) == list(range(1, 111))
+
+
+def _region(city: pd.Series) -> pd.Series:
+    """Map province codes to regions; missing or unrecognised codes become 'Unknown'."""
+    return city.astype(str).map(REGION_BY_PROVINCE).fillna("Unknown")
+
 
 @dataclass(frozen=True)
 class PreprocessingConfig:
@@ -125,6 +141,22 @@ class PreprocessingArtifacts:
     feature_columns: list[str]
 
 
+def _load_notebook_functions(notebook: str) -> dict[str, Any]:
+    """Exec the code cells tagged ``export`` in notebooks/features/<notebook>.ipynb."""
+    cells = json.loads(project_path(f"notebooks/features/{notebook}.ipynb").read_text(encoding="utf-8"))["cells"]
+    namespace: dict[str, Any] = {"pd": pd, "np": np}
+    for cell in cells:
+        if "export" in cell["metadata"].get("tags", []):
+            exec("".join(cell["source"]), namespace)
+    return namespace
+
+
+_flags = _load_notebook_functions("01_flag_anomalies")
+_missing = _load_notebook_functions("02_missing_values")
+flag_anomalies = _flags["flag_anomalies"]
+fill_missing = _missing["fill_missing"]
+
+
 def _drop_index_columns(frame: pd.DataFrame) -> pd.DataFrame:
     frame = frame.copy()
     frame.columns = [str(column).lstrip("\ufeff").strip() for column in frame.columns]
@@ -143,117 +175,16 @@ def _require_columns(frame: pd.DataFrame, *, include_target: bool, config: Prepr
         raise ValueError(f"Input is missing required columns: {missing}")
 
 
-def _coerce_raw_types(frame: pd.DataFrame, config: PreprocessingConfig) -> pd.DataFrame:
-    """Convert financial fields and known numeric identifiers; preserve dates/categories."""
-    frame = _drop_index_columns(frame)
-    numeric = set(IMPUTE_COLS) | {
-        config.id_column,
-        config.year_column,
-        config.sector_column,
-        config.target_column,
-        "asst_tot",
-        "HQ_city",
-        "wc_net",
-        "margin_fin",
-        "roa",
-        "roe",
-    }
-    for column in numeric.intersection(frame.columns):
-        frame[column] = pd.to_numeric(frame[column], errors="coerce")
-    return frame
-
-
-def flag_anomalies(frame: pd.DataFrame) -> pd.DataFrame:
-    """Add binary flags for economically implausible reported values without changing them."""
-    columns = [
-        *NEG_BS_COLS,
-        "rev_operating",
-        "COGS",
-        "exp_financing",
-        "ebitda",
-        "prof_operations",
-        "prof_financing",
-        "goodwill",
-    ]
-    values = frame[columns].apply(pd.to_numeric, errors="coerce")
-    result = frame.copy()
-    result["neg_bs_flag"] = (values[NEG_BS_COLS] < 0).any(axis=1)
-    result["neg_pl_flag"] = (
-        (values["rev_operating"] < 0)
-        | (values["COGS"] < 0)
-        | (values["exp_financing"] < 0)
-        | (values["ebitda"] < values["prof_operations"])
-    )
-    result["fin_adj_flag"] = values["prof_financing"].notna() & (values["prof_financing"] != 0)
-    result["neg_goodwill_flag"] = values["goodwill"] < 0
-    short_term_detail = values["debt_bank_st"] + values["debt_fin_st"] + values["AP_st"]
-    long_term_detail = values["debt_bank_lt"] + values["debt_fin_lt"] + values["AP_lt"]
-    result["debt_detail_inconsistent"] = values[DEBT_DETAIL].notna().all(axis=1) & (
-        (short_term_detail > values["debt_st"] + 1)
-        | (long_term_detail > values["debt_lt"] + 1)
-    )
-    result[ANOMALY_FLAGS] = result[ANOMALY_FLAGS].astype(int)
-    return result
-
-
-def fit_sector_medians(train: pd.DataFrame, config: PreprocessingConfig) -> pd.DataFrame:
-    """Fit sector-level size-normalized imputation medians on training anchors only."""
-    train = _coerce_raw_types(train, config)
-    ratios = train[IMPUTE_COLS].div(train["asst_tot"], axis=0)
-    ratios["asst_tot"] = train["asst_tot"]
-    medians = ratios.groupby(train[config.sector_column]).median()
-    medians.loc["ALL"] = ratios.median()
-    return medians
-
-
 def clean_and_impute(
     frame: pd.DataFrame,
     medians: pd.DataFrame,
     config: PreprocessingConfig,
 ) -> pd.DataFrame:
     """Flag anomalies, preserve their values, and impute raw fields with training statistics."""
+    frame = _drop_index_columns(frame)
     _require_columns(frame, include_target=False, config=config)
-    result = _coerce_raw_types(frame, config)
-    result = flag_anomalies(result)
-    result = result.drop(columns=DROP_COLS, errors="ignore")
-
-    result["HQ_city"] = (
-        result["HQ_city"].map("{:.0f}".format, na_action="ignore").fillna("Unknown")
-    )
+    result = fill_missing(flag_anomalies(frame), medians)
     result[config.legal_column] = result[config.legal_column].fillna("Unknown").astype(str)
-    result["debt_detail_missing"] = result[DEBT_DETAIL].isna().any(axis=1).astype(int)
-
-    # Restore a missing component only when the other two income-statement
-    # values were reported. This happens before ratio-based imputation.
-    result["rev_operating"] = result["rev_operating"].fillna(
-        result["prof_operations"] + result["COGS"]
-    )
-    result["COGS"] = result["COGS"].fillna(
-        result["rev_operating"] - result["prof_operations"]
-    )
-    result["prof_operations"] = result["prof_operations"].fillna(
-        result["rev_operating"] - result["COGS"]
-    )
-
-    by_sector = medians.drop(index="ALL").reindex(result[config.sector_column])
-    by_sector.index = result.index
-    by_sector = by_sector.fillna(medians.loc["ALL"])
-    result["asst_tot"] = result["asst_tot"].fillna(by_sector["asst_tot"])
-    result[IMPUTE_COLS] = result[IMPUTE_COLS].fillna(
-        by_sector[IMPUTE_COLS].mul(result["asst_tot"], axis=0)
-    )
-
-    fixed_assets = (
-        result["asst_intang_fixed"] + result["asst_tang_fixed"] + result["asst_fixed_fin"]
-    )
-    result["margin_fin"] = result["margin_fin"].fillna(result["eqty_tot"] - fixed_assets)
-    result["wc_net"] = result["wc_net"].fillna(result["asst_current"] - result["debt_st"])
-    result["roa"] = result.get("roa", pd.Series(index=result.index, dtype=float)).fillna(
-        result["prof_operations"].div(result["asst_tot"]).mul(100)
-    )
-    result["roe"] = result.get("roe", pd.Series(index=result.index, dtype=float)).fillna(
-        result["profit"].div(result["eqty_tot"].where(result["eqty_tot"] != 0)).mul(100)
-    )
     return result
 
 
@@ -271,14 +202,12 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
 
     result["size"] = np.log(result["asst_tot"].where(result["asst_tot"] > 0))
     result["equity_ratio"] = _positive_divide(result["eqty_tot"], result["asst_tot"])
-    result["debt_ratio"] = _positive_divide(total_debt, result["asst_tot"])
     result["st_debt_share"] = _positive_divide(result["debt_st"], total_debt)
     result["lt_debt_to_capital"] = _positive_divide(result["debt_lt"], long_term_capital)
     result["bank_debt_conc"] = _positive_divide(bank_debt, total_debt)
     result["tangible_asset_ratio"] = _positive_divide(result["asst_tang_fixed"], result["asst_tot"])
     result["goodwill_ratio"] = _positive_divide(result["goodwill"], result["asst_tot"])
     result["cash_ratio"] = _positive_divide(result["cash_and_equiv"], result["asst_tot"])
-    result["cash_to_debt"] = _positive_divide(result["cash_and_equiv"], total_debt)
     result["cash_to_financing_exp_ratio"] = _positive_divide(
         result["cash_and_equiv"], result["exp_financing"]
     )
@@ -287,17 +216,17 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     result["payables_ratio"] = _positive_divide(result["AP_st"], result["asst_tot"])
     result["wc_ratio"] = _positive_divide(result["wc_net"], result["asst_tot"])
     result["cur_debt_ratio"] = _positive_divide(result["asst_current"], result["debt_st"])
-    result["ebitda_ratio"] = _positive_divide(result["ebitda"], result["asst_tot"])
+    result["quick_ratio"] = _positive_divide(result["cash_and_equiv"] + result["AR"], result["debt_st"])
+    result["asset_turnover"] = _positive_divide(result["rev_operating"], result["asst_tot"])
     result["op_margin"] = _positive_divide(result["prof_operations"], result["rev_operating"])
     result["net_prof_margin"] = _positive_divide(result["profit"], result["rev_operating"])
     result["tax_ratio"] = _positive_divide(result["taxes"], result["asst_tot"])
-    result["cogs_ratio"] = _positive_divide(result["COGS"], result["rev_operating"])
     result["int_coverage"] = _positive_divide(result["ebitda"], result["exp_financing"])
     result["financing_expense_ratio"] = _positive_divide(result["exp_financing"], result["asst_tot"])
     result["financing_income_ratio"] = _positive_divide(result["inc_financing"], result["asst_tot"])
     result["operating_cash_flow_ratio"] = _positive_divide(result["cf_operations"], result["asst_tot"])
-    result["operating_cash_flow_to_debt"] = _positive_divide(result["cf_operations"], total_debt)
-    result["debt_to_ebitda"] = _positive_divide(total_debt, result["ebitda"])
+    # Inverted Debt/EBITDA: firms with EBITDA <= 0 keep a graded value instead of NaN.
+    result["ebitda_to_debt"] = _positive_divide(result["ebitda"], total_debt)
     result["loss_flag"] = (result["profit"] < 0).astype(int)
 
     previous_year = result.groupby(config.id_column)[config.year_column].shift()
@@ -307,18 +236,12 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
         (result["roa"] - previous_roa).div(year_gap.where(year_gap > 0))
     )
 
-    previous_revenue = result.groupby(config.id_column)["rev_operating"].shift()
-    revenue_ratio = _positive_divide(result["rev_operating"], previous_revenue)
-    result["annualized_sales_growth"] = (
-        revenue_ratio.pow(1 / year_gap.where(year_gap > 0)) - 1
-    ).where((result["rev_operating"] > 0) & (previous_revenue > 0))
-
     previous_ar = result.groupby(config.id_column)["AR"].shift()
     average_ar = (result["AR"] + previous_ar) / 2
     result["ar_turnover"] = _positive_divide(result["rev_operating"], average_ar)
     previous_ar_turnover = result.groupby(config.id_column)["ar_turnover"].shift()
     # The feature schema defines this as a difference in turnover, rather than
-    # an annualized change. (Unlike ROA and sales growth, it is not divided by
+    # an annualized change. (Unlike ROA, it is not divided by
     # the calendar-year gap.)
     result["change_in_ar_turnover"] = result["ar_turnover"] - previous_ar_turnover
 
@@ -349,7 +272,6 @@ def _period_numeric_features() -> list[str]:
     return [
         "size",
         "equity_ratio",
-        "debt_ratio",
         "st_debt_share",
         "lt_debt_to_capital",
         "bank_debt_conc",
@@ -357,28 +279,24 @@ def _period_numeric_features() -> list[str]:
         "goodwill_ratio",
         "cash_ratio",
         "cash_to_financing_exp_ratio",
-        "cash_to_debt",
         "cur_asst_ratio",
         "AR_ratio",
         "change_in_ar_turnover",
         "payables_ratio",
         "wc_ratio",
         "cur_debt_ratio",
+        "quick_ratio",
+        "asset_turnover",
         "annualized_change_in_roa",
         "roa",
-        "roe",
-        "ebitda_ratio",
         "op_margin",
-        "annualized_sales_growth",
         "net_prof_margin",
         "tax_ratio",
-        "cogs_ratio",
         "int_coverage",
         "financing_expense_ratio",
         "financing_income_ratio",
         "operating_cash_flow_ratio",
-        "operating_cash_flow_to_debt",
-        "debt_to_ebitda",
+        "ebitda_to_debt",
     ]
 
 
@@ -412,7 +330,6 @@ FEATURE_GROUPS: dict[str, list[str]] = {
     "business_structural": ["ateco_sector_te", "legal_*", "city_*", "size"],
     "leverage_capital_structure": [
         "equity_ratio",
-        "debt_ratio",
         "st_debt_share",
         "lt_debt_to_capital",
         "bank_debt_conc",
@@ -423,33 +340,28 @@ FEATURE_GROUPS: dict[str, list[str]] = {
     ],
     "liquidity_activity": [
         "cash_ratio",
-        "cash_to_debt",
         "AR_ratio",
         "change_in_ar_turnover",
         "payables_ratio",
         "wc_ratio",
         "cur_debt_ratio",
+        "quick_ratio",
+        "asset_turnover",
     ],
     "profitability_growth": [
         "roa",
         "annualized_change_in_roa",
-        "ebitda_ratio",
         "op_margin",
-        "annualized_sales_growth",
         "net_prof_margin",
-        "roe",
         "tax_ratio",
-        "cogs_ratio",
-        "neg_pl_flag",
     ],
     "coverage_cash_flow": [
         "int_coverage",
         "financing_expense_ratio",
         "cash_to_financing_exp_ratio",
-        "debt_to_ebitda",
+        "ebitda_to_debt",
         "financing_income_ratio",
         "operating_cash_flow_ratio",
-        "operating_cash_flow_to_debt",
     ],
 }
 
@@ -749,7 +661,7 @@ def _finalize_features(
     legal = output[config.legal_column].fillna("Unknown").astype(str)
     for category in artifacts.legal_categories:
         output[f"legal_{category}"] = legal.eq(category).astype(int)
-    city = output["HQ_city"].fillna("Unknown").astype(str)
+    city = _region(output["HQ_city"])
     for category in artifacts.city_categories:
         output[f"city_{category}"] = city.eq(category).astype(int)
 
@@ -787,11 +699,11 @@ def fit_preprocessor(
     history = _drop_index_columns(history)
     _require_columns(train, include_target=True, config=config)
     _require_columns(history, include_target=False, config=config)
-    medians = fit_sector_medians(train, config)
+    medians = _missing["sector_medians"](_drop_index_columns(train))
     engineered = _build_features(train, history, medians, config)
     _, industry_mapping, industry_global_mean = _oof_target_encode(engineered, config)
     all_legal_categories = sorted(engineered[config.legal_column].fillna("Unknown").astype(str).unique())
-    all_city_categories = sorted(engineered["HQ_city"].fillna("Unknown").astype(str).unique())
+    all_city_categories = sorted(_region(engineered["HQ_city"]).unique())
     legal_reference_category, *legal_categories = all_legal_categories
     city_reference_category, *city_categories = all_city_categories
     feature_columns = [

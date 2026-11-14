@@ -43,7 +43,12 @@ The model has seen this data, so its scores here look better than on new data an
 ## 5. Test (FY(t), evaluated once)
 
 - Score the test dataset with the model from step 3, then apply the mapping and transformation from step 4 to get the calibrated PD.
-- Report ROC/AUC and the calibration plot, separately for existing and new companies. Define "new" explicitly (e.g. companies not present in the training data).
+- Report ROC/AUC and the calibration plot, separately for existing and new companies, plus the combined result.
+- Existing and new are defined by company `id` against the whole pre-test period (FY2007 to FY(t−1)), however the training dataset is split internally for tuning:
+  - existing: the company appears in any year of FY2007 to FY(t−1);
+  - new: the company appears in none of those years. A company absent in FY(t−1) but present earlier is still existing.
+- The classification uses only information known before the test year, never default labels or test-year data. It only changes how results are reported: the split, tuning, refit and calibration (steps 1 to 4) are unchanged.
+- Existing companies are out-of-time only; new companies are out-of-sample and out-of-time, the strictest case in Stein (2007, Sec. 3.1, Fig. 4–5). New companies have fewer defaults, so report their AUC with an interval, not only a point estimate.
 
 ## 6. Roll forward
 
