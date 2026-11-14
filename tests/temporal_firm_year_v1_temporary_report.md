@@ -42,6 +42,42 @@ mapping, \(\sigma(a\operatorname{logit}(pd_{raw}) + b)\), for every model.  That
 frozen mapping is applied once to the following test year.  `Calibration gap`
 is mean calibrated test PD minus the observed test default rate.
 
+## Production refit: `production_lightgbm_v1`
+
+Following the walk-forward selection of LightGBM, the production bundle refits
+the firm-year preprocessing and LightGBM model on **all mature labeled data**:
+FY2007–2011.  This is a deployment artifact, not a fourth evaluation round;
+it therefore has no new held-out test metric.
+
+| Item | Production-refit result |
+| --- | --- |
+| Training rows | 835,016 |
+| Training fiscal years | 2007–2011 |
+| Training default rate | 1.36% |
+| Model features | 171 |
+| LightGBM trees | 314 fixed trees |
+| Calibration method | Platt scaling |
+| Calibration observations | 529,382 pooled out-of-time rows from rounds 1–3 |
+| Calibration default rate | 1.54% |
+
+The 314-tree count is the median of the temporal-run LightGBM early-stopping
+iterations (287, 399, and 314).  The preprocessor, model, calibrator, and
+training manifest are stored in `model_artifacts/production_lightgbm_v1/`.
+
+| Pooled out-of-time calibration metric | Raw PD | Platt-calibrated PD |
+| --- | ---: | ---: |
+| ROC-AUC | 0.8412 | 0.8412 |
+| PR-AUC | 0.2011 | 0.2011 |
+| Mean PD | 1.10% | 1.54% |
+| Calibration gap | -0.43 pp | +0.00 pp |
+| Calibration slope | 0.9682 | 1.0001 |
+| Brier score | 0.01355 | 0.01350 |
+
+These pooled predictions are used to estimate the production Platt mapping;
+they should not be reported as an additional independent test result.  The
+three temporal test rounds above remain the relevant evidence for model
+selection and expected out-of-time performance.
+
 ## Initial interpretation
 
 - **LightGBM ranks defaults better in every temporal test year.** Its ROC-AUC

@@ -5,13 +5,20 @@ import pandas as pd
 import pytest
 
 from finance_project.model_development.ebm_model import EBMConfig
-from finance_project.model_development.lightgbm_model import LightGBMConfig
+from finance_project.model_development.lightgbm_model import (
+    LightGBMConfig,
+    fit_final_monotone_lightgbm,
+)
 from finance_project.model_development.run_walk_forward_models import (
     RunnerConfig,
     load_feature_splits,
     run_model_for_round,
 )
 from finance_project.model_development.woe_logistic import WOELogisticConfig, fit_woe_logistic
+from finance_project.model_development.train_production_best_algo import (
+    load_out_of_time_calibration_predictions,
+)
+from finance_project.model_development.interpret_production_lightgbm import build_feature_curve
 
 
 def _split_frame(start, rows, *, omit_legal_srs=False):
@@ -107,6 +114,56 @@ def test_lightgbm_runner_uses_validation_for_early_stopping(tmp_path):
     assert payload["model_details"]["best_iteration"] <= 30
     assert "cash_ratio" in payload["model_details"]["monotone_constraints"]
     assert payload["test"]["calibrated"]["pr_auc"] is not None
+
+
+def test_final_lightgbm_fit_uses_fixed_iteration_count(tmp_path):
+    pytest.importorskip("lightgbm")
+    frame = _split_frame(1, 30)
+    features = frame[["cash_ratio", "debt_to_ebitda", "loss_flag", "legal_SRL", "legal_SRS"]]
+    model, details = fit_final_monotone_lightgbm(
+        features,
+        frame["label"],
+        LightGBMConfig(n_estimators=12, min_child_samples=2, num_leaves=4, n_jobs=1),
+    )
+
+    assert details["fit_mode"] == "final_fixed_iteration"
+    assert details["n_estimators"] == 12
+    assert len(model.predict_proba(features)) == len(frame)
+
+
+def test_production_calibration_loader_pools_out_of_time_lightgbm_predictions(tmp_path):
+    for round_name, rows in {
+        "round_01": pd.DataFrame({"id": [1, 2], "label": [0, 1], "pd_raw": [0.1, 0.8]}),
+        "round_02": pd.DataFrame({"id": [3, 4], "label": [0, 1], "pd_raw": [0.2, 0.7]}),
+    }.items():
+        destination = tmp_path / round_name / "lightgbm"
+        destination.mkdir(parents=True)
+        rows.to_csv(destination / "test_predictions.csv", index=False)
+
+    pooled = load_out_of_time_calibration_predictions(tmp_path)
+
+    assert len(pooled) == 4
+    assert set(pooled["source_round"]) == {"round_01", "round_02"}
+    assert pooled["label"].tolist() == [0, 1, 0, 1]
+
+
+def test_feature_curve_uses_full_population_bins_and_sample_shap_values():
+    values = pd.Series(np.arange(1, 101, dtype=float))
+    labels = pd.Series((values > 70).astype(int))
+    sample_index = np.arange(0, 100, 2)
+    curve, curve_type = build_feature_curve(
+        values,
+        labels,
+        values.iloc[sample_index],
+        pd.Series(np.linspace(-0.2, 0.3, len(sample_index)), index=sample_index),
+        n_bins=5,
+    )
+
+    assert curve_type == "quantile"
+    assert curve["n_obs"].sum() == 100
+    assert curve["n_defaults"].sum() == 30
+    assert curve["shap_sample_rows"].sum() == 50
+    assert curve["smoothed_default_rate"].between(0, 1).all()
 
 
 def test_ebm_runner_writes_global_importance_and_shape_figures(tmp_path):

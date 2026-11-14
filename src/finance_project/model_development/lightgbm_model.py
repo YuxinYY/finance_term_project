@@ -119,3 +119,55 @@ def fit_monotone_lightgbm(
         "monotone_constraints": constraints,
         "config": asdict(config),
     }
+
+
+def fit_final_monotone_lightgbm(
+    train_features: pd.DataFrame,
+    train_target: pd.Series,
+    config: LightGBMConfig | None = None,
+) -> tuple[LightGBMModel, dict[str, Any]]:
+    """Fit the final fixed-iteration LightGBM model for deployment.
+
+    The production tree count must have been selected before this step (for
+    example, from walk-forward early-stopping results).  This deliberately has
+    no validation input and therefore cannot use early stopping: all labeled
+    observations remain available to estimate the final deployed model.
+    """
+    try:
+        from lightgbm import LGBMClassifier
+    except ImportError as error:  # pragma: no cover - depends on active environment
+        raise ImportError(
+            "LightGBM is required for this model. Install the project dependencies "
+            "or activate the project's daily environment."
+        ) from error
+
+    config = config or LightGBMConfig()
+    feature_columns = list(train_features.columns)
+    constraints = {column: MONOTONE_DIRECTIONS.get(column, 0) for column in feature_columns}
+    estimator = LGBMClassifier(
+        objective="binary",
+        n_estimators=config.n_estimators,
+        learning_rate=config.learning_rate,
+        num_leaves=config.num_leaves,
+        min_child_samples=config.min_child_samples,
+        subsample=config.subsample,
+        colsample_bytree=config.colsample_bytree,
+        reg_lambda=config.reg_lambda,
+        monotone_constraints=[constraints[column] for column in feature_columns],
+        random_state=config.random_state,
+        n_jobs=config.n_jobs,
+        verbosity=-1,
+    )
+    estimator.fit(train_features.reindex(columns=feature_columns), train_target)
+    model = LightGBMModel(
+        estimator=estimator,
+        feature_columns=feature_columns,
+        constraints=constraints,
+        config=config,
+    )
+    return model, {
+        "fit_mode": "final_fixed_iteration",
+        "n_estimators": config.n_estimators,
+        "monotone_constraints": constraints,
+        "config": asdict(config),
+    }

@@ -1,0 +1,11 @@
+group,feature,feature_type,n_model_columns,model_columns,mean_abs_shap,mean_shap,sample_non_missing,sample_unique_values,selection_eligible,rank_in_group,selection_rank,selected
+business_structural,ateco_sector_te,numeric_or_binary,1,ateco_sector_te,0.10349340679125091,0.0023998437693841,100000,82,True,1,1,True
+business_structural,size,numeric_or_binary,1,size,0.049433287763259934,0.0006409286345567078,100000,99120,True,2,2,True
+coverage_cash_flow,operating_cash_flow_ratio,numeric_or_binary,1,operating_cash_flow_ratio,0.10606566395168042,-0.0025185605995265933,100000,99870,True,1,1,True
+coverage_cash_flow,operating_cash_flow_to_debt,numeric_or_binary,1,operating_cash_flow_to_debt,0.10525062404688693,-0.004782267790794217,99961,99836,True,2,2,True
+leverage_capital_structure,tangible_asset_ratio,numeric_or_binary,1,tangible_asset_ratio,0.3346907784206927,0.01151438895573688,100000,90154,True,1,1,True
+leverage_capital_structure,equity_ratio,numeric_or_binary,1,equity_ratio,0.2155154565237704,-0.006169021804890127,100000,99954,True,2,2,True
+liquidity_activity,AR_ratio,numeric_or_binary,1,AR_ratio,0.12961308816641487,-0.0015133356464318674,96584,96404,True,1,1,True
+liquidity_activity,payables_ratio,numeric_or_binary,1,payables_ratio,0.09771079583903908,0.0030972955502505495,100000,84713,True,2,2,True
+profitability_growth,net_prof_margin,numeric_or_binary,1,net_prof_margin,0.11209126610836616,0.004811338631983291,96584,96430,True,1,1,True
+profitability_growth,tax_ratio,numeric_or_binary,1,tax_ratio,0.10027441631176123,-0.011617066036956164,100000,99830,True,2,2,True
