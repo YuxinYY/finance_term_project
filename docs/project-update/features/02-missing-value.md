@@ -5,7 +5,7 @@ Code: [notebooks/features/02_missing_values.ipynb](../../../notebooks/features/0
 ## Definition
 - Input: a raw-data DataFrame (training or holdout). `medians` is the sector-median table computed from the **training data** by `sector_medians(train)`. At prediction time, pass the table computed from the training data; never recompute it from the holdout.
 - Output: the filled DataFrame. Compared with the input:
-  - Dropped: `Unnamed: 0`, `eqty_corp_family_tot`, `days_rec`, `roe`.
+  - Dropped: `Unnamed: 0`, `eqty_corp_family_tot`, `days_rec`. (`roe` was dropped originally — see below — but was reinstated as a model feature in feature schema 1.2.0; it is now kept with its missing values left as NaN.)
   - Added: one 0/1 flag, `debt_detail_missing`.
   - `HQ_city` becomes a string category (missing → `"Unknown"`).
   - Numeric columns are first coerced with `pd.to_numeric(errors="coerce")`, so blanks, `"NA"` and other missing-value spellings all become NaN (the project instructions say the holdout may spell missing values differently from the training data).
@@ -40,7 +40,7 @@ Code: [notebooks/features/02_missing_values.ipynb](../../../notebooks/features/0
 | Method | What it does | Why |
 |---|---|---|
 | A | Treat a missing `HQ_city` as its own category `"Unknown"` | The 277 rows come from 85 firms that are missing in every year, so other years cannot fill them; every holdout row needs a PD, so rows cannot be dropped |
-| B | Sector (`ateco_sector`) median of column / `asst_tot`, times the row's `asst_tot`; sectors absent from training use the overall median | `asst_tot` is never missing, so filled values scale with firm size. Early Moody's RiskCalc filled missing financial data with region and sector means [1]. We do not use region (`HQ_city` has 110 values, too few rows per cell) and use the median instead of the mean (less sensitive to extreme values) |
+| B | Coarse ATECO industry-group (A–U) median of column / `asst_tot`, times the row's `asst_tot`; groups missing or absent from training use the overall median | `asst_tot` is never missing, so filled values scale with firm size. Early Moody's RiskCalc filled missing financial data with region and sector means [1]. We do not use region (`HQ_city` has 110 values, too few rows per cell) and use the median instead of the mean (less sensitive to extreme values) |
 | C | If any of the six columns is missing, set `debt_detail_missing = 1`, then fill with B | The gaps may come from small firms filing the short-form statement [5], and missingness may relate to financial distress [3][4]. The six columns cannot be restored from `debt_st` / `debt_lt` (the sums match for only 4% / 62% of rows). One flag and sector-only grouping for now; split into short/long flags or add a size grouping if results are poor |
 | D | `prof_operations = rev_operating − COGS`; restore whichever of the three is missing | Holds within €1 for 99.99% of rows; no other income-statement identity holds |
 | E | `margin_fin = eqty_tot − (asst_intang_fixed + asst_tang_fixed + asst_fixed_fin)`; `wc_net = asst_current − debt_st`; `roa = prof_operations / asst_tot × 100`| Match rates 99.96%, 99.98%, 99.99%. Runs after B and D, so every input to the formula is already filled and every row can be computed |
@@ -56,9 +56,10 @@ Order of execution: unify missing spellings → drop columns → A → record th
 - Filling with 0: `asst_current`, `AR` and `cash_and_equiv` are almost never 0.
 - Dropping rows: every row needs a PD at prediction time.
 
-### Why `days_rec` and `roe` are dropped
+### Why `days_rec` is dropped (and why `roe` was)
 - `days_rec` is 72.31% missing, at a similar rate in every year (67–74%).
 - `days_rec` matches `AR / rev_operating × 365` for only 0.6% of rows and has negative values; the definition is unclear and it cannot be restored. If needed later, compute `AR / rev_operating × 365` ourselves.
+- `roe` was dropped for the reasons in method I above. Feature schema 1.2.0 reinstated it as a model feature anyway: it is no longer dropped here, stays unimputed (NaN remains NaN), and the caveats above still apply when interpreting it.
 
 ### Safeguard added in code, not yet discussed
 - `asst_tot` has no missing values in training, but if a holdout row lacks it, method B cannot compute. The code therefore fills it with the sector median of `asst_tot` (an amount, not a ratio). Training data never triggers this.

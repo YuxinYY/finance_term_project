@@ -153,6 +153,7 @@ def _raw_row(company_id, year, label=None, *, sector=10, legal="SRL", current_as
         "wc_net": 10,
         "margin_fin": 35,
         "roa": 20,
+        "roe": 20,
         "pred_start_dt": f"{year + 1}-06-01",
     }
     if label is not None:

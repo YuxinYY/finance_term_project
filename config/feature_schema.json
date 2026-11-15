@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "debt_detail_columns": [
     "debt_bank_st",
     "debt_bank_lt",
@@ -58,6 +58,7 @@
   "period_numeric_features": [
     "size",
     "equity_ratio",
+    "debt_to_eqty",
     "st_debt_share",
     "lt_debt_to_capital",
     "bank_debt_conc",
@@ -67,25 +68,32 @@
     "cash_to_financing_exp_ratio",
     "cur_asst_ratio",
     "AR_ratio",
-    "change_in_ar_turnover",
     "payables_ratio",
     "wc_ratio",
     "cur_debt_ratio",
     "quick_ratio",
     "asset_turnover",
-    "annualized_change_in_roa",
     "roa",
+    "roe",
     "op_margin",
     "net_prof_margin",
-    "tax_ratio",
+    "profit",
+    "rev_operating",
+    "ebitda",
+    "COGS",
+    "prof_operations",
+    "exp_financing",
     "int_coverage",
     "financing_expense_ratio",
-    "financing_income_ratio",
+    "ebitda_to_debt",
+    "operating_cash_flow_margin",
+    "cash_interest_coverage",
     "operating_cash_flow_ratio",
-    "ebitda_to_debt"
+    "operating_cash_flow_to_debt"
   ],
   "period_binary_features": [
     "neg_bs_flag",
+    "neg_pl_flag",
     "debt_detail_missing",
     "loss_flag",
     "zero_asst_tot",
@@ -114,6 +122,7 @@
     ],
     "leverage_capital_structure": [
       "equity_ratio",
+      "debt_to_eqty",
       "st_debt_share",
       "lt_debt_to_capital",
       "bank_debt_conc",
@@ -125,7 +134,6 @@
     "liquidity_activity": [
       "cash_ratio",
       "AR_ratio",
-      "change_in_ar_turnover",
       "payables_ratio",
       "wc_ratio",
       "cur_debt_ratio",
@@ -134,18 +142,27 @@
     ],
     "profitability_growth": [
       "roa",
-      "annualized_change_in_roa",
+      "roe",
       "op_margin",
       "net_prof_margin",
-      "tax_ratio"
+      "profit",
+      "rev_operating",
+      "ebitda",
+      "COGS",
+      "prof_operations",
+      "loss_flag",
+      "neg_pl_flag"
     ],
     "coverage_cash_flow": [
+      "exp_financing",
       "int_coverage",
       "financing_expense_ratio",
       "cash_to_financing_exp_ratio",
       "ebitda_to_debt",
-      "financing_income_ratio",
-      "operating_cash_flow_ratio"
+      "operating_cash_flow_margin",
+      "cash_interest_coverage",
+      "operating_cash_flow_ratio",
+      "operating_cash_flow_to_debt"
     ]
   },
   "mode_features": {

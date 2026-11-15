@@ -3,14 +3,13 @@
 Each input row is a prediction anchor identified by ``(id, fs_year)``. The
 output has one row per anchor. ``decayed_history`` aggregates financial
 features from up to four statements whose fiscal year is no later than the
-anchor. ``firm_year`` retains only the anchor-year features, while still using
-earlier statements to calculate backward-looking change features. The weight
+anchor. ``firm_year`` retains only the anchor-year features. The weight
 for a statement ``k`` calendar years old is ``phi ** k``; available weights
 are re-normalized for every feature in ``decayed_history`` mode.
 
-Use ``fit`` on a round's train.csv only. It learns sector-median imputation,
-industry target encoding, and legal-structure categories, writes those
-artifacts, and transforms train.csv. Use ``transform`` with that artifact for
+Use ``fit`` on a round's train.csv only. It learns industry-group-median
+imputation, industry target encoding, and legal-structure categories, writes
+those artifacts, and transforms train.csv. Use ``transform`` with that artifact for
 the corresponding validation.csv and test.csv. Both commands require the
 round's history.csv, but labels in history are never used as input features.
 """
@@ -210,7 +209,7 @@ class PreprocessingArtifacts:
 def _load_notebook_functions(notebook: str) -> dict[str, Any]:
     """Exec the code cells tagged ``export`` in notebooks/features/<notebook>.ipynb."""
     cells = json.loads(project_path(f"notebooks/features/{notebook}.ipynb").read_text(encoding="utf-8"))["cells"]
-    namespace: dict[str, Any] = {"pd": pd, "np": np}
+    namespace: dict[str, Any] = {"pd": pd, "np": np, "project_path": project_path}
     for cell in cells:
         if "export" in cell["metadata"].get("tags", []):
             exec("".join(cell["source"]), namespace)
@@ -256,8 +255,15 @@ def clean_and_impute(
 
 
 def _positive_divide(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
-    """Return NaN rather than infinity when a financial denominator is non-positive."""
-    return numerator.div(denominator.where(denominator > 0))
+    """Divide financial values, adding 1 to zero denominators to prevent errors.
+
+    A zero denominator becomes 1, so the ratio degrades to the numerator rather
+    than NaN or infinity; the corresponding ``zero_*`` flag still records the
+    original zero. Negative denominators remain economically invalid and yield
+    NaN, as do missing values.
+    """
+    adjusted = denominator.mask(denominator == 0, denominator + 1)
+    return numerator.div(adjusted.where(adjusted > 0))
 
 
 def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd.DataFrame:
@@ -269,6 +275,7 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
 
     result["size"] = np.log(result["asst_tot"].where(result["asst_tot"] > 0))
     result["equity_ratio"] = _positive_divide(result["eqty_tot"], result["asst_tot"])
+    result["debt_to_eqty"] = _positive_divide(total_debt, result["eqty_tot"])
     result["st_debt_share"] = _positive_divide(result["debt_st"], total_debt)
     result["lt_debt_to_capital"] = _positive_divide(result["debt_lt"], long_term_capital)
     result["bank_debt_conc"] = _positive_divide(bank_debt, total_debt)
@@ -287,30 +294,21 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     result["asset_turnover"] = _positive_divide(result["rev_operating"], result["asst_tot"])
     result["op_margin"] = _positive_divide(result["prof_operations"], result["rev_operating"])
     result["net_prof_margin"] = _positive_divide(result["profit"], result["rev_operating"])
-    result["tax_ratio"] = _positive_divide(result["taxes"], result["asst_tot"])
     result["int_coverage"] = _positive_divide(result["ebitda"], result["exp_financing"])
     result["financing_expense_ratio"] = _positive_divide(result["exp_financing"], result["asst_tot"])
-    result["financing_income_ratio"] = _positive_divide(result["inc_financing"], result["asst_tot"])
-    result["operating_cash_flow_ratio"] = _positive_divide(result["cf_operations"], result["asst_tot"])
     # Inverted Debt/EBITDA: firms with EBITDA <= 0 keep a graded value instead of NaN.
     result["ebitda_to_debt"] = _positive_divide(result["ebitda"], total_debt)
+    result["operating_cash_flow_margin"] = _positive_divide(result["cf_operations"], result["rev_operating"])
+    result["cash_interest_coverage"] = _positive_divide(result["cf_operations"], result["exp_financing"])
+    result["operating_cash_flow_ratio"] = _positive_divide(result["cf_operations"], result["asst_tot"])
+    result["operating_cash_flow_to_debt"] = _positive_divide(result["cf_operations"], total_debt)
     result["loss_flag"] = (result["profit"] < 0).astype(int)
-
-    previous_year = result.groupby(config.id_column)[config.year_column].shift()
-    year_gap = result[config.year_column] - previous_year
-    previous_roa = result.groupby(config.id_column)["roa"].shift()
-    result["annualized_change_in_roa"] = (
-        (result["roa"] - previous_roa).div(year_gap.where(year_gap > 0))
-    )
-
-    previous_ar = result.groupby(config.id_column)["AR"].shift()
-    average_ar = (result["AR"] + previous_ar) / 2
-    result["ar_turnover"] = _positive_divide(result["rev_operating"], average_ar)
-    previous_ar_turnover = result.groupby(config.id_column)["ar_turnover"].shift()
-    # The feature schema defines this as a difference in turnover, rather than
-    # an annualized change. (Unlike ROA, it is not divided by
-    # the calendar-year gap.)
-    result["change_in_ar_turnover"] = result["ar_turnover"] - previous_ar_turnover
+    # Negative P&L flag per the feature schema: reported negative revenue, COGS,
+    # or financing expense. Imputation never alters reported values, so this
+    # reflects the original statement.
+    result["neg_pl_flag"] = (
+        (result["rev_operating"] < 0) | (result["COGS"] < 0) | (result["exp_financing"] < 0)
+    ).astype(int)
 
     zero_values = {
         "zero_asst_tot": result["asst_tot"],
@@ -578,12 +576,11 @@ def select_firm_year_features(
     history_features: pd.DataFrame,
     config: PreprocessingConfig,
 ) -> pd.DataFrame:
-    """Keep direct anchor-year features while retaining only backward-looking lags.
+    """Keep direct anchor-year features.
 
-    ``make_period_features`` is evaluated on the supplied history first, so a
-    change feature at fiscal year ``t`` can use only the same firm's earlier
-    statement(s). This function then selects the exact ``(id, fs_year)``
-    anchor row rather than decay-averaging earlier values.
+    ``make_period_features`` is evaluated on the supplied history; this
+    function then selects the exact ``(id, fs_year)`` anchor row rather than
+    decay-averaging earlier values.
     """
     _assert_anchor_history_compatibility(anchors, history_features, config)
     id_column = config.id_column
@@ -700,6 +697,38 @@ def _build_features(
     raise ValueError("feature_mode must be 'decayed_history' or 'firm_year'.")
 
 
+def _report_feature_quality(
+    frame: pd.DataFrame,
+    feature_columns: list[str],
+    *,
+    stage: str,
+) -> None:
+    """Print missing and infinite value counts for transformed feature columns.
+
+    Reported only; nothing is dropped or filled here. Missing ratios (for
+    example, from negative denominators or first-observation change features)
+    are legitimate model inputs for tree-based models.
+    """
+    features = frame.reindex(columns=feature_columns).apply(pd.to_numeric, errors="coerce")
+    rows = len(features)
+    missing = features.isna().sum()
+    missing = missing.loc[missing > 0].sort_values(ascending=False)
+    infinite = pd.Series(
+        {column: int(np.isinf(features[column]).sum()) for column in features.columns}
+    )
+    infinite = infinite.loc[infinite > 0].sort_values(ascending=False)
+
+    print(f"[{stage}] Post-transformation feature check: {rows} rows x {len(feature_columns)} features.")
+    for label, counts in (("Missing", missing), ("Infinite", infinite)):
+        if counts.empty:
+            print(f"[{stage}] {label.lower()} feature values: none.")
+            continue
+        print(f"[{stage}] {label.lower()} feature values in {len(counts)} column(s):")
+        for column, count in counts.items():
+            share = count / rows if rows else 0.0
+            print(f"  {column}: {int(count)} rows ({share:.2%})")
+
+
 def fit_preprocessor(
     train: pd.DataFrame,
     history: pd.DataFrame,
@@ -749,7 +778,9 @@ def fit_preprocessor(
         city_reference_category=city_reference_category,
         feature_columns=feature_columns,
     )
-    return _finalize_features(engineered, artifacts, training=True), artifacts
+    transformed = _finalize_features(engineered, artifacts, training=True)
+    _report_feature_quality(transformed, artifacts.feature_columns, stage="fit")
+    return transformed, artifacts
 
 
 def transform_with_preprocessor(
@@ -765,7 +796,9 @@ def transform_with_preprocessor(
     _require_columns(anchors, include_target=False, config=config)
     _require_columns(history, include_target=False, config=config)
     engineered = _build_features(anchors, history, artifacts.sector_medians, config)
-    return _finalize_features(engineered, artifacts, training=False)
+    transformed = _finalize_features(engineered, artifacts, training=False)
+    _report_feature_quality(transformed, artifacts.feature_columns, stage="transform")
+    return transformed
 
 
 def bootstrap_minority_class(

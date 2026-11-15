@@ -55,8 +55,7 @@ For every round, fit preprocessing only on `train.csv`, then use the saved
 artifact to transform validation and test. This is required to keep sector
 medians, target encoding, and categorical levels from leaking across splits.
 Use `--feature-mode decayed_history` for the existing weighted historical
-features, or `--feature-mode firm_year` for direct anchor-year features. In
-`firm_year` mode, lagged/change features still use only earlier statements.
+features, or `--feature-mode firm_year` for direct anchor-year features.
 
 ```bash
 PYTHONPATH=src python -m finance_project.data_processing.preprocess fit \
