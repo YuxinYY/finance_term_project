@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "1.2.1",
   "debt_detail_columns": [
     "debt_bank_st",
     "debt_bank_lt",
@@ -40,7 +40,8 @@
     "taxes",
     "profit",
     "ebitda",
-    "cf_operations"
+    "cf_operations",
+    "roe"
   ],
   "raw_required": [
     "id",

@@ -5,7 +5,7 @@ Code: [notebooks/features/02_missing_values.ipynb](../../../notebooks/features/0
 ## Definition
 - Input: a raw-data DataFrame (training or holdout). `medians` is the sector-median table computed from the **training data** by `sector_medians(train)`. At prediction time, pass the table computed from the training data; never recompute it from the holdout.
 - Output: the filled DataFrame. Compared with the input:
-  - Dropped: `Unnamed: 0`, `eqty_corp_family_tot`, `days_rec`. (`roe` was dropped originally — see below — but was reinstated as a model feature in feature schema 1.2.0; it is now kept with its missing values left as NaN.)
+  - Dropped: `Unnamed: 0`, `eqty_corp_family_tot`, `days_rec`. (`roe` was dropped originally — see below — but was reinstated as a model feature in feature schema 1.2.x; its missing values are filled with the coarse A–U industry-group median, a plain median with no `asst_tot` scaling since `roe` is a percentage.)
   - Added: one 0/1 flag, `debt_detail_missing`.
   - `HQ_city` becomes a string category (missing → `"Unknown"`).
   - Numeric columns are first coerced with `pd.to_numeric(errors="coerce")`, so blanks, `"NA"` and other missing-value spellings all become NaN (the project instructions say the holdout may spell missing values differently from the training data).
@@ -59,7 +59,7 @@ Order of execution: unify missing spellings → drop columns → A → record th
 ### Why `days_rec` is dropped (and why `roe` was)
 - `days_rec` is 72.31% missing, at a similar rate in every year (67–74%).
 - `days_rec` matches `AR / rev_operating × 365` for only 0.6% of rows and has negative values; the definition is unclear and it cannot be restored. If needed later, compute `AR / rev_operating × 365` ourselves.
-- `roe` was dropped for the reasons in method I above. Feature schema 1.2.0 reinstated it as a model feature anyway: it is no longer dropped here, stays unimputed (NaN remains NaN), and the caveats above still apply when interpreting it.
+- `roe` was dropped for the reasons in method I above. Feature schema 1.2.x reinstated it as a model feature anyway: it is no longer dropped, and missing values are filled with the coarse A–U industry-group median (no `asst_tot` scaling, since `roe` is a percentage). The caveats above still apply when interpreting it.
 
 ### Safeguard added in code, not yet discussed
 - `asst_tot` has no missing values in training, but if a holdout row lacks it, method B cannot compute. The code therefore fills it with the sector median of `asst_tot` (an amount, not a ratio). Training data never triggers this.

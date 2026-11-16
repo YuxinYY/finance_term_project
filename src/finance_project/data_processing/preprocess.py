@@ -254,16 +254,15 @@ def clean_and_impute(
     return result
 
 
-def _positive_divide(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
+def _safe_divide(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
     """Divide financial values, adding 1 to zero denominators to prevent errors.
 
     A zero denominator becomes 1, so the ratio degrades to the numerator rather
-    than NaN or infinity; the corresponding ``zero_*`` flag still records the
-    original zero. Negative denominators remain economically invalid and yield
-    NaN, as do missing values.
+    than infinity; the corresponding ``zero_*`` flag still records the original
+    zero. Reported negative denominators are divided as-is (the reported values
+    are preserved, per the anomaly policy), and missing values stay NaN.
     """
-    adjusted = denominator.mask(denominator == 0, denominator + 1)
-    return numerator.div(adjusted.where(adjusted > 0))
+    return numerator.div(denominator.mask(denominator == 0, denominator + 1))
 
 
 def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd.DataFrame:
@@ -274,34 +273,34 @@ def make_period_features(frame: pd.DataFrame, config: PreprocessingConfig) -> pd
     long_term_capital = result["debt_lt"] + result["eqty_tot"]
 
     result["size"] = np.log(result["asst_tot"].where(result["asst_tot"] > 0))
-    result["equity_ratio"] = _positive_divide(result["eqty_tot"], result["asst_tot"])
-    result["debt_to_eqty"] = _positive_divide(total_debt, result["eqty_tot"])
-    result["st_debt_share"] = _positive_divide(result["debt_st"], total_debt)
-    result["lt_debt_to_capital"] = _positive_divide(result["debt_lt"], long_term_capital)
-    result["bank_debt_conc"] = _positive_divide(bank_debt, total_debt)
-    result["tangible_asset_ratio"] = _positive_divide(result["asst_tang_fixed"], result["asst_tot"])
-    result["goodwill_ratio"] = _positive_divide(result["goodwill"], result["asst_tot"])
-    result["cash_ratio"] = _positive_divide(result["cash_and_equiv"], result["asst_tot"])
-    result["cash_to_financing_exp_ratio"] = _positive_divide(
+    result["equity_ratio"] = _safe_divide(result["eqty_tot"], result["asst_tot"])
+    result["debt_to_eqty"] = _safe_divide(total_debt, result["eqty_tot"])
+    result["st_debt_share"] = _safe_divide(result["debt_st"], total_debt)
+    result["lt_debt_to_capital"] = _safe_divide(result["debt_lt"], long_term_capital)
+    result["bank_debt_conc"] = _safe_divide(bank_debt, total_debt)
+    result["tangible_asset_ratio"] = _safe_divide(result["asst_tang_fixed"], result["asst_tot"])
+    result["goodwill_ratio"] = _safe_divide(result["goodwill"], result["asst_tot"])
+    result["cash_ratio"] = _safe_divide(result["cash_and_equiv"], result["asst_tot"])
+    result["cash_to_financing_exp_ratio"] = _safe_divide(
         result["cash_and_equiv"], result["exp_financing"]
     )
-    result["cur_asst_ratio"] = _positive_divide(result["asst_current"], result["asst_tot"])
-    result["AR_ratio"] = _positive_divide(result["AR"], result["rev_operating"])
-    result["payables_ratio"] = _positive_divide(result["AP_st"], result["asst_tot"])
-    result["wc_ratio"] = _positive_divide(result["wc_net"], result["asst_tot"])
-    result["cur_debt_ratio"] = _positive_divide(result["asst_current"], result["debt_st"])
-    result["quick_ratio"] = _positive_divide(result["cash_and_equiv"] + result["AR"], result["debt_st"])
-    result["asset_turnover"] = _positive_divide(result["rev_operating"], result["asst_tot"])
-    result["op_margin"] = _positive_divide(result["prof_operations"], result["rev_operating"])
-    result["net_prof_margin"] = _positive_divide(result["profit"], result["rev_operating"])
-    result["int_coverage"] = _positive_divide(result["ebitda"], result["exp_financing"])
-    result["financing_expense_ratio"] = _positive_divide(result["exp_financing"], result["asst_tot"])
+    result["cur_asst_ratio"] = _safe_divide(result["asst_current"], result["asst_tot"])
+    result["AR_ratio"] = _safe_divide(result["AR"], result["rev_operating"])
+    result["payables_ratio"] = _safe_divide(result["AP_st"], result["asst_tot"])
+    result["wc_ratio"] = _safe_divide(result["wc_net"], result["asst_tot"])
+    result["cur_debt_ratio"] = _safe_divide(result["asst_current"], result["debt_st"])
+    result["quick_ratio"] = _safe_divide(result["cash_and_equiv"] + result["AR"], result["debt_st"])
+    result["asset_turnover"] = _safe_divide(result["rev_operating"], result["asst_tot"])
+    result["op_margin"] = _safe_divide(result["prof_operations"], result["rev_operating"])
+    result["net_prof_margin"] = _safe_divide(result["profit"], result["rev_operating"])
+    result["int_coverage"] = _safe_divide(result["ebitda"], result["exp_financing"])
+    result["financing_expense_ratio"] = _safe_divide(result["exp_financing"], result["asst_tot"])
     # Inverted Debt/EBITDA: firms with EBITDA <= 0 keep a graded value instead of NaN.
-    result["ebitda_to_debt"] = _positive_divide(result["ebitda"], total_debt)
-    result["operating_cash_flow_margin"] = _positive_divide(result["cf_operations"], result["rev_operating"])
-    result["cash_interest_coverage"] = _positive_divide(result["cf_operations"], result["exp_financing"])
-    result["operating_cash_flow_ratio"] = _positive_divide(result["cf_operations"], result["asst_tot"])
-    result["operating_cash_flow_to_debt"] = _positive_divide(result["cf_operations"], total_debt)
+    result["ebitda_to_debt"] = _safe_divide(result["ebitda"], total_debt)
+    result["operating_cash_flow_margin"] = _safe_divide(result["cf_operations"], result["rev_operating"])
+    result["cash_interest_coverage"] = _safe_divide(result["cf_operations"], result["exp_financing"])
+    result["operating_cash_flow_ratio"] = _safe_divide(result["cf_operations"], result["asst_tot"])
+    result["operating_cash_flow_to_debt"] = _safe_divide(result["cf_operations"], total_debt)
     result["loss_flag"] = (result["profit"] < 0).astype(int)
     # Negative P&L flag per the feature schema: reported negative revenue, COGS,
     # or financing expense. Imputation never alters reported values, so this
@@ -702,13 +701,8 @@ def _report_feature_quality(
     feature_columns: list[str],
     *,
     stage: str,
-) -> None:
-    """Print missing and infinite value counts for transformed feature columns.
-
-    Reported only; nothing is dropped or filled here. Missing ratios (for
-    example, from negative denominators or first-observation change features)
-    are legitimate model inputs for tree-based models.
-    """
+) -> pd.DataFrame:
+    """Report feature NaN/infinity counts and drop rows containing either."""
     features = frame.reindex(columns=feature_columns).apply(pd.to_numeric, errors="coerce")
     rows = len(features)
     missing = features.isna().sum()
@@ -727,6 +721,11 @@ def _report_feature_quality(
         for column, count in counts.items():
             share = count / rows if rows else 0.0
             print(f"  {column}: {int(count)} rows ({share:.2%})")
+
+    finite_rows = np.isfinite(features.to_numpy(dtype=float)).all(axis=1)
+    removed = int((~finite_rows).sum())
+    print(f"[{stage}] Dropping {removed:,} of {rows:,} rows with missing or infinite features.")
+    return frame.loc[finite_rows].copy()
 
 
 def fit_preprocessor(
@@ -779,7 +778,7 @@ def fit_preprocessor(
         feature_columns=feature_columns,
     )
     transformed = _finalize_features(engineered, artifacts, training=True)
-    _report_feature_quality(transformed, artifacts.feature_columns, stage="fit")
+    transformed = _report_feature_quality(transformed, artifacts.feature_columns, stage="fit")
     return transformed, artifacts
 
 
@@ -797,8 +796,7 @@ def transform_with_preprocessor(
     _require_columns(history, include_target=False, config=config)
     engineered = _build_features(anchors, history, artifacts.sector_medians, config)
     transformed = _finalize_features(engineered, artifacts, training=False)
-    _report_feature_quality(transformed, artifacts.feature_columns, stage="transform")
-    return transformed
+    return _report_feature_quality(transformed, artifacts.feature_columns, stage="transform")
 
 
 def bootstrap_minority_class(
