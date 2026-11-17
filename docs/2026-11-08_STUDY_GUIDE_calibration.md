@@ -668,6 +668,186 @@ Quotes are from `docs/Term Project Instructions 20261011.pdf`. Page numbers are 
 
 ---
 
+## Part 18. Where τ = 1.46% comes from, and the full prior-shift recipe (added 2026-11-17)
+
+Sources: `experiments/calibration/2026-11-08_chloe_lgbm_v1/2026-11-08_rates_by_cohort_her_window.csv`,
+`2026-11-08_params_for_production.json`, `2026-11-08_production_level_candidates.csv` (same folder; made by
+`2026-11-08_r1_fit_and_calibrate.py`, section 9), and D-073 / D-150. Numbers re-computed in Python on 2026-11-17
+and they match the files.
+
+### 18.0 The whole thing in one paragraph
+
+The model **sorts** firms well, but its **level** is not guaranteed to be right for the holdout years, because default
+rates move with the economy. So we pick one number, **τ ≈ 1.46%**, as our best guess of the holdout's average
+default rate. Then we add the same amount, **δ ≈ +0.077**, to every firm's log-odds, so the average PD lands near
+1.46%. Everyone moves in the same direction and nobody swaps places, so AUC is unchanged. Only the level changes.
+
+**Analogy:** a bathroom scale that reads 2 kg too low still ranks people correctly. But if you dose medicine by
+weight, you need to reset it. Calibration resets the scale. It does not change who is heavier.
+
+### 18.1 Why one number is enough (recap of Part 12.1)
+
+1,000 firms, 10 defaulters (1%). 30% of defaulters have losses (3 firms), and 2% of survivors have losses
+(19.8 firms). Odds for a loss-making firm = 3 / 19.8 = 0.152.
+
+In a bad year there are 20 defaulters (2%), with the same 30% / 2% profiles: 6 vs 980 × 2% = 19.6. Odds =
+6 / 19.6 = 0.306, i.e. **× 2.02**. That is exactly the change in the overall odds, (20/980) ÷ (10/990) = 2.02. The
+profiles cancel out, so **every firm's odds get multiplied by the same factor**:
+
+> **δ = logit(τ) − logit(r_w)**, new log-odds = old log-odds + δ
+
+The only real decision is **τ**.
+
+### 18.2 Step A: what actually happened each year (Chloe's window: default in 1 Jun t+1 to 31 May t+2)
+
+| Cohort | Firms | Defaults | Rate | Log-odds |
+|---|---|---|---|---|
+| FY2007 | 144,251 | 1,260 | 0.873% | −4.732 |
+| FY2008 | 161,383 | 1,945 | 1.205% | −4.406 |
+| FY2009 | 170,549 | 2,687 | 1.576% | −4.135 |
+| FY2010 | 174,674 | 2,881 | 1.649% | −4.088 |
+| FY2011 | 184,159 | 2,563 | **1.392%** | −4.261 |
+| Pooled | 835,016 | 11,336 | **1.358%** (= r_w) | −4.286 |
+
+Rates rose through the crisis and then fell in 2011.
+
+### 18.3 Step B: the candidates, and why each simple one falls short
+
+| Rule | τ | Problem |
+|---|---|---|
+| a pooled | 1.358% | Weights calm 2007 the same as recent years |
+| b last year (FY2011) | 1.392% | Up to date, but assumes next year = last year exactly |
+| d equal-weight | 1.339% | Same issue as pooled |
+| e last 6 months × 2 | 1.599% | Jumpy: over-predicted 2011 by 43% in the backtest (turning point) |
+| **Random-walk hedge, h = 2** | **1.464%** | **Chosen** (D-073 logic) |
+
+### 18.4 Step C: anchor on the latest year, then account for not knowing the future
+
+D-071: recent years predict next year better than old ones, so we **anchor on FY2011 = 1.392%**. But the holdout
+period is unknown (email Q3), and rates drift. So we model the log-odds as a **driftless random walk**: each year
+they take a random step up or down, with no built-in direction.
+
+**How big is a step (σ)?** We use the year-to-year changes in log-odds:
+
+| Change | Δ log-odds | Squared |
+|---|---|---|
+| 2007 → 2008 | +0.325 | 0.1058 |
+| 2008 → 2009 | +0.272 | 0.0738 |
+| 2009 → 2010 | +0.047 | 0.0022 |
+| 2010 → 2011 | −0.172 | 0.0297 |
+| Mean of squares | | 0.0529 |
+
+σ = √0.0529 = **0.230 per year**. In a typical year the rate moves about ±0.23 in log-odds, roughly 1.1% to 1.75%
+from 1.39%.
+
+**How far ahead (h)?** We use **h = 2 years**. This is a judgment, and D-073 asks for human sign-off. Random-walk
+spreads grow with √h, so the spread after 2 years is 0.230 × 1.414 = **0.325**.
+
+### 18.5 Step D: average over all possible futures, which gives 1.464%
+
+| Future, 2 years out | Log-odds = −4.261 + k × 0.325 | Rate |
+|---|---|---|
+| Much better (k = −2) | −4.911 | 0.73% |
+| Better (k = −1) | −4.586 | 1.01% |
+| Same (k = 0) | −4.261 | 1.39% |
+| Worse (k = +1) | −3.936 | 1.92% |
+| Much worse (k = +2) | −3.611 | 2.63% |
+
+Look at the k = ±1 pair. A step down loses 0.38 points (1.39% → 1.01%), while a step up gains 0.53 points
+(1.39% → 1.92%). **Bad years hurt more than good years help**, because the S-curve bends upward at low PDs. The
+average of that pair is **1.463%**, not 1.39%.
+
+The code averages over every future on a bell curve (Monte Carlo):
+
+| Horizon | Expected rate |
+|---|---|
+| h = 1 | 1.428% |
+| **h = 2** | **1.464% = τ** |
+| h = 3 | 1.501% |
+
+**One sentence for the deck:** *start from the most recent year (1.39%), assume rates keep wandering as they have
+(σ = 0.23/yr), look two years ahead, and take the average outcome. Downside surprises are bigger than upside ones,
+so the average sits a little above today's rate.*
+
+**Why the average, not the most likely value?** We are scored on log-likelihood. Under uncertainty, the single guess
+that minimises log loss is the expected rate. D-073 (`scenario_regret.csv`, on our start-6 label): the hedge costs
+0.17e-4 if the truth is 1.43%, and saves 1.1e-4 if the truth is 1.70%. It is cheap insurance.
+
+**Label note:** the same recipe gives 1.49% on our older start-6 label and 1.46% on Chloe's 5-month label (D-150).
+
+### 18.6 The 6-step recipe with real numbers
+
+| Step | What | Number | Field in `params_for_production.json` |
+|---|---|---|---|
+| 1 | Train the final model on FY2007–11 | 835,016 rows, 11,336 defaults | `model` |
+| 2 | r_w = training default rate | 1.3576% (logit −4.2858) | `training_rate_assumed` |
+| 3 | τ by the rule above | 1.4641% (logit −4.2092) | `tau` |
+| 4 | δ = logit(τ) − logit(r_w) | **+0.0766** (odds × 1.080) | `delta` |
+| 5 | Slope b (round-1 Platt slope) | 0.9956 | `slope_b` |
+| 6 | PD = clip(expit(a + b·logit(raw) + δ), 0.03%, 99%) | | `floor`, `cap`, `pipeline` |
+
+**What a (the anchor) does.** A model fitted on 2007–11 does not average exactly 1.3576% on its own training rows.
+a is the small correction that makes it do so (bisection, `solve_shift` in `s3_methods.py`). Then δ moves the level
+from 1.3576% to 1.46%. So there are two moves: **anchor to what we observed, then shift to what we expect.**
+
+**What δ = +0.0766 does to firms:**
+
+| Raw PD | After shift |
+|---|---|
+| 0.1% | 0.108% |
+| 0.5% | 0.540% |
+| 1% | 1.079% |
+| 5% | 5.38% |
+| 20% | 21.25% |
+
+Small PDs rise about 8%, large ones rise a little less, and the order never changes.
+
+**One firm (assume a ≈ 0 for illustration):** raw 2% → logit −3.892 → × 0.9956 = −3.875 → + 0.0766 = −3.798 →
+expit = **2.19%**. That is inside the floor and cap, so the final PD is 2.19%.
+
+### 18.7 Caveats to know before Roger asks
+
+1. **`anchor_a` is `null` in the params file.** Computing it needs the production model's raw PDs on its own
+   835,016 training rows, which were not handed over. It must be solved once at estimation time.
+2. **h = 2 is judgment.** The range is narrow: 1.43% (h = 1) to 1.50% (h = 3). If the holdout years are disclosed,
+   set h to match.
+3. **σ rests on only 4 year-to-year changes.** It is a rough estimate; say so.
+4. **The prior-shift assumption (stable profiles) is doubtful in 2008–12.** We use it as a level tool, not as a claim
+   that the assumption holds (D-072, R-22).
+5. **The average PD lands near τ, not exactly on it**, because the curve bends. In FY2009 the target was 1.516% and
+   the result was 1.581%.
+6. **A monotone shift cannot improve ranking** (R-07 pp. 88–91).
+7. **No Saerens EM.** It needs other holdout rows (Part 17), and on our data it guessed 2.18% / 1.79% / 0.45% when the
+   truth was 1.28% / 1.62% / 1.70%.
+
+### 18.8 Run it yourself (plain Python, no libraries)
+
+```python
+import math, random
+L = lambda p: math.log(p / (1 - p))      # PD -> log-odds
+E = lambda z: 1 / (1 + math.exp(-z))     # log-odds -> PD
+
+rates = [0.008735, 0.012052, 0.015755, 0.016494, 0.013917]   # FY2007..FY2011, Chloe's window
+z = [L(r) for r in rates]
+steps = [z[i+1] - z[i] for i in range(4)]
+sigma = math.sqrt(sum(s*s for s in steps) / len(steps))
+print("sigma =", round(sigma, 3))                                    # 0.230
+
+h = 2
+draws = [E(z[-1] + sigma*math.sqrt(h)*random.gauss(0, 1)) for _ in range(500_000)]
+tau = sum(draws) / len(draws)
+print("tau =", round(100*tau, 3), "%")      # ~1.464 (random draws: expect 1.461-1.467; exact value 1.4639)
+
+r_w = 11336 / 835016
+delta = L(tau) - L(r_w)
+print("delta =", round(delta, 4), "odds x", round(math.exp(delta), 3))  # ~0.0766 (0.074-0.079 by draw), x1.08
+
+raw, b = 0.02, 0.9956
+print("final PD =", round(100*E(b*L(raw) + delta), 2), "%")          # ~2.19
+```
+
+---
+
 ## Glossary
 
 - **r_w:** default rate of the exact rows the final model was fitted on.

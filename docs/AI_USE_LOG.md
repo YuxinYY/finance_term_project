@@ -49,3 +49,7 @@ Roger grades whether AI use was "appropriate and additive (or just a shortcut)".
 ## 2026-11-08 s5 label rebuild and walk-forward splits v2 (D-151)
 - AI-generated: src/data/2026-11-08_build_labels_s5.py, data/interim/2026-11-08_panel_s5.parquet, data/splits/2026-11-08_walkforward_v2.json, data/splits/2026-11-08_walkforward_v2_test_rows.parquet, reports/data/2026-11-08_labels_s5.md, reports/data/2026-11-08_walkforward_v2_folds.csv, the v2 section of data/splits/README.md and the D-151 update (Claude Code, data-auditor sub-agent). The script reproduced the D-151 counts (835,016 / 11,336 / 2,897), and an independent recompute matched every row. v1 files were not modified.
 - Human verifier: pending (KN to re-run the script and check the sha256 values in the v2 JSON).
+
+## 2026-11-17 Calibration study guide Part 18 (τ = 1.46% and prior-shift recipe)
+- AI-generated: Part 18 of `docs/2026-11-08_STUDY_GUIDE_calibration.md` (Claude Code). Numbers come from `experiments/calibration/2026-11-08_chloe_lgbm_v1/` (rates_by_cohort_her_window.csv, params_for_production.json, production_level_candidates.csv) and D-073 / D-150. σ, τ by horizon, δ and the worked examples were re-computed in Python in-session and match the files.
+- Human verifier: pending (KN to run the 18.8 snippet and confirm it prints σ 0.230, τ ≈ 1.464%, δ ≈ 0.0766).
