@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.1",
+  "schema_version": "1.3.0",
   "debt_detail_columns": [
     "debt_bank_st",
     "debt_bank_lt",
@@ -40,8 +40,7 @@
     "taxes",
     "profit",
     "ebitda",
-    "cf_operations",
-    "roe"
+    "cf_operations"
   ],
   "raw_required": [
     "id",
@@ -97,6 +96,7 @@
     "neg_pl_flag",
     "debt_detail_missing",
     "loss_flag",
+    "roe_negative",
     "zero_asst_tot",
     "zero_total_debt",
     "zero_debt_st",
@@ -152,6 +152,7 @@
       "COGS",
       "prof_operations",
       "loss_flag",
+      "roe_negative",
       "neg_pl_flag"
     ],
     "coverage_cash_flow": [
