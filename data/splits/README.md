@@ -81,3 +81,29 @@ D-009 sensitivity (2013 dates blanked, data_end 2012-12-31): `y_s5_d2012` / `sta
 (Copied from the v2 JSON / folds CSV; those files are authoritative.) fs2012 is never usable (all rows censored
 or already_defaulted). Under the D-009 sensitivity, fs2011 has 0 usable rows (the lockbox and the 2011 part of
 final_fit disappear); folds 1-3 are identical under both treatments.
+
+---
+
+## v4 (2026-11-20, D-156): temporal_year walk-forward + FY2011 lockbox — use for the final model
+
+Supersedes the v3 `company_random` proposal (D-155; v3 files live in the agent-kit repo,
+`data/splits/2026-11-18_walkforward_v3_company_random.json`). Label s5 (D-151), status `ok` rows only.
+
+| Round | Train | Validation (early stopping only) | Test | Role |
+|---|---|---|---|---|
+| 1 | FY2007 | FY2008 | FY2009 | model selection |
+| 2 | FY2007-08 | FY2009 | FY2010 | model selection |
+| 3 | FY2007-09 | FY2010 | FY2011 | **LOCKBOX** (file in `LOCKBOX_do_not_open/`; score once, after model choice) |
+| final | FY2007-11, all 835,016 labelled rows | none | - | harness model |
+
+- Split definition: `2026-11-20_walkforward_v4_temporal_year.json` (read-only): counts, default rates (lockbox labels
+  withheld), seen/new firm row counts per validation and test set, the test-year firm ids seen in training, code and
+  schema sha256, and the sha256 of every feature file and preprocessor artifact.
+- Feature files: `data/processed/2026-11-20_v4_temporal_year/round_0{1,2,3}_{train,valid,test}.parquet`
+  (round 3 test in `LOCKBOX_do_not_open/`), `final_fit.parquet`, `artifacts/*_preprocessor.joblib`.
+  Columns: `id, fs_year, label`, then 81 features (schema 1.3.0, same names and order in every file).
+- Built by `src/data/2026-11-20_build_v4_temporal_year.py` with the team's `preprocess.py` in `firm_year` mode:
+  `fit_preprocessor` sees only the round's training years; validation, test and lockbox use
+  `transform_with_preprocessor` with the frozen artifact. Checks: `reports/data/2026-11-20_v4_checks.md`.
+- Rules: the validation year is for early stopping only. Do not fit Platt/isotonic on it (D-150); the level comes from
+  the prior shift (D-072). Never tune on round 3. Rounds 1-2 test years (FY2009, FY2010) are the only selection years.
