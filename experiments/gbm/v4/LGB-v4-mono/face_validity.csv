@@ -1,0 +1,163 @@
+round,test_year,feature,meaning,expected_sign,constrained,n_splits,mean_abs_shap,spearman_value_vs_shap,shap_direction,ice_rows_any_step_against_share,ice_rows_net_p5_p95_against_share,shap_violation,ice_violation
+1,2009,tangible_asset_ratio,tangible fixed assets / assets,-,-,247,0.3408300735040245,-0.9444339399092689,-,0.0,0.0,False,False
+1,2009,AR_ratio,receivables / revenue,+,+,237,0.2128268562456179,0.9758754522189007,+,0.0,0.0,False,False
+1,2009,equity_ratio,equity as a share of assets,-,-,175,0.2047695592779553,-0.8839849054946622,-,0.0,0.0,False,False
+1,2009,cur_asst_ratio,current assets / assets,0,0,403,0.1812688005832174,0.9555330167385242,+,,,False,False
+1,2009,payables_ratio,short-term trade payables / assets,+,+,235,0.13700414069662542,0.9205251060002314,+,0.0,0.0,False,False
+1,2009,st_debt_share,short-term share of debt,+,+,139,0.1299955994587895,0.8904032808783277,+,0.0,0.0,False,False
+1,2009,ateco_sector_te,industry default rate (training years),+,+,176,0.11615890699520703,0.9455515149328029,+,0.0,0.0,False,False
+1,2009,financing_expense_ratio,financing expense / assets,+,+,233,0.11260575196715,0.9231182677846406,+,0.0,0.0,False,False
+1,2009,operating_cash_flow_ratio,operating cash flow / assets,-,-,35,0.09675802981649333,-0.45374766615511275,-,0.0,0.0,False,False
+1,2009,net_prof_margin,net profit margin,-,-,62,0.08835223265772167,-0.7265388789085891,-,0.0,0.0,False,False
+1,2009,int_coverage,EBITDA / financing expense,-,-,48,0.0791506948147936,-0.8472176414692492,-,0.0,0.0,False,False
+1,2009,quick_ratio,(cash + receivables) / short-term debt,-,-,106,0.07775693911823124,-0.8004368752173902,-,0.0,0.0,False,False
+1,2009,operating_cash_flow_to_debt,operating cash flow / total debt,-,-,44,0.077105627717979,-0.8723620278283637,-,0.0,0.0,False,False
+1,2009,asset_turnover,revenue / assets,0,0,311,0.07241563977657282,0.38244771063343286,+,,,False,False
+1,2009,roe,return on equity (profit / equity; sign flips if equity < 0),0,0,361,0.06787546675281443,-0.41521787954378286,-,,,False,False
+1,2009,op_margin,operating margin,-,-,98,0.056364987630004644,-0.9319233513916018,-,0.0,0.0,False,False
+1,2009,goodwill_ratio,goodwill field / assets,0,0,387,0.055358273840891356,0.1446235557378603,+,,,False,False
+1,2009,size,firm size (log total assets),-,-,153,0.054111557892237094,-0.9431789098063518,-,0.0,0.0,False,False
+1,2009,cur_debt_ratio,current assets / short-term debt,-,-,78,0.05328782403874963,-0.9395212811124121,-,0.0,0.0,False,False
+1,2009,wc_ratio,net working capital / assets,-,-,70,0.05269258387428245,-0.7867807617120337,-,0.0,0.0,False,False
+1,2009,COGS,cost of goods sold (EUR),0,0,233,0.04865130314803436,-0.6815143110689105,-,,,False,False
+1,2009,bank_debt_conc,bank share of debt,0,0,296,0.04752466000807239,-0.709731608645369,-,,,False,False
+1,2009,lt_debt_to_capital,long-term debt to (long-term debt + equity),+,0,196,0.046926745646433066,0.6890213561582851,+,1.0,0.122,False,True
+1,2009,roa,return on assets,-,-,51,0.04546481790630988,-0.9212961972981443,-,0.0,0.0,False,False
+1,2009,cash_to_financing_exp_ratio,cash / financing expense,-,-,121,0.045282021206108795,-0.9734416949987977,-,0.0,0.0,False,False
+1,2009,cash_ratio,cash / assets,-,-,169,0.04503947705411612,-0.9658881120307825,-,0.0,0.0,False,False
+1,2009,debt_to_eqty,debt-to-equity,0,0,311,0.04405974898309209,-0.5053598281106237,-,,,False,False
+1,2009,rev_operating,operating revenue (EUR),0,0,213,0.04386392844951137,0.5841560596013373,+,,,False,False
+1,2009,profit,net profit (EUR),-,0,255,0.042634340526142844,-0.6318764982482539,-,1.0,0.364,False,True
+1,2009,exp_financing,financing expense (EUR),+,0,281,0.03475141466284753,-0.310006054272722,-,1.0,0.44,True,True
+1,2009,prof_operations,operating profit (EUR),-,0,190,0.03140685827532777,-0.4826811774380941,-,0.998,0.03,False,False
+1,2009,ebitda_to_debt,EBITDA / total debt,-,-,63,0.03105735147131064,-0.8708466350271548,-,0.0,0.0,False,False
+1,2009,ebitda,EBITDA (EUR),-,0,175,0.027402555535345978,0.14877798285146515,+,1.0,0.694,True,True
+1,2009,cash_interest_coverage,operating cash flow / financing expense,-,-,30,0.022785446729144246,-0.8948751195864599,-,0.0,0.0,False,False
+1,2009,city_Lombardia,headquartered in Lombardia,0,0,28,0.02187565000942228,-0.7655754183514638,-,,,False,False
+1,2009,city_Lazio,headquartered in Lazio,0,0,39,0.02124187155987659,-0.5246827237596685,-,,,False,False
+1,2009,legal_SRU,legal form SRU,0,0,30,0.018967573157480582,0.6105028247737708,+,,,False,False
+1,2009,city_Toscana,headquartered in Toscana,0,0,23,0.011598373060874334,0.4522809133111376,+,,,False,False
+1,2009,legal_SRL,legal form SRL,0,0,38,0.011552015365955971,0.774507046727992,+,,,False,False
+1,2009,city_Campania,headquartered in Campania,0,0,18,0.008567962217861852,0.40783954862746025,+,,,False,False
+1,2009,city_Veneto,headquartered in Veneto,0,0,29,0.008508998473727299,0.528184188934663,+,,,False,False
+1,2009,city_Piemonte,headquartered in Piemonte,0,0,13,0.006318283713557046,0.4263192939476678,+,,,False,False
+1,2009,legal_SPA,legal form SPA,0,0,9,0.004909980031896948,-0.5259219411009773,-,,,False,False
+1,2009,operating_cash_flow_margin,operating cash flow / revenue,-,-,23,0.0033937981102627863,-0.6774095241905781,-,0.0,0.0,False,False
+1,2009,zero_debt_lt,debt_lt reported as exactly zero,0,0,8,0.002543032883343862,0.47597934747945825,+,,,False,False
+1,2009,city_Trentino-Alto Adige,headquartered in Trentino-Alto Adige,0,0,0,0.001745764570558712,-0.24934622505291215,-,,,False,False
+1,2009,city_Emilia-Romagna,headquartered in Emilia-Romagna,0,0,15,0.001385460553500331,0.041898918164305396,0,,,False,False
+1,2009,city_Marche,headquartered in Marche,0,0,8,0.0012515672097538092,0.2848586063052078,+,,,False,False
+1,2009,legal_SAU,legal form SAU,0,0,10,0.0012102555229352534,-0.21895472700843469,-,,,False,False
+1,2009,zero_AP_st,AP_st reported as exactly zero,0,0,5,0.0011877881169581174,0.22354963292575056,+,,,False,False
+1,2009,city_Puglia,headquartered in Puglia,0,0,5,0.0009236603598568342,0.3148719661261812,+,,,False,False
+1,2009,zero_bank_debt,bank_debt reported as exactly zero,0,0,2,0.00042740171927363175,0.6485543172891117,+,,,False,False
+1,2009,city_Sicilia,headquartered in Sicilia,0,0,3,0.00035966079693639425,0.3160353075642218,+,,,False,False
+1,2009,roe_negative,net loss AND negative equity (flag is misnamed 'roe_negative'),+,+,1,7.853235829901084e-05,0.3383093817014809,+,0.0,0.0,False,False
+1,2009,neg_bs_flag,a balance-sheet field is negative (data anomaly),+,0,0,0.0,0.0,0,,,False,False
+1,2009,neg_pl_flag,a P&L field is negative (data anomaly),+,0,0,0.0,0.0,0,,,False,False
+1,2009,debt_detail_missing,debt breakdown not reported,+,+,0,0.0,0.0,0,,,False,False
+1,2009,loss_flag,net loss this year,+,+,0,0.0,0.0,0,,,False,False
+1,2009,zero_asst_tot,asst_tot reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_total_debt,total_debt reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_debt_st,debt_st reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_cash,cash reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_asst_current,asst_current reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_ar,ar reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_rev_operating,rev_operating reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_wc_net,wc_net reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_ebitda,ebitda reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_prof_operations,prof_operations reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_profit,profit reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_cf_operations,cf_operations reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,zero_exp_financing,exp_financing reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+1,2009,legal_SRS,legal form SRS,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Basilicata,headquartered in Basilicata,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Calabria,headquartered in Calabria,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Friuli-Venezia Giulia,headquartered in Friuli-Venezia Giulia,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Liguria,headquartered in Liguria,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Molise,headquartered in Molise,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Sardegna,headquartered in Sardegna,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Umbria,headquartered in Umbria,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Unknown,headquartered in Unknown,0,0,0,0.0,0.0,0,,,False,False
+1,2009,city_Valle d'Aosta,headquartered in Valle d'Aosta,0,0,0,0.0,0.0,0,,,False,False
+2,2010,tangible_asset_ratio,tangible fixed assets / assets,-,-,368,0.4208903402927351,-0.953785995142098,-,0.0,0.0,False,False
+2,2010,equity_ratio,equity as a share of assets,-,-,229,0.24497876626142134,-0.9124140258354538,-,0.0,0.0,False,False
+2,2010,AR_ratio,receivables / revenue,+,+,349,0.1935317993486083,0.9798126724361598,+,0.0,0.0,False,False
+2,2010,ateco_sector_te,industry default rate (training years),+,+,233,0.15336312292398246,0.9624695363523385,+,0.0,0.0,False,False
+2,2010,cur_asst_ratio,current assets / assets,0,0,715,0.14397629049392618,0.943209277203066,+,,,False,False
+2,2010,st_debt_share,short-term share of debt,+,+,198,0.1413892815309415,0.9344754708298326,+,0.0,0.0,False,False
+2,2010,financing_expense_ratio,financing expense / assets,+,+,372,0.12132900899348115,0.8134255966731293,+,0.0,0.0,False,False
+2,2010,payables_ratio,short-term trade payables / assets,+,+,325,0.11690816667151806,0.9430158095803601,+,0.0,0.0,False,False
+2,2010,roa,return on assets,-,-,171,0.11020381455568391,-0.9564197751743134,-,0.0,0.0,False,False
+2,2010,operating_cash_flow_ratio,operating cash flow / assets,-,-,65,0.09902310086788144,-0.6682966709674533,-,0.0,0.0,False,False
+2,2010,cash_ratio,cash / assets,-,-,260,0.08720069140270889,-0.977496051496177,-,0.0,0.0,False,False
+2,2010,net_prof_margin,net profit margin,-,-,96,0.08439485482977391,-0.7771444865640299,-,0.0,0.0,False,False
+2,2010,ebitda_to_debt,EBITDA / total debt,-,-,132,0.08406748779728626,-0.8884867978891186,-,0.0,0.0,False,False
+2,2010,bank_debt_conc,bank share of debt,0,0,607,0.08069817182949016,-0.8501402259733062,-,,,False,False
+2,2010,goodwill_ratio,goodwill field / assets,0,0,671,0.08022913230188557,0.646869642497734,+,,,False,False
+2,2010,op_margin,operating margin,-,-,141,0.07864702843528078,-0.9273859029943787,-,0.0,0.0,False,False
+2,2010,size,firm size (log total assets),-,-,317,0.07585929668554628,-0.9621649386551875,-,0.0,0.0,False,False
+2,2010,profit,net profit (EUR),-,0,489,0.06643149626440484,-0.7004373501668207,-,1.0,0.264,False,True
+2,2010,cur_debt_ratio,current assets / short-term debt,-,-,136,0.06530545877586197,-0.836707724726672,-,0.0,0.0,False,False
+2,2010,ebitda,EBITDA (EUR),-,0,432,0.05971974948751725,0.2469478398200216,+,1.0,0.78,True,True
+2,2010,debt_to_eqty,debt-to-equity,0,0,533,0.05668787192420573,-0.7588986758353421,-,,,False,False
+2,2010,roe,return on equity (profit / equity; sign flips if equity < 0),0,0,598,0.05638298106856304,-0.6086334440149409,-,,,False,False
+2,2010,operating_cash_flow_to_debt,operating cash flow / total debt,-,-,80,0.05549274288847826,-0.8803830969566149,-,0.0,0.0,False,False
+2,2010,exp_financing,financing expense (EUR),+,0,557,0.0517031911886333,-0.6804877038776787,-,1.0,0.94,True,True
+2,2010,lt_debt_to_capital,long-term debt to (long-term debt + equity),+,0,355,0.05090947749212062,0.6403697887645081,+,1.0,0.096,False,False
+2,2010,asset_turnover,revenue / assets,0,0,565,0.05037648365389368,-0.03740848828935225,0,,,False,False
+2,2010,wc_ratio,net working capital / assets,-,-,126,0.047746095930802576,-0.8544168280748183,-,0.0,0.0,False,False
+2,2010,int_coverage,EBITDA / financing expense,-,-,80,0.0467839695965542,-0.8006357740300941,-,0.0,0.0,False,False
+2,2010,COGS,cost of goods sold (EUR),0,0,448,0.040787850007643026,-0.23621146818354127,-,,,False,False
+2,2010,cash_to_financing_exp_ratio,cash / financing expense,-,-,142,0.038957276802050855,-0.9642263084535211,-,0.0,0.0,False,False
+2,2010,quick_ratio,(cash + receivables) / short-term debt,-,-,82,0.03886328438860187,-0.6987861775363583,-,0.0,0.0,False,False
+2,2010,legal_SPA,legal form SPA,0,0,65,0.03660321132484049,-0.5199332015765616,-,,,False,False
+2,2010,legal_SRU,legal form SRU,0,0,56,0.036229839830340844,0.619890287201717,+,,,False,False
+2,2010,city_Lazio,headquartered in Lazio,0,0,81,0.03404280333350062,-0.5258204996606913,-,,,False,False
+2,2010,prof_operations,operating profit (EUR),-,0,358,0.032994857210937166,-0.48301243776421277,-,1.0,0.216,False,True
+2,2010,rev_operating,operating revenue (EUR),0,0,327,0.030053628245313418,-0.4612502577159448,-,,,False,False
+2,2010,operating_cash_flow_margin,operating cash flow / revenue,-,-,60,0.02390505194946476,-0.9133297281827119,-,0.0,0.0,False,False
+2,2010,cash_interest_coverage,operating cash flow / financing expense,-,-,96,0.01806236987349669,-0.94126723149947,-,0.0,0.0,False,False
+2,2010,city_Trentino-Alto Adige,headquartered in Trentino-Alto Adige,0,0,0,0.015207073960198209,-0.24860830269802714,-,,,False,False
+2,2010,legal_SRL,legal form SRL,0,0,48,0.012286226523163348,0.7045693587246116,+,,,False,False
+2,2010,city_Campania,headquartered in Campania,0,0,30,0.011270888677667288,0.4093592931514475,+,,,False,False
+2,2010,city_Toscana,headquartered in Toscana,0,0,35,0.009510908279121785,0.4503011522565451,+,,,False,False
+2,2010,legal_SAU,legal form SAU,0,0,61,0.009280031002953867,-0.2673546715230299,-,,,False,False
+2,2010,debt_detail_missing,debt breakdown not reported,+,+,15,0.005754743815215649,0.6561480826033246,+,0.0,0.0,False,False
+2,2010,city_Lombardia,headquartered in Lombardia,0,0,40,0.005723609381532796,-0.0864543684423646,-,,,False,False
+2,2010,city_Marche,headquartered in Marche,0,0,31,0.0042810353239634905,0.26092565302894405,+,,,False,False
+2,2010,city_Veneto,headquartered in Veneto,0,0,29,0.0036005986547210486,0.46246863372889135,+,,,False,False
+2,2010,city_Friuli-Venezia Giulia,headquartered in Friuli-Venezia Giulia,0,0,0,0.0030883391862366154,-0.24328530987255387,-,,,False,False
+2,2010,city_Piemonte,headquartered in Piemonte,0,0,10,0.00308821539797981,0.4195392261115164,+,,,False,False
+2,2010,city_Puglia,headquartered in Puglia,0,0,13,0.0027617553856084218,0.3145114540989407,+,,,False,False
+2,2010,zero_debt_lt,debt_lt reported as exactly zero,0,0,12,0.002495718970400173,-0.43666939924324416,-,,,False,False
+2,2010,zero_rev_operating,rev_operating reported as exactly zero,0,0,10,0.0023372419484428667,-0.3120582235486025,-,,,False,False
+2,2010,city_Emilia-Romagna,headquartered in Emilia-Romagna,0,0,24,0.0022941216957178,0.0458300166589487,0,,,False,False
+2,2010,zero_AP_st,AP_st reported as exactly zero,0,0,10,0.0014923678380636956,0.2294796131651638,+,,,False,False
+2,2010,city_Liguria,headquartered in Liguria,0,0,2,0.0006086401466195065,-0.22863696022020802,-,,,False,False
+2,2010,city_Sicilia,headquartered in Sicilia,0,0,7,0.0005857037625505316,0.18016919555585642,+,,,False,False
+2,2010,city_Calabria,headquartered in Calabria,0,0,2,0.00032854460943822043,-0.19688900629747055,-,,,False,False
+2,2010,zero_cash,cash reported as exactly zero,0,0,1,4.571807666967559e-05,0.2576906840030242,+,,,False,False
+2,2010,zero_bank_debt,bank_debt reported as exactly zero,0,0,1,4.3316823819261435e-05,0.7114074886195961,+,,,False,False
+2,2010,neg_bs_flag,a balance-sheet field is negative (data anomaly),+,0,0,0.0,0.0,0,,,False,False
+2,2010,neg_pl_flag,a P&L field is negative (data anomaly),+,0,0,0.0,0.0,0,,,False,False
+2,2010,loss_flag,net loss this year,+,+,0,0.0,0.0,0,,,False,False
+2,2010,roe_negative,net loss AND negative equity (flag is misnamed 'roe_negative'),+,+,0,0.0,0.0,0,,,False,False
+2,2010,zero_asst_tot,asst_tot reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_total_debt,total_debt reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_debt_st,debt_st reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_asst_current,asst_current reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_ar,ar reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_wc_net,wc_net reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_ebitda,ebitda reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_prof_operations,prof_operations reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_profit,profit reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_cf_operations,cf_operations reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,zero_exp_financing,exp_financing reported as exactly zero,0,0,0,0.0,0.0,0,,,False,False
+2,2010,legal_SRS,legal form SRS,0,0,0,0.0,0.0,0,,,False,False
+2,2010,city_Basilicata,headquartered in Basilicata,0,0,0,0.0,0.0,0,,,False,False
+2,2010,city_Molise,headquartered in Molise,0,0,0,0.0,0.0,0,,,False,False
+2,2010,city_Sardegna,headquartered in Sardegna,0,0,0,0.0,0.0,0,,,False,False
+2,2010,city_Umbria,headquartered in Umbria,0,0,0,0.0,0.0,0,,,False,False
+2,2010,city_Unknown,headquartered in Unknown,0,0,0,0.0,0.0,0,,,False,False
+2,2010,city_Valle d'Aosta,headquartered in Valle d'Aosta,0,0,0,0.0,0.0,0,,,False,False

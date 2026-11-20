@@ -1,0 +1,18 @@
+cfg 0: {'num_leaves': 15, 'max_depth': 4, 'learning_rate': 0.03, 'min_child_samples': 500, 'min_sum_hessian_in_leaf': 2.0, 'feature_fraction': 0.7, 'bagging_fraction': 0.8, 'lambda_l1': 1.0, 'lambda_l2': 5.0} -> AUC 0.8566/0.8528 iters 300/638
+cfg 1: {'num_leaves': 31, 'max_depth': 5, 'learning_rate': 0.03, 'min_child_samples': 200, 'min_sum_hessian_in_leaf': 2.0, 'feature_fraction': 0.9, 'bagging_fraction': 0.7, 'lambda_l1': 1.0, 'lambda_l2': 20.0} -> AUC 0.8562/0.8535 iters 208/560
+cfg 2: {'num_leaves': 15, 'max_depth': 4, 'learning_rate': 0.03, 'min_child_samples': 200, 'min_sum_hessian_in_leaf': 5.0, 'feature_fraction': 0.7, 'bagging_fraction': 0.8, 'lambda_l1': 0.0, 'lambda_l2': 0.0} -> AUC 0.8551/0.8520 iters 204/466
+cfg 3: {'num_leaves': 16, 'max_depth': 4, 'learning_rate': 0.05, 'min_child_samples': 500, 'min_sum_hessian_in_leaf': 0.5, 'feature_fraction': 0.7, 'bagging_fraction': 1.0, 'lambda_l1': 5.0, 'lambda_l2': 20.0} -> AUC 0.8539/0.8530 iters 262/595
+cfg 4: {'num_leaves': 7, 'max_depth': 5, 'learning_rate': 0.05, 'min_child_samples': 200, 'min_sum_hessian_in_leaf': 0.5, 'feature_fraction': 0.5, 'bagging_fraction': 1.0, 'lambda_l1': 5.0, 'lambda_l2': 20.0} -> AUC 0.8529/0.8524 iters 336/1281
+cfg 5: {'num_leaves': 31, 'max_depth': 5, 'learning_rate': 0.03, 'min_child_samples': 200, 'min_sum_hessian_in_leaf': 5.0, 'feature_fraction': 0.9, 'bagging_fraction': 0.7, 'lambda_l1': 5.0, 'lambda_l2': 0.0} -> AUC 0.8566/0.8536 iters 202/398
+cfg 6: {'num_leaves': 8, 'max_depth': 3, 'learning_rate': 0.05, 'min_child_samples': 500, 'min_sum_hessian_in_leaf': 2.0, 'feature_fraction': 0.5, 'bagging_fraction': 1.0, 'lambda_l1': 1.0, 'lambda_l2': 20.0} -> AUC 0.8538/0.8521 iters 418/831
+cfg 7: {'num_leaves': 7, 'max_depth': 5, 'learning_rate': 0.02, 'min_child_samples': 200, 'min_sum_hessian_in_leaf': 0.5, 'feature_fraction': 0.9, 'bagging_fraction': 0.7, 'lambda_l1': 5.0, 'lambda_l2': 0.0} -> AUC 0.8555/0.8533 iters 884/1755
+cfg 8: {'num_leaves': 7, 'max_depth': 3, 'learning_rate': 0.03, 'min_child_samples': 2000, 'min_sum_hessian_in_leaf': 2.0, 'feature_fraction': 0.5, 'bagging_fraction': 1.0, 'lambda_l1': 1.0, 'lambda_l2': 0.0} -> AUC 0.8526/0.8506 iters 564/1052
+cfg 9: {'num_leaves': 8, 'max_depth': 3, 'learning_rate': 0.03, 'min_child_samples': 500, 'min_sum_hessian_in_leaf': 5.0, 'feature_fraction': 0.9, 'bagging_fraction': 1.0, 'lambda_l1': 1.0, 'lambda_l2': 5.0} -> AUC 0.8537/0.8511 iters 603/1070
+cfg 10: {'num_leaves': 8, 'max_depth': 3, 'learning_rate': 0.05, 'min_child_samples': 200, 'min_sum_hessian_in_leaf': 5.0, 'feature_fraction': 0.5, 'bagging_fraction': 0.8, 'lambda_l1': 0.0, 'lambda_l2': 0.0} -> AUC 0.8546/0.8505 iters 353/406
+cfg 11: {'num_leaves': 7, 'max_depth': 3, 'learning_rate': 0.03, 'min_child_samples': 200, 'min_sum_hessian_in_leaf': 0.5, 'feature_fraction': 0.7, 'bagging_fraction': 1.0, 'lambda_l1': 5.0, 'lambda_l2': 5.0} -> AUC 0.8539/0.8522 iters 654/1176
+cfg 12: {'num_leaves': 8, 'max_depth': 3, 'learning_rate': 0.03, 'min_child_samples': 500, 'min_sum_hessian_in_leaf': 5.0, 'feature_fraction': 0.7, 'bagging_fraction': 1.0, 'lambda_l1': 1.0, 'lambda_l2': 20.0} -> AUC 0.8538/0.8516 iters 599/1389
+CHOSEN {'num_leaves': 31, 'max_depth': 5, 'learning_rate': 0.03, 'min_child_samples': 200, 'min_sum_hessian_in_leaf': 5.0, 'feature_fraction': 0.9, 'bagging_fraction': 0.7, 'lambda_l1': 5.0, 'lambda_l2': 0.0}
+round 1: best_iter 202, delta +0.3253
+round 2: best_iter 398, delta +0.4124
+round 3: best_iter 467, delta +0.2916
+done

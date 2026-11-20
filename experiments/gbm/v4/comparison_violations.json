@@ -1,0 +1,85 @@
+{
+ "mono": {
+  "1": {
+   "shap": 2,
+   "ice": 4,
+   "shap_list": [
+    "ebitda",
+    "exp_financing"
+   ],
+   "ice_list": [
+    "ebitda",
+    "exp_financing",
+    "lt_debt_to_capital",
+    "profit"
+   ]
+  },
+  "2": {
+   "shap": 2,
+   "ice": 4,
+   "shap_list": [
+    "ebitda",
+    "exp_financing"
+   ],
+   "ice_list": [
+    "ebitda",
+    "exp_financing",
+    "prof_operations",
+    "profit"
+   ]
+  }
+ },
+ "free": {
+  "1": {
+   "shap": 2,
+   "ice": 14,
+   "shap_list": [
+    "debt_detail_missing",
+    "operating_cash_flow_margin"
+   ],
+   "ice_list": [
+    "ateco_sector_te",
+    "cash_interest_coverage",
+    "debt_detail_missing",
+    "ebitda",
+    "ebitda_to_debt",
+    "exp_financing",
+    "int_coverage",
+    "lt_debt_to_capital",
+    "net_prof_margin",
+    "operating_cash_flow_margin",
+    "operating_cash_flow_to_debt",
+    "quick_ratio",
+    "size",
+    "wc_ratio"
+   ]
+  },
+  "2": {
+   "shap": 4,
+   "ice": 15,
+   "shap_list": [
+    "exp_financing",
+    "int_coverage",
+    "operating_cash_flow_ratio",
+    "quick_ratio"
+   ],
+   "ice_list": [
+    "cash_to_financing_exp_ratio",
+    "debt_detail_missing",
+    "ebitda",
+    "ebitda_to_debt",
+    "exp_financing",
+    "int_coverage",
+    "lt_debt_to_capital",
+    "net_prof_margin",
+    "operating_cash_flow_margin",
+    "operating_cash_flow_to_debt",
+    "payables_ratio",
+    "prof_operations",
+    "quick_ratio",
+    "size",
+    "wc_ratio"
+   ]
+  }
+ }
+}
