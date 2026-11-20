@@ -1,5 +1,10 @@
 # Collinearity check
 
+Historical analysis for an earlier feature set. The current selection stage is
+documented in [Iterative VIF feature selection](06-vif-feature-selection.md).
+The `preprocess collinearity` command mentioned below has been replaced by
+`finance_project.data_processing.select_features_vif`.
+
 The check covers the features currently produced by `preprocess.py` (`firm_year` mode). Data: `data/processed/walk_forward/round_01/train.csv` (FY2007, 115,400 rows); we ran `preprocess fit` and checked its output. Scope: 31 numeric features (including `ateco_sector_te`); `legal_*`, `city_*` and the flags are not included.
 
 ## Why check

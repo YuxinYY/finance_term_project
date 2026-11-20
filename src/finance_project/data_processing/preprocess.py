@@ -32,6 +32,7 @@ from finance_project.common import project_path, write_json
 
 
 FEATURE_SCHEMA_PATH = project_path("config/feature_schema.json")
+VIF_SELECTED_FEATURES_PATH = project_path("config/vif_selected_features.json")
 ATECO_INDUSTRY_LOOKUP_PATH = project_path("data/interim/ateco_sector_english.csv")
 
 
@@ -88,6 +89,14 @@ def _load_feature_schema(path: Path = FEATURE_SCHEMA_PATH) -> tuple[dict[str, An
 
 FEATURE_SCHEMA, FEATURE_SCHEMA_HASH = _load_feature_schema()
 FEATURE_SCHEMA_VERSION = FEATURE_SCHEMA["schema_version"]
+VIF_SELECTION = json.loads(VIF_SELECTED_FEATURES_PATH.read_text(encoding="utf-8"))
+if VIF_SELECTION.get("schema_sha256") != FEATURE_SCHEMA_HASH:
+    raise ValueError("VIF selection was created from a different feature schema; regenerate it first.")
+VIF_SELECTED_FEATURES = VIF_SELECTION.get("selected_features")
+if (not isinstance(VIF_SELECTED_FEATURES, list) or not VIF_SELECTED_FEATURES
+        or not all(isinstance(name, str) for name in VIF_SELECTED_FEATURES)
+        or len(set(VIF_SELECTED_FEATURES)) != len(VIF_SELECTED_FEATURES)):
+    raise ValueError("VIF selection must contain a nonempty, unique list of feature names.")
 DEBT_DETAIL = list(FEATURE_SCHEMA["debt_detail_columns"])
 ANOMALY_FLAGS = list(FEATURE_SCHEMA["anomaly_flags"])
 IMPUTE_COLS = list(FEATURE_SCHEMA["impute_columns"])
@@ -398,108 +407,10 @@ def feature_schema_coverage(feature_columns: list[str]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def _group_feature_columns(feature_columns: list[str], requirements: list[str]) -> list[str]:
-    """Resolve exact and prefix feature requirements for a schema group."""
-    selected: list[str] = []
-    for requirement in requirements:
-        if requirement.endswith("*"):
-            selected.extend(column for column in feature_columns if column.startswith(requirement[:-1]))
-        elif requirement in feature_columns:
-            selected.append(requirement)
-    return list(dict.fromkeys(selected))
 
 
-def calculate_vif(
-    frame: pd.DataFrame,
-    feature_columns: list[str],
-    *,
-    max_rows: int = 100_000,
-    random_state: int = 42,
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """Return VIF, covariance, and correlation diagnostics for numeric features.
-
-    Missing values are median-filled only for this diagnostic. All-missing and
-    constant columns are retained in the VIF table with an explanatory status
-    but excluded from the matrix inversion. To keep the diagnostic practical
-    on the full panel, it uses a reproducible row sample when needed.
-    """
-    if max_rows < 2:
-        raise ValueError("max_rows must be at least 2.")
-    values = frame.reindex(columns=feature_columns).apply(pd.to_numeric, errors="coerce")
-    values = values.replace([np.inf, -np.inf], np.nan)
-    if len(values) > max_rows:
-        values = values.sample(n=max_rows, random_state=random_state)
-
-    rows: list[dict[str, str | float | int]] = []
-    eligible: list[str] = []
-    for column in feature_columns:
-        series = values[column]
-        if series.notna().sum() == 0:
-            rows.append({"feature": column, "vif": np.nan, "status": "all_missing"})
-        elif series.nunique(dropna=True) < 2:
-            rows.append({"feature": column, "vif": np.nan, "status": "constant"})
-        else:
-            eligible.append(column)
-
-    usable = values[eligible].copy()
-    if eligible:
-        usable = usable.fillna(usable.median()).fillna(0.0)
-    covariance = usable.cov() if eligible else pd.DataFrame()
-    correlation = usable.corr() if eligible else pd.DataFrame()
-
-    if len(eligible) == 1:
-        rows.append({"feature": eligible[0], "vif": 1.0, "status": "ok"})
-    elif len(eligible) > 1:
-        matrix = correlation.to_numpy(dtype=float)
-        rank = int(np.linalg.matrix_rank(matrix))
-        if rank < len(eligible):
-            rows.extend({"feature": column, "vif": np.inf, "status": "singular_matrix"} for column in eligible)
-        else:
-            inverse = np.linalg.inv(matrix)
-            rows.extend(
-                {
-                    "feature": column,
-                    "vif": float(inverse[position, position]),
-                    "status": "ok",
-                }
-                for position, column in enumerate(eligible)
-            )
-
-    vif = pd.DataFrame(rows)
-    if not vif.empty:
-        vif.insert(1, "sample_rows", len(values))
-        vif = vif.sort_values(["vif", "feature"], ascending=[False, True], na_position="last").reset_index(drop=True)
-    return vif, covariance, correlation
 
 
-def feature_group_collinearity(
-    frame: pd.DataFrame,
-    feature_columns: list[str] | None = None,
-    *,
-    max_rows: int = 100_000,
-    random_state: int = 42,
-) -> dict[str, dict[str, pd.DataFrame]]:
-    """Calculate VIF-first diagnostics for every Feature Schema group.
-
-    Pass transformed *training* features only. This avoids using validation or
-    test data even for an exploratory diagnostic.
-    """
-    feature_columns = list(frame.columns) if feature_columns is None else feature_columns
-    diagnostics: dict[str, dict[str, pd.DataFrame]] = {}
-    for group, requirements in FEATURE_GROUPS.items():
-        columns = _group_feature_columns(feature_columns, requirements)
-        vif, covariance, correlation = calculate_vif(
-            frame,
-            columns,
-            max_rows=max_rows,
-            random_state=random_state,
-        )
-        diagnostics[group] = {
-            "vif": vif,
-            "covariance": covariance,
-            "correlation": correlation,
-        }
-    return diagnostics
 
 
 def _assert_anchor_history_compatibility(
@@ -764,6 +675,17 @@ def fit_preprocessor(
     ].tolist()
     if missing_required:
         raise AssertionError(f"Feature Schema fields are missing: {missing_required}")
+    if config.feature_mode == "firm_year":
+        # Keep indicators stable even when a training round lacks a category.
+        legal_categories = [name.removeprefix("legal_") for name in VIF_SELECTED_FEATURES if name.startswith("legal_")]
+        city_categories = [name.removeprefix("city_") for name in VIF_SELECTED_FEATURES if name.startswith("city_")]
+        missing_selected = set(VIF_SELECTED_FEATURES) - set(feature_columns) - {
+            *[f"legal_{category}" for category in legal_categories],
+            *[f"city_{category}" for category in city_categories],
+        }
+        if missing_selected:
+            raise ValueError(f"Selected features cannot be constructed: {sorted(missing_selected)}")
+        feature_columns = list(VIF_SELECTED_FEATURES)
     artifacts = PreprocessingArtifacts(
         config=config,
         feature_schema_version=FEATURE_SCHEMA_VERSION,
@@ -933,40 +855,6 @@ def _transform_command(args: argparse.Namespace) -> None:
     print(f"Wrote transformed features: {output_path}")
 
 
-def _collinearity_command(args: argparse.Namespace) -> None:
-    """Write VIF-first diagnostics for a transformed training feature file."""
-    frame = _read_csv(args.input)
-    metadata = {args.id_column, args.year_column, args.target_column, "pred_start_dt"}
-    feature_columns = [column for column in frame.columns if column not in metadata]
-    diagnostics = feature_group_collinearity(
-        frame,
-        feature_columns,
-        max_rows=args.max_rows,
-        random_state=args.random_state,
-    )
-    output_dir = project_path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    summary: dict[str, Any] = {
-        "input": str(project_path(args.input)),
-        "max_rows": args.max_rows,
-        "groups": {},
-    }
-    for group, diagnostic in diagnostics.items():
-        vif_path = output_dir / f"{group}_vif.csv"
-        covariance_path = output_dir / f"{group}_covariance.csv"
-        correlation_path = output_dir / f"{group}_correlation.csv"
-        diagnostic["vif"].to_csv(vif_path, index=False)
-        diagnostic["covariance"].to_csv(covariance_path)
-        diagnostic["correlation"].to_csv(correlation_path)
-        summary["groups"][group] = {
-            "features": diagnostic["vif"]["feature"].tolist() if not diagnostic["vif"].empty else [],
-            "vif": str(vif_path),
-            "covariance": str(covariance_path),
-            "correlation": str(correlation_path),
-        }
-    summary_path = write_json(args.summary_output, summary)
-    print(f"Wrote collinearity diagnostics: {output_dir}")
-    print(f"Wrote collinearity summary: {summary_path}")
 
 
 def _add_common_arguments(parser: argparse.ArgumentParser) -> None:
@@ -1017,22 +905,6 @@ def parse_args() -> argparse.Namespace:
     transform = commands.add_parser("transform", help="Transform validation/test data with fitted artifacts.")
     _add_common_arguments(transform)
     transform.add_argument("--artifacts", required=True, help="Joblib artifact input path.")
-    collinearity = commands.add_parser(
-        "collinearity",
-        help="Write VIF, covariance, and correlation diagnostics for transformed training features.",
-    )
-    collinearity.add_argument("--input", required=True, help="Transformed training feature CSV.")
-    collinearity.add_argument("--output-dir", required=True, help="Directory for grouped VIF/covariance CSVs.")
-    collinearity.add_argument(
-        "--summary-output",
-        default="reports/metrics/feature_collinearity.json",
-        help="JSON diagnostic manifest path.",
-    )
-    collinearity.add_argument("--id-column", default="id")
-    collinearity.add_argument("--year-column", default="fs_year")
-    collinearity.add_argument("--target-column", default="label")
-    collinearity.add_argument("--max-rows", type=int, default=100_000)
-    collinearity.add_argument("--random-state", type=int, default=42)
     return parser.parse_args()
 
 
@@ -1042,8 +914,6 @@ def main() -> None:
         _fit_command(args)
     elif args.command == "transform":
         _transform_command(args)
-    else:
-        _collinearity_command(args)
 
 
 if __name__ == "__main__":

@@ -13,9 +13,7 @@ from finance_project.data_processing.preprocess import (
     FEATURE_SCHEMA_VERSION,
     PreprocessingConfig,
     bootstrap_minority_class,
-    calculate_vif,
     feature_schema_metadata,
-    feature_group_collinearity,
     feature_schema_coverage,
     fit_preprocessor,
     transform_with_preprocessor,
@@ -205,7 +203,7 @@ def test_preprocessor_fits_on_train_and_uses_decay_weighted_history_for_transfor
     assert artifacts.feature_schema_hash == FEATURE_SCHEMA_HASH
 
 
-def test_preprocessor_implements_feature_schema_and_group_collinearity_diagnostics():
+def test_preprocessor_implements_feature_schema():
     train = pd.DataFrame(
         [
             _raw_row(1, 2007, 0, sector=10, legal="SRL"),
@@ -226,18 +224,6 @@ def test_preprocessor_implements_feature_schema_and_group_collinearity_diagnosti
     assert coverage.loc[~coverage["schema_feature"].str.endswith("*"), "implemented"].all()
     assert coverage.loc[coverage["schema_feature"].eq("legal_*"), "implemented"].item()
     assert coverage.loc[coverage["schema_feature"].eq("city_*"), "implemented"].item()
-
-    diagnostics = feature_group_collinearity(transformed, artifacts.feature_columns)
-    assert set(diagnostics) == {
-        "business_structural",
-        "leverage_capital_structure",
-        "liquidity_activity",
-        "profitability_growth",
-        "coverage_cash_flow",
-    }
-    assert {"feature", "vif", "status", "sample_rows"}.issubset(
-        diagnostics["business_structural"]["vif"].columns
-    )
 
 
 def test_feature_schema_metadata_has_a_version_and_hash():
@@ -266,17 +252,6 @@ def test_transform_rejects_an_artifact_from_a_different_feature_schema():
 
     with pytest.raises(ValueError, match="feature schema does not match"):
         transform_with_preprocessor(train.drop(columns="label"), train.drop(columns="label"), artifacts)
-
-
-def test_calculate_vif_marks_perfectly_collinear_features():
-    features = pd.DataFrame({"x": [1, 2, 3, 4], "twice_x": [2, 4, 6, 8], "constant": 1})
-
-    vif, covariance, correlation = calculate_vif(features, list(features))
-
-    assert set(vif.loc[vif["status"] == "singular_matrix", "feature"]) == {"x", "twice_x"}
-    assert vif.loc[vif["feature"] == "constant", "status"].item() == "constant"
-    assert covariance.index.tolist() == ["x", "twice_x"]
-    assert correlation.columns.tolist() == ["x", "twice_x"]
 
 
 def test_firm_year_feature_mode_uses_direct_anchor_values_not_decay_aggregation():
