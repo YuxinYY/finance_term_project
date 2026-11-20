@@ -1,0 +1,562 @@
+comparison,rows,feature,in_left,in_right,n_rows_compared,n_differ,share_differ,n_differ_material,share_differ_material,max_abs_diff,n_nan_mismatch
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,size,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,equity_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_to_eqty,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,st_debt_share,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,lt_debt_to_capital,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,bank_debt_conc,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,tangible_asset_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,goodwill_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_to_financing_exp_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_asst_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,AR_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,payables_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,wc_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_debt_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,quick_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,asset_turnover,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roa,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roe,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,op_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,net_prof_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,COGS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,int_coverage,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,financing_expense_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda_to_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_interest_coverage,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_to_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_bs_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_pl_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_detail_missing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,loss_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_tot,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_total_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_lt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_bank_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cash,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_current,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ar,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_AP_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_wc_net,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cf_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ateco_sector_te,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SAU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SPA,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRL,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Basilicata,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Calabria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Campania,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Emilia-Romagna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Friuli-Venezia Giulia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lazio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Liguria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lombardia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Marche,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Molise,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Piemonte,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Puglia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sardegna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sicilia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Toscana,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Trentino-Alto Adige,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Umbria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Unknown,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Valle d'Aosta,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle0 vs H_kiet (arithmetic parity, no prior years)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Veneto,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,size,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,equity_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_to_eqty,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.05899210228628471,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,st_debt_share,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.3094692792817778,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,lt_debt_to_capital,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.05570589446222062,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,bank_debt_conc,True,True,20003,1.0,4.999250112483127e-05,1.0,4.999250112483127e-05,5.5329777978475056e-05,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,tangible_asset_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,goodwill_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_to_financing_exp_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_asst_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,AR_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,payables_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,wc_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_debt_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,quick_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,asset_turnover,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roa,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roe,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,op_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,net_prof_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,COGS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,int_coverage,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,financing_expense_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda_to_debt,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.03844209844477449,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_interest_coverage,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_to_debt,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.05210074221102437,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_bs_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_pl_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_detail_missing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,loss_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_tot,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_total_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_lt,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,1.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_bank_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cash,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_current,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ar,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_AP_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_wc_net,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cf_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ateco_sector_te,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SAU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SPA,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRL,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Basilicata,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Calabria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Campania,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Emilia-Romagna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Friuli-Venezia Giulia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lazio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Liguria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lombardia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Marche,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Molise,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Piemonte,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Puglia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sardegna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sicilia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Toscana,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Trentino-Alto Adige,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Umbria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Unknown,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Valle d'Aosta,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+"T_bundle vs H_kiet (training history incl. FY2010; G on in training, off in harness)",random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Veneto,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,size,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,equity_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_to_eqty,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.05899210228628471,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,st_debt_share,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.3094692792817778,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,lt_debt_to_capital,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.05570589446222062,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,bank_debt_conc,True,True,20003,1.0,4.999250112483127e-05,1.0,4.999250112483127e-05,5.5329777978475056e-05,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,tangible_asset_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,goodwill_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_to_financing_exp_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_asst_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,AR_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,payables_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,wc_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_debt_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,quick_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,asset_turnover,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roa,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roe,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,op_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,net_prof_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,COGS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,int_coverage,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,financing_expense_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda_to_debt,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.03844209844477449,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_interest_coverage,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_to_debt,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,0.05210074221102437,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_bs_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_pl_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_detail_missing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,loss_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_tot,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_total_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_lt,True,True,20003,2.0,9.998500224966255e-05,2.0,9.998500224966255e-05,1.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_bank_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cash,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_current,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ar,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_AP_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_wc_net,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cf_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ateco_sector_te,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SAU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SPA,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRL,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Basilicata,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Calabria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Campania,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Emilia-Romagna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Friuli-Venezia Giulia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lazio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Liguria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lombardia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Marche,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Molise,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Piemonte,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Puglia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sardegna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sicilia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Toscana,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Trentino-Alto Adige,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Umbria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Unknown,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Valle d'Aosta,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_bundle vs H_chloe (batch = FY2011 only),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Veneto,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,size,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,equity_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_to_eqty,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,st_debt_share,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,lt_debt_to_capital,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,bank_debt_conc,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,tangible_asset_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,goodwill_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_to_financing_exp_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_asst_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,AR_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,payables_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,wc_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_debt_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,quick_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,asset_turnover,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roa,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roe,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,op_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,net_prof_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,COGS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,int_coverage,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,financing_expense_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda_to_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_margin,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_interest_coverage,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_to_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_bs_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_pl_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_detail_missing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,loss_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_tot,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_total_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_lt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_bank_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cash,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_current,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ar,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_AP_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_wc_net,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cf_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ateco_sector_te,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SAU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SPA,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRL,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Basilicata,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Calabria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Campania,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Emilia-Romagna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Friuli-Venezia Giulia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lazio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Liguria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lombardia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Marche,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Molise,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Piemonte,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Puglia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sardegna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sicilia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Toscana,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Trentino-Alto Adige,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Umbria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Unknown,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Valle d'Aosta,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe vs H_kiet (same batch),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Veneto,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,size,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,equity_ratio,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,1.1102230246251565e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_to_eqty,True,True,20003,3.0,0.00014997750337449384,0.0,0.0,3.552713678800501e-15,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,st_debt_share,True,True,20003,3.0,0.00014997750337449384,0.0,0.0,9.992007221626409e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,lt_debt_to_capital,True,True,20003,3.0,0.00014997750337449384,0.0,0.0,2.636779683484747e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,bank_debt_conc,True,True,20003,1353.0,0.06763985402189672,0.0,0.0,2.2382096176443156e-13,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,tangible_asset_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,goodwill_ratio,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,1.0408340855860843e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_ratio,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,7.979727989493313e-17,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_to_financing_exp_ratio,True,True,20003,2.0,9.998500224966255e-05,0.0,0.0,2.3936408410918375e-13,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_asst_ratio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,AR_ratio,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,2.6645352591003757e-15,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,payables_ratio,True,True,20003,1260.0,0.0629905514172874,0.0,0.0,4.822531263215524e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,wc_ratio,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,4.440892098500626e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cur_debt_ratio,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,3.552713678800501e-15,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,quick_ratio,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,3.1086244689504383e-15,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,asset_turnover,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,1.6653345369377348e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roa,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,1.9539925233402755e-14,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roe,True,True,20003,19963.0,0.9980002999550067,19963.0,0.9980002999550067,48702.44990390775,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,op_margin,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,8.396061623727746e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,net_prof_margin,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,5.204170427930421e-18,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,rev_operating,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,1.862645149230957e-08,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,3.4924596548080444e-08,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,COGS,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,5.587935447692871e-08,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,prof_operations,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,2.3283064365386963e-08,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,exp_financing,True,True,20003,2.0,9.998500224966255e-05,0.0,0.0,5.366746336221695e-08,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,int_coverage,True,True,20003,2.0,9.998500224966255e-05,0.0,0.0,4.4586556668946287e-13,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,financing_expense_ratio,True,True,20003,2.0,9.998500224966255e-05,0.0,0.0,4.510281037539698e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ebitda_to_debt,True,True,20003,3.0,0.00014997750337449384,0.0,0.0,7.979727989493313e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_margin,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,5.134781488891349e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,cash_interest_coverage,True,True,20003,2.0,9.998500224966255e-05,0.0,0.0,3.3661962106634746e-13,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_ratio,True,True,20003,1.0,4.999250112483127e-05,0.0,0.0,1.3183898417423734e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,operating_cash_flow_to_debt,True,True,20003,3.0,0.00014997750337449384,0.0,0.0,2.706168622523819e-16,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_bs_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,neg_pl_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,debt_detail_missing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,loss_flag,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,roe_negative,True,False,20003,,,,,,
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_tot,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_total_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_debt_lt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_bank_debt,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cash,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_asst_current,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ar,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_rev_operating,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_AP_st,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_wc_net,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_ebitda,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_prof_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_profit,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_cf_operations,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,zero_exp_financing,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,ateco_sector_te,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SAU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SPA,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRL,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRS,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,legal_SRU,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Basilicata,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Calabria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Campania,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Emilia-Romagna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Friuli-Venezia Giulia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lazio,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Liguria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Lombardia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Marche,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Molise,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Piemonte,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Puglia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sardegna,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Sicilia,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Toscana,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Trentino-Alto Adige,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Umbria,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Unknown,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Valle d'Aosta,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+T_pin (schema 1.3.0) vs H_kiet (frozen 1.2.1 bundle),random FY2011 sample + all FY2011 rows with liab_lt/liab_lt_emp/debt_lt missing,city_Veneto,True,True,20003,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,size,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,equity_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,debt_to_eqty,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,st_debt_share,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,lt_debt_to_capital,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,bank_debt_conc,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,tangible_asset_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,goodwill_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cash_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cash_to_financing_exp_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cur_asst_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,AR_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,payables_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,wc_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cur_debt_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,quick_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,asset_turnover,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,roa,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,roe,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,op_margin,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,net_prof_margin,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,profit,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,rev_operating,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,ebitda,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,COGS,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,prof_operations,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,exp_financing,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,int_coverage,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,financing_expense_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,ebitda_to_debt,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,operating_cash_flow_margin,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cash_interest_coverage,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,operating_cash_flow_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,operating_cash_flow_to_debt,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,neg_bs_flag,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,neg_pl_flag,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,debt_detail_missing,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,loss_flag,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_asst_tot,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_total_debt,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_debt_st,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_debt_lt,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_bank_debt,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_cash,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_asst_current,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_ar,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_rev_operating,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_AP_st,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_wc_net,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_ebitda,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_prof_operations,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_profit,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_cf_operations,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_exp_financing,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,ateco_sector_te,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SAU,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SPA,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SRL,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SRS,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SRU,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Basilicata,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Calabria,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Campania,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Emilia-Romagna,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Friuli-Venezia Giulia,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Lazio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Liguria,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Lombardia,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Marche,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Molise,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Piemonte,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Puglia,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Sardegna,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Sicilia,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Toscana,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Trentino-Alto Adige,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Umbria,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Unknown,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Valle d'Aosta,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_kiet: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Veneto,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,size,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,equity_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,debt_to_eqty,True,True,3,2.0,0.6666666666666666,2.0,0.6666666666666666,0.05899210228628471,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,st_debt_share,True,True,3,2.0,0.6666666666666666,2.0,0.6666666666666666,0.3094692792817778,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,lt_debt_to_capital,True,True,3,2.0,0.6666666666666666,2.0,0.6666666666666666,0.05570589446222062,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,bank_debt_conc,True,True,3,1.0,0.3333333333333333,1.0,0.3333333333333333,5.5329777978475056e-05,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,tangible_asset_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,goodwill_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cash_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cash_to_financing_exp_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cur_asst_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,AR_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,payables_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,wc_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cur_debt_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,quick_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,asset_turnover,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,roa,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,roe,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,op_margin,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,net_prof_margin,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,profit,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,rev_operating,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,ebitda,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,COGS,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,prof_operations,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,exp_financing,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,int_coverage,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,financing_expense_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,ebitda_to_debt,True,True,3,2.0,0.6666666666666666,2.0,0.6666666666666666,0.03844209844477449,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,operating_cash_flow_margin,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,cash_interest_coverage,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,operating_cash_flow_ratio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,operating_cash_flow_to_debt,True,True,3,2.0,0.6666666666666666,2.0,0.6666666666666666,0.05210074221102437,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,neg_bs_flag,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,neg_pl_flag,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,debt_detail_missing,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,loss_flag,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_asst_tot,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_total_debt,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_debt_st,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_debt_lt,True,True,3,2.0,0.6666666666666666,2.0,0.6666666666666666,1.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_bank_debt,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_cash,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_asst_current,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_ar,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_rev_operating,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_AP_st,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_wc_net,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_ebitda,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_prof_operations,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_profit,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_cf_operations,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,zero_exp_financing,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,ateco_sector_te,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SAU,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SPA,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SRL,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SRS,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,legal_SRU,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Basilicata,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Calabria,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Campania,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Emilia-Romagna,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Friuli-Venezia Giulia,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Lazio,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Liguria,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Lombardia,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Marche,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Molise,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Piemonte,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Puglia,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Sardegna,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Sicilia,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Toscana,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Trentino-Alto Adige,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Umbria,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Unknown,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Valle d'Aosta,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0
+H_chloe: FY2011 rows with vs without the firm's FY2010 row in the batch,3 FY2011 rows with a PREV_ZERO field missing,city_Veneto,True,True,3,0.0,0.0,0.0,0.0,0.0,0.0

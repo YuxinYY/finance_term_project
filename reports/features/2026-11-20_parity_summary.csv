@@ -1,0 +1,71 @@
+check,value,detail
+provenance:models/preprocessing/temporal_firm_year_round_03.joblib,not in repo,joblib not committed (models/* gitignored)
+provenance:model_artifacts/temporal_firm_year_v2/round_03/lightgbm/model.joblib,not in repo,joblib not committed (models/* gitignored)
+provenance:config/feature_schema.json,4e0ba3a=MATCH; 478b058=DIFF,
+provenance:data/interim/ateco_sector_english.csv,4e0ba3a=MATCH; 478b058=MATCH,bundle copy (data/interim/* is gitignored)
+provenance:notebooks/features/01_flag_anomalies.ipynb,4e0ba3a=MATCH; 478b058=MATCH,
+provenance:notebooks/features/02_missing_values.ipynb,4e0ba3a=MATCH; 478b058=DIFF,
+provenance:src/finance_project/data_processing/preprocess.py,4e0ba3a=MATCH; 478b058=MATCH,
+repro:ateco_lookup_gitignored,True,preprocess.py raises FileNotFoundError on import in a fresh clone unless the file is copied in
+schema:train_bundle_version,1.2.1,
+schema:train_pin_version,1.3.0,
+schema:harness_version,1.2.1,
+schema:frozen_params_version,1.2.1,
+schema:frozen_hash_equals_bundle_code_hash,True,
+schema:frozen_hash_equals_pin_code_hash,False,
+model:n_features,80,
+train_window:rows,476183,labelled (s5) FY2007-09 = round-03 training anchors
+train_window:default_rate_equals_frozen_fallback_pd,True,0.012373394262289918 vs 0.012373394262289918
+refit_bundle:medians_max_abs_diff,5.551115123125783e-16,"groups=['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'U', 'ALL']"
+refit_bundle:te_mapping_max_abs_diff,0.0,groups refit=19 frozen=19
+refit_bundle:te_global_mean_diff,0.0,
+refit_bundle:legal_categories_match,True,reference (all-zero) category = SAA
+refit_bundle:city_categories_match,True,reference (all-zero) category = Abruzzo
+refit_pin:groups_falling_back_to_overall_median,"['O', 'P', 'U']",O:13 firms; P:266 firms; U:57 firms
+refit_pin:median_columns_removed,['roe'],
+sample:random_fy2011_rows,20000,seed=20261120
+sample:fy2011_rows_with_liab_lt/liab_lt_emp/debt_lt_missing,3,
+sample:of_which_method_G_would_fire_from_FY2010,2,
+rows_kept:T_bundle,20003,of 20003 anchors (rest dropped by training / fallback PD in harness)
+rows_kept:T_bundle0,20003,of 20003 anchors (rest dropped by training / fallback PD in harness)
+rows_kept:T_pin,20003,of 20003 anchors (rest dropped by training / fallback PD in harness)
+rows_kept:H_chloe,20003,of 20003 anchors (rest dropped by training / fallback PD in harness)
+rows_kept:H_kiet,20003,of 20003 anchors (rest dropped by training / fallback PD in harness)
+pd_abs_diff_vs_H_kiet:T_bundle:max,0.000692400583592559,rows=20003
+pd_abs_diff_vs_H_kiet:T_bundle:n_rows_gt_1e-12,2,
+pd_abs_diff_vs_H_kiet:T_bundle0:max,0.0,rows=20003
+pd_abs_diff_vs_H_kiet:T_bundle0:n_rows_gt_1e-12,0,
+pd_abs_diff_vs_H_kiet:H_chloe:max,0.0,rows=20003
+pd_abs_diff_vs_H_kiet:H_chloe:n_rows_gt_1e-12,0,
+T_pin:roe_abs_value_gt_150_share,0.04854271859221117,"frozen model saw roe only in [-150, 149.93] (lightgbm.txt feature_infos)"
+T_pin:roe_max_abs,48706.149903907746,
+T_pin:roe_raw_blank_share,0.06833974903764435,harness fills these with the industry median; 1.3.0 recomputes them
+T_pin:roe_absdiff_gt_0.01_share_when_raw_present,0.0,provider roe is rounded to 2 decimals; larger gaps = formula differences
+T_pin:roe_absdiff_median_when_raw_blank,214.68987910907268,
+T_pin:roe_negative_share,0.03649452582112683,flag = profit<0 AND eqty_tot<0 (roe sign is positive in these rows)
+invariance:H_kiet:shuffle_chunks_cells_differ,0,
+invariance:H_kiet:single_vs_batch_cells_differ,0,503 rows scored alone
+invariance:H_kiet:multi_year_batch_pd_max_abs_diff,0.0,
+invariance:H_kiet:multi_year_batch_cells_differ,0,rows with PD change=0
+invariance:H_chloe:shuffle_chunks_cells_differ,0,
+invariance:H_chloe:single_vs_batch_cells_differ,0,503 rows scored alone
+invariance:H_chloe:multi_year_batch_pd_max_abs_diff,0.000692400583592559,
+invariance:H_chloe:multi_year_batch_cells_differ,13,rows with PD change=2
+method_G:train_window_anchor_rows_where_G_fired,279,of 476183 training anchors (0.058591%)
+small_group_fallback:fy2011_rows_affected,19,"rows in ['O', 'P', 'U'] with a Method-B field missing, of 184973 FY2011 rows"
+small_group_fallback:train_window_rows_affected,137,of 476183
+region_map:team_vs_kiet_codes_mismatches,0,codes=[]
+region_map:preprocess_vs_harness_identical,True,
+unseen:legal_dummies_all_zero(=reference SAA),True,
+unseen:HQ_city_999_maps_to_city_Unknown,True,
+unseen:ateco_missing_te_equals_global_mean,True,
+model:monotone_constraints_match_code,True,AR_ratio:+1; ateco_sector_te:+1; cash_ratio:-1; cash_to_financing_exp_ratio:-1; cur_debt_ratio:-1; ebitda_to_debt:-1; equity_ratio:-1; financing_expense_ratio:+1; int_coverage:-1; loss_flag:+1; lt_debt_to_capital:+1; net_prof_margin:-1; op_margin:-1; operating_cash_flow_ratio:-1; payables_ratio:+1; quick_ratio:-1; roa:-1; st_debt_share:+1; wc_ratio:-1
+model:features_unusable_in_training(feature_infos=none),"['zero_asst_tot', 'zero_total_debt', 'zero_asst_current', 'zero_wc_net', 'legal_SRS', 'city_Unknown']",
+model:features_never_split_on,"['neg_bs_flag', 'neg_pl_flag', 'loss_flag', 'zero_asst_tot', 'zero_total_debt', 'zero_cash', 'zero_asst_current', 'zero_ar', 'zero_rev_operating', 'zero_wc_net', 'zero_ebitda', 'zero_prof_operations', 'zero_cf_operations', 'zero_exp_financing', 'legal_SRS', 'city_Liguria', 'city_Sardegna', 'city_Umbria', 'city_Unknown']",
+model:training_range:lt_debt_to_capital,[-294.50032519075671:3752],
+model:training_range:AR_ratio,[-12654052.5:181657070],
+model:training_range:cur_debt_ratio,[-1874428:18720738],
+model:training_range:roe,[-150:149.93000000000001],
+model:training_range:int_coverage,[-102493833:89103170],
+smoke:pin_fit_preprocessor_runs,True,"3,000-row demo fit: features=78; roe_negative in features=True"
+smoke:pin_transform_with_frozen_1.2.1_artifact,raises,ValueError('Preprocessing artifact feature schema does not match the current configuration. Refit the preprocessor/model or restore the feature_schema.json used for fitting.')
