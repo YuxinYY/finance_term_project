@@ -21,6 +21,11 @@ Contradictions 11–13. NB: the orchestrator's brief called LightGBM "R-18"; R-1
 (still TO-VERIFY), so LightGBM is **R-38**. Likewise TreeSHAP is **R-41** (R-23 stays the 2017
 SHAP paper).
 
+**Day 4 pass (2026-11-16, literature-scout, per-feature literature for the 80-feature set):**
+new rows R-60..R-70; R-12 re-tried (stays LOCATED); notes N-60, N-61, N-66, N-69 and additions
+N-01c, N-05c, N-32b, N-33b; Contradictions 14–18; must-not items 23–28. Per-feature claim table:
+`docs/2026-11-16_feature_literature_claims.md`.
+
 ## Contradictions with the team's plan (read first)
 
 1. **"RiskCalc is the industry standard" is contradicted by R-05.** Falkenstein et al. (2000,
@@ -89,6 +94,32 @@ SHAP paper).
     (R-19 Sec. 4 on coarse piecewise-constant output; D-072 measured −0.0008). "A monotone
     recalibration leaves AUC unchanged" is exact only for *strictly* increasing maps (Platt with
     b > 0, intercept shifts). Word it that way.
+14. **"Bigger firms are safer" is NOT what the Italian and UK SME evidence shows once financials
+    are controlled.** R-01 p. 13 and R-33 p. 12 say large firms default less often (univariate
+    transforms). But in Italian manufacturing (R-60, p. 393, Table 3 p. 392) size (log sales) has a
+    *positive*, significant marginal effect in a probit with financial ratios, and the size
+    densities of defaulters and non-defaulters barely differ (p. 382–383). In UK data (R-61,
+    pp. 19, 23; Table 3 p. 12) insolvency risk rises then falls with assets (turning point about
+    £350k), modelled with log assets and its square. R-01 p. 13 itself says the size advantage
+    shrank once a cash-flow ratio entered. Our own D-022 found the multivariate `log_assets` sign
+    is +. **Do not monotone-constrain size to "−" on the strength of the literature, and do not
+    write "the literature shows larger firms are safer" without the conditional caveat.**
+15. **No verified source supports "very high cash signals distress" for private firms; R-05
+    contradicts it.** R-05 p. 51 (Exhibit 5.4) shows private-firm default frequency falling over
+    the whole cash/assets range and calls cash/assets the single most valuable private-firm
+    predictor. Only R-66 (Colombian retail, 115 bankruptcies) estimates a convex (U-shaped) cash
+    effect (Fig. 3, p. 10). Any "high cash hump" in our data must be presented as our finding.
+16. **Debt/equity and ROE are not monotone because equity can be ≤ 0.** R-05 p. 34 dropped
+    debt/net worth for this "knife-edged" interpretation; R-05 p. 33 shows NI/equity rising in
+    risk above its 60th percentile (driven by near-zero or negative book equity; 12% of private
+    firms had negative book equity). Our `debt_to_eqty`, `roe` and `lt_debt_to_capital` share
+    the problem.
+17. **The `goodwill` field is probably value added (D-010, D-091), so `goodwill_ratio` is not an
+    accounting-goodwill ratio.** Literature on goodwill/intangibles (R-05 p. 34, R-67 B.I.5)
+    does not apply; the closest verified analogue is labour productivity (value added per
+    employee), which lowers PD in Italian manufacturing (R-60, pp. 384, 393).
+18. **The local PDF "Financial and Economic Determinants of Firm Default" is Bottazzi et al.
+    (2011) (R-60), not Bonfim (2009).** Bonfim (R-65) is LOCATED only; cite nothing from it.
 
 ## Bibliography
 
@@ -105,7 +136,7 @@ SHAP paper).
 | R-09 | Bohn, J. R., & Stein, R. M. (2009). *Active Credit Portfolio Management in Practice.* Wiley. ISBN 978-0-470-08018-4. | LOCATED | Wiley product page | Not read |
 | R-10 | Stein, R. M., Kocagil, A. E., Bohn, J., & Akhavein, J. (2003, February). *Systematic and Idiosyncratic Risk in Middle-Market Default Prediction: A Study of the Performance of the RiskCalc and PFM Models.* Moody's Special Comment (cover: Moody's Investors Service, Global Credit Research; R-01 lists it as Moody's KMV). | **VERIFIED** (Day 1b; read pp. 1–10, 14–15, 21–22, 26–30, 33–34) | http://www.rogermstein.com/wp-content/uploads/riskcalcpfm.pdf (author's site; 40 pp.) | See note N-10. NB first-page author spelling is "Jalal Akhavein"; Stein's site spells "Akhavain" |
 | R-11 | Altman, E. I. (1968). Financial ratios, discriminant analysis and the prediction of corporate bankruptcy. *Journal of Finance*, 23(4), 589–609. doi:10.1111/j.1540-6261.1968.tb00843.x | LOCATED (Crossref metadata matches; full text paywalled) | api.crossref.org/works/10.1111/j.1540-6261.1968.tb00843.x | For method/sample details cite R-32 (Altman's own restatement) |
-| R-12 | Ohlson, J. A. (1980). Financial ratios and the probabilistic prediction of bankruptcy. *Journal of Accounting Research*, 18(1), 109–131. doi:10.2307/2490395 | LOCATED (Crossref metadata matches; JSTOR paywalled) | api.crossref.org/works/10.2307/2490395 | "Logit on ratios; size effect" **not checked** — cite only as existence of logit lineage |
+| R-12 | Ohlson, J. A. (1980). Financial ratios and the probabilistic prediction of bankruptcy. *Journal of Accounting Research*, 18(1), 109–131. doi:10.2307/2490395 | LOCATED (Crossref metadata matches; JSTOR paywalled). **Re-tried 2026-11-16**: RePEc confirms metadata; only an unofficial Scribd upload exists (text not visible) — not used | api.crossref.org/works/10.2307/2490395 ; econpapers.repec.org/RePEc:bla:joares:v:18:y:1980:i:1:p:109-131 | "Logit on ratios; size effect" **not checked** — cite only as existence of logit lineage. R-61 p. 8 (VERIFIED) states Ohlson (1980) first applied conditional logit to default prediction — use that for the lineage. Nothing on Ohlson's variables (SIZE, OENEG, INTWO …) may be cited |
 | R-13 | Shumway, T. (2001). Forecasting bankruptcy more accurately: A simple hazard model. *Journal of Business*, 74(1), 101–124. | TO-VERIFY | — | Not attempted today |
 | R-14 | Engelmann, B., Hayden, E., & Tasche, D. (2003). *Measuring the Discriminative Power of Rating Systems.* Deutsche Bundesbank Discussion Paper, Series 2: Banking and Financial Supervision, No. 01/2003. | **VERIFIED** | https://bundesbank.de/resource/blob/704150/b9fa10a16dfff3c98842581253f6d141/472B63F073F071307366337C94F8C870/2003-10-01-dkp-01-data.pdf | See notes N-14. **Cite this DP, not the *Risk* (2003) article** — the *Risk* piece "Testing rating accuracy" was not located (UNVERIFIED); Stein (2007, p. 83 fn. 7) cites "Engelmann et al (2003)" for the identity |
 | R-15 | Basel Committee on Banking Supervision (2006, June). *International Convergence of Capital Measurement and Capital Standards: A Revised Framework — Comprehensive Version.* BIS. | **VERIFIED** | https://www.bis.org/publ/bcbs128.htm → https://www.bis.org/publications/200606-standards-basel-ii-international-convergence-capital-measurement-and-capital-standards-revised-framework.pdf | See notes N-15 |
@@ -154,6 +185,17 @@ SHAP paper).
 | R-57 | Seitshiro, M. B., & Govender, S. (2024). Credit risk prediction with and without weights of evidence using quantitative learning models. *Cogent Economics & Finance*, 12(1), 2338971. doi:10.1080/23322039.2024.2338971 | **LOCATED (abstract-level, 2026-11-03)** | https://ideas.repec.org/a/taf/oaefxx/v12y2024i1p2338971.html | Abstract: WoE did not improve logistic regression on commercial bank data; helps explain bins. Full text restricted |
 | R-58 | Saito, T., & Rehmsmeier, M. (2015). The precision-recall plot is more informative than the ROC plot when evaluating binary classifiers on imbalanced datasets. *PLoS ONE*, 10(3), e0118432. doi:10.1371/journal.pone.0118432 | **VERIFIED (journal page text: abstract, Theoretical Background, Results, Conclusion; 2026-11-03)** | https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0118432 | PRC baseline set by positive/negative ratio; "Only PRC changes with the ratio of positives and negatives". Simulation study, not credit data |
 | R-59 | Davis, J., & Goadrich, M. (2006). The relationship between precision-recall and ROC curves. *ICML '06*, 233–240. doi:10.1145/1143844.1143874 | **LOCATED (abstract-level via search summary, 2026-11-03)** | https://mlanthology.org/icml/2006/davis2006icml-relationship | Dominance in ROC space iff dominance in PR space; optimizing AUC-ROC does not guarantee AUC-PR |
+| R-60 | Bottazzi, G., Grazzi, M., Secchi, A., & Tamagni, F. (2011). Financial and economic determinants of firm default. *Journal of Evolutionary Economics*, 21(3), 373–406. doi:10.1007/s00191-011-0224-6 | **VERIFIED** (2026-11-16; printed pp. 373–386 and 389–396 read in the publisher-typeset PDF) | doi.org/10.1007/s00191-011-0224-6 (DOI, journal, volume, pages and authors as printed on p. 373 of the copy read). Copy read: teammates' folder `relevent reading/Financial and Economic Determinants of Firm Default.pdf` | See note N-60. **Italian** manufacturing firms. NB: this local PDF is **not** Bonfim (2009); the brief assumed it might be |
+| R-61 | Altman, E. I., Sabato, G., & Wilson, N. (2010). The value of non-financial information in small and medium-sized enterprise risk management. *Journal of Credit Risk*, 6(2), 95–127. doi:10.21314/JCR.2010.110 | **VERIFIED** (2026-11-16; deposited published version, PDF printed pp. 1–29 read) | https://eprints.whiterose.ac.uk/id/eprint/219715/1/SME%20Risk%20Altman-Sabbato-Wilson.pdf (White Rose, "Published Version"). The deposited PDF is paginated 1–33; journal page ≈ printed page + 94 (inferred from the 95–127 range) — **cite the printed page and say so** | See note N-61. UK data; label = insolvency |
+| R-62 | Altman, E. I., & Sabato, G. (2007). Modelling credit risk for SMEs: Evidence from the U.S. market. *Abacus*, 43(3), 332–357. doi:10.1111/j.1467-6281.2007.00234.x | **LOCATED** (RePEc metadata + abstract, 2026-11-16). Full text not obtained (scispace/zendy returned empty; Hull repository 403). Variable list **SECONDARY via R-61** (Sec. 3.2 p. 9, Table 2 p. 10) | https://econpapers.repec.org/RePEc:bla:abacus:v:43:y:2007:i:3:p:332-357 | Abstract: logit, >2,000 US firms with sales < $65m, 1994–2002, one-year horizon; SME-specific model ~30% better out-of-sample than a generic corporate model. Do not cite their coefficients, log transforms or AR from memory |
+| R-63 | Beaver, W. H. (1966). Financial ratios as predictors of failure. *Journal of Accounting Research*, 4 (Empirical Research in Accounting: Selected Studies 1966), 71–111. doi:10.2307/2490171 | **LOCATED** (Crossref metadata: title, author, vol. 4, first page 71, year 1966; end page 111 from secondary listings, **not checked**). Content **SECONDARY via R-32** pdf p. 9 | api.crossref.org/works/10.2307/2490171 (JSTOR paywalled; no open copy found 2026-11-16) | R-32 pdf p. 9 says the Beaver study found cash flow / debt the best single ratio. **R-32 calls it "Beaver study (1967)"** — year mismatch with Crossref (1966); cite 1966 and attribute the finding "as reported by Altman (2000)" |
+| R-64 | Ciampi, F., & Gordini, N. (2013). Small enterprise default prediction modeling through artificial neural networks: An empirical analysis of Italian small enterprises. *Journal of Small Business Management*, 51(1), 23–45. doi:10.1111/j.1540-627X.2012.00376.x | **LOCATED** (RePEc metadata + abstract, 2026-11-16); full text not found open access | https://econpapers.repec.org/RePEc:taf:ujbmxx:v:51:y:2013:i:1:p:23-45 | Abstract only: >7,000 Italian small firms; NNs beat traditional methods; models estimated separately by size, region and industry are more accurate for the smallest firms and for Central Italy. **No ratio list or signs read** |
+| R-65 | Bonfim, D. (2009). Credit risk drivers: Evaluating the contribution of firm level information and of macroeconomic dynamics. *Journal of Banking & Finance*, 33(2), 281–299. (Banco de Portugal WP 7/2007) | **LOCATED** (RePEc metadata + abstract, 2026-11-16). Banco de Portugal WP PDF returned 403 | https://ideas.repec.org/a/eee/jbfina/v33y2009i2p281-299.html ; WP: bportugal.pt/sites/default/files/anexos/papers/wp200707.pdf (403) | Abstract only: Portuguese firms (>30,000); firm-specific characteristics drive PDs; adding time effects / macro variables improves results. **No variable list or signs read — do not cite Bonfim for any feature** |
+| R-66 | Valencia, C., Cabrales, S., Garcia, L., Ramirez, J., & Calderona, D. (2019). Generalized additive model with embedded variable selection for bankruptcy prediction: Prediction versus interpretation. *Cogent Economics & Finance*, 7(1), 1597956. doi:10.1080/23322039.2019.1597956 | **VERIFIED** (2026-11-16; pp. 1–11 of 14 read; open access CC-BY) | https://doi.org/10.1080/23322039.2019.1597956 ; copy read: teammates' folder (publisher PDF) | See note N-66. Colombian **retail** SMEs, 115 bankruptcies, one year (2012→2013), SMOTE-rebalanced training — weak external validity for us |
+| R-67 | Italian Civil Code, art. 2424 (*contenuto dello stato patrimoniale*), current text. | **VERIFIED (current text)** (2026-11-16) | https://www.brocardi.it/codice-civile/libro-quinto/titolo-v/capo-v/sezione-ix/art2424.html | Passivo D) Debiti has **no Roman-numeral sub-classes**; items are Arabic-numbered 1)–14) incl. 4) debiti verso banche, 7) debiti verso fornitori; Attivo B.I.5) = avviamento (goodwill). Historical (2007–2012) wording not checked; the derivative items were added later (D.Lgs. 139/2015 per R-68's template — secondary) |
+| R-68 | Riva, P. Chapter 10, "Structure and Contents of (Italian) Financial Statements", pp. 199–226, in an edited book whose title, editor, publisher and year are **not identified** (reference list cites works up to 2022). | **LOCATED (local copy only; text read pp. 199–207, 224–226; host-book metadata missing)** | teammates' folder `relevent reading/Structure+and+Contents+of+(Italian)+Financial.pdf` (28 pp.) | Translated art. 2424 template (p. 204), goodwill definition (p. 207), short-form thresholds €4.4m / €8.8m / 50 employees and "capital letters and Roman numerals" rule (p. 224) **as of the book's date, not 2007–2012**. Use R-27 / R-67 for citations; R-68 only as reading aid until the book is identified |
+| R-69 | Banca d'Italia (2018, November). *L'economia delle regioni italiane: Dinamiche recenti e aspetti strutturali.* Economie regionali n. 23. | **VERIFIED (official landing-page summary, 2026-11-16; the full PDF was not opened)** | https://www.bancaditalia.it/pubblicazioni/economie-regionali/2018/2018-0023/index.html ; PDF linked there: .../2018-0023/1823-eco-regioni.pdf | See note N-69. Regional (South vs Centre-North) gap in firms' credit deterioration rate |
+| R-70 | Stein, R. M. (2023, November 1). *Unofficial Definitions of Italian Corporate Structure Designations.* Course handout (1 p.). | **VERIFIED (course file)** (2026-11-16) | teammates' folder `relevent reading/Unofficial Definitions of Italian Corporate Structure Designations.pdf` | Roger's note relaying an Italian colleague's **unofficial** readings: SRL, SRS (simplified, capital < €10k), SRU ("probably" single-shareholder SRL), SPA listed as obliged to publish a balance sheet; SAA and SAU (meaning of "U" unclear) listed as not obliged. Cite as "unofficial" |
 
 ## Verified notes (claims, location, what we take, what we do differently)
 
@@ -735,6 +777,166 @@ SHAP paper).
   76, 83, 89) are not divisions; codes.py returns None for them, which is correct.
 - *Take:* the division → section mapping is official. *Differ:* none.
 
+**N-01c RiskCalc v3.1 — ratio groups and shapes (R-01, re-read 2026-11-16, local copy = same 36-pp. document)**
+- p. 13: seven groups; ratios inside a group are "alternative readings of the same underlying
+  construct"; at least one per group. Stated directions: high profitability ↓PD; high leverage
+  ↑PD (examples liabilities/assets, LTD/assets); growth two-sided; high liquidity ↓PD (cash and
+  marketable securities/assets, current ratio, quick ratio); large inventories/sales ↑PD, "other
+  activity ratios have different relationships to default" (AR turnover named); large firms
+  default less often. Size measured as real total assets.
+- p. 13: when a cash-flow ratio was added, the size advantage declined — a small firm with very
+  healthy statements is not much riskier than a comparable large one.
+- p. 14 + Fig. 2 + fn. 10: PD falls with NI/assets but with diminishing sensitivity (convex);
+  quadratic terms cannot capture this well.
+- p. 18 + Table 3: in services, construction, mining/transport/utilities > 40% of firms carry
+  no inventory; a zero should not earn "credit" in those sectors.
+- Appendix p. 34: US/Canada inputs — ROA, change in ROA, LTD/(LTD + net worth), retained
+  earnings/current liabilities, cash flow/interest expense (US) or cash flow/current liabilities
+  (Canada), cash and marketable securities/assets, inventory/sales, change in AR turnover, current
+  liabilities/sales, sales growth, total assets. UK: net P&L/turnover, liabilities/assets, cash
+  flow/interest charges, current ratio, trade creditors/turnover, change in trade debtors/turnover.
+  Japan: EBITDA/interest expense, trade receivables/net sales (under liquidity), cash/total assets.
+- *Take:* family structure and stated signs for our expected-sign table. *Differ:* no Italy list
+  (R-03); our formulas differ (see claim file).
+
+**N-05c RiskCalc for Private Companies — univariate shapes (R-05, re-read 2026-11-16)**
+- Caveat for all Section IV exhibits (p. 32): Compustat **public** firms 1980–1999, **5-year**
+  cumulative default, 50 groups, HP-smoothed. Exhibits 5.2–5.5 (pp. 50–52) add private CRD data.
+- p. 33: NI/assets dominates NI/equity; NI/equity becomes perverse above ~60th percentile
+  because of near-zero/negative book equity (10% of public, 12% of private firms negative);
+  operating margin worse than NI/assets (margins vary by industry); EBIT/assets and EBITDA
+  variants did no better (an outcome the authors call controversial).
+- p. 34 (Exh. 4.4): EBIT/interest highly predictive but default risk *falls* at very low
+  coverage (tiny interest expense, slightly negative EBIT); its power drops sharply for private
+  firms (possibly unreliable interest expense on unaudited statements). Debt/net worth is
+  non-monotone (negative net worth) and was excluded; debt/assets worse than liabilities/assets
+  for private firms; subtracting intangibles does not help ("intangibles appear really to be worth
+  something").
+- p. 35 (Exh. 4.5): sales and assets near-equivalent size proxies; public-firm size effect flat to
+  slightly positive below the 60th percentile, attributed to Compustat bias.
+- p. 36 (Exh. 4.6): short-/long-term debt mix of little use (fn. 31: 364-day facilities blur
+  maturity for private firms); quick ratio slightly better than WC/assets; current ratio more
+  linear but similar; a high current ratio need not mean health; cash/assets modest for public
+  but most important single variable for private firms. (The chart's current-ratio line is
+  labelled as rising, against the text — do not cite the chart line.)
+- p. 37 (Exh. 4.7): sales/assets non-monotone and very flat, and dropping it improved Z-score
+  variants; AR and AP ratios are individually more powerful than inventory/COGS but were left out
+  because the quick ratio carries their information. Sales growth U-shaped (pp. 37–38).
+- p. 47: liabilities/assets > 1 for 10% of private firms; negative-net-worth firms default at
+  ~3× the average rate, not at Caa-like rates — extreme ratios are not fatal; coverage rules of
+  thumb (0, 1, 5) break for the many firms outside the "normal" range.
+- pp. 49–51 (Exh. 5.3): private data — strong negative size relation below $40m assets, flat
+  above, partly because manually collected defaults over-represent large firms; Moody's best
+  estimate: size monotone ↓ with dampening. Exh. 5.4: private cash/assets curve falls across the
+  whole range; "single most valuable predictor" for private firms.
+- p. 61: v1 weights — assets 14%, NI/assets 9%, NI growth 7%, interest coverage 7%, quick ratio 7%,
+  cash/assets 12%, inventories/COGS 12%, sales growth 12%, liabilities/assets 9%, retained
+  earnings/assets 12%.
+- *Take:* documented non-monotone ratios (coverage at the bottom, NI/equity, debt/net worth,
+  turnover, growth) and the "private firms differ" warning. *Differ:* our horizon is one year,
+  our data are private Italian firms.
+
+**N-32b Altman (2000) — the five Z ratios (R-32, re-read 2026-11-16, pdf pp. 8–13, 22–26)**
+- pdf p. 9: 22 candidates in liquidity, profitability, leverage, solvency, activity; Beaver's
+  study (called "1967" there) found cash flow/debt the best single ratio; not used in 1968 for lack
+  of consistent depreciation/cash-flow data.
+- pdf p. 10: X1 WC/TA = net liquid assets vs capitalisation; a firm with persistent operating
+  losses sees current assets shrink relative to total assets; most valuable of three liquidity
+  ratios; current and quick ratios "subject to perverse trends for some failing firms".
+- pdf pp. 10–11: X2 RE/TA = cumulative profitability, implicitly firm age and leverage.
+  X3 EBIT/TA = productivity of assets; outperforms other profitability measures incl. cash flow.
+- pdf pp. 11–12: X4 market equity / book total liabilities (book equity in Z'); X5 sales/TA is
+  the least significant ratio on its own (Table 1, F = 2.84, pdf p. 13) yet second in multivariate
+  contribution; wide industry variation → Z'' without X5 (pdf p. 26; the text there misprints
+  "X1 – sales/total assets").
+- pdf p. 13 Table 1: group means bankrupt vs non-bankrupt — X1 −6.1% vs 41.4%; X3 −31.8% vs 15.4%.
+- pdf p. 25: Z' = 0.717X1 + 0.847X2 + 3.107X3 + 0.420X4 + 0.998X5 (book-equity X4).
+
+**N-33b RiskCalc 4.0 France — shapes (R-33, re-read 2026-11-16, pp. 11–13)**
+- p. 11 Table 2: activity — e.g. large AP/sales ↑PD, other activity ratios differ; debt coverage
+  ↑ ↓PD; leverage ↑ ↑PD; liquidity ↑ ↓PD; profitability ↑ ↓PD; size: large firms default less.
+- p. 12 + Fig. 5 p. 13: interest expense/sales, AP/sales and personnel expenses/sales slope up;
+  debt coverage slopes down and flattens; equity/assets slopes down, steepest at low equity;
+  cash/assets slopes down (close to linear on the percentile scale); operating margin slopes down
+  and flattens; real total assets slopes down; sales growth and ΔROA U-shaped.
+
+**N-60 Bottazzi, Grazzi, Secchi & Tamagni (2011) (R-60)** — printed pages
+- Sample (pp. 377–378, Table 1 p. 379): 19,628 Italian manufacturing limited-liability firms in
+  CeBi (Centrale dei Bilanci), 1998–2003, ≥ €1m sales and > 1 employee; 147 defaults in 2003–04
+  supplied by one bank, Basel-style definition (> 90 days past due or unlikely to pay, pp. 374–375);
+  sample default rates are far below the Unioncamere population rates, so non-defaulters are
+  resampled per 2-digit sector to population frequencies (p. 389).
+- p. 378: cites Foglia et al. (1998) and Cosci & Meliciani (2002) that the median Italian firm
+  in CeBi borrows from 6–8 banks (secondary to us).
+- p. 380: financial variables = interest expenses/sales, leverage (total assets/(equity + after-
+  tax income)), financial debt/sales; p. 381: size = sales; profitability = ROS (gross operating
+  income/sales); labour productivity = value added per employee.
+- pp. 382–383 (Fig. 1): size distributions of defaulters and non-defaulters are very similar —
+  no clear-cut size/default relation. p. 383–384 (Fig. 3): defaulters have clearly lower ROS,
+  widening near default. p. 384 (Fig. 4): defaulters have lower labour productivity.
+- pp. 385–386 (Figs. 5–7): defaulters show higher interest expenses/sales, shifting up as
+  default nears; leverage and FD/S also shift up, but less sharply — the authors read cost of debt
+  as the sharpest financial discriminator.
+- p. 391 + Table 3 p. 392 (bootstrap probit, z-scored, marginal effects): IE/S positive and
+  significant in all years; leverage significant only in the last year; FD/S weaker; fewer than
+  5% of sector dummies significant.
+- p. 393: with economic variables added, **size and growth have positive effects**, productivity
+  and profitability negative; size significant in all years; fn. 20: results hold with logit/LPM
+  and with employees as the size proxy. Brier scores improve when economic variables are added.
+- *Take:* Italian evidence for interest burden (`financing_expense_ratio`), operating margin and
+  value added (our `goodwill` field) as predictors, and a counter-example to "bigger is safer".
+  *Differ:* manufacturing only, 147 defaults, defaults known only for one bank's customers, sales
+  as size, 1998–2003.
+
+**N-61 Altman, Sabato & Wilson (2010) (R-61)** — deposited published version, printed pages
+- p. 4: > 60% of UK SMEs use filing exemptions; small-company accounts = abbreviated balance
+  sheet, no P&L; medium = full balance sheet, abbreviated P&L. p. 23: 765k of 1.2m accounts in
+  2005 were abridged (60%).
+- p. 8: Ohlson (1980) first applied conditional logit to default prediction; logit pooled over
+  firm-years is equivalent to a discrete-time hazard model (citing Nam et al. 2008).
+- p. 9 Sec. 3.2 + Table 2 p. 10: the Altman–Sabato (2007) US SME model uses five ratios
+  covering profitability, leverage, liquidity, coverage, activity: cash/TA, EBITDA/TA,
+  EBITDA/interest paid, retained earnings/TA, short-term debt/equity (R-62 secondary).
+- p. 11: trade-credit literature: small firms extend more credit and take more supplier credit
+  when declining; small-firm bankruptcy mainly driven by trade creditors (Hudson 1986, cited).
+- Table 3 p. 12 (SME1, logit, 1 = failed): cash/TA, EBITDA/TA, EBITDA/interest, RE/TA negative;
+  ST debt/equity positive; full model adds audited (+), audit qualifications (+), late filing
+  (+), no cash-flow statement (+), CCJs (+), log age (−), age 3–9 (+), subsidiary (−), log size
+  (+0.333) and log size squared (−0.011), industry WoE.
+- Table 4 p. 13 (SME2, abridged accounts): quick assets/current assets, net cash/net worth,
+  current ratio, RE/TA, change in net worth negative; trade creditors/total liabilities and trade
+  debtors/total assets positive; log size positive.
+- pp. 19–20, 23 + Fig. 1: insolvency risk rises with asset size up to about £350k, then falls
+  (creditors do not pursue firms with little to recover); p. 20: ratios clipped at 1st/99th
+  percentiles; industry as prior-year sector failure log-odds (WoE).
+- pp. 26–27: the current ratio "can provide conflicting evidence": it improves in many
+  distressed small firms because trade receivables rise; trade debt and trade credit both higher
+  in failing firms.
+- Table 9 p. 28: hold-out AUC — SME1 financial only 0.67 (UK weights), with non-financial 0.76;
+  SME2 0.71 → 0.75.
+- *Take:* SME evidence for receivables/payables signs, the non-monotone size curve, the value of
+  filing/quality flags, and that abridged-accounts firms are still predictable. *Differ:* UK,
+  insolvency label, very small firms (most far below our €1.5m assets threshold).
+
+**N-66 Valencia et al. (2019) (R-66)** — "Page x of 14"
+- p. 7: 2,922 Colombian retail SMEs, 115 bankrupt (3.9%), 2012 ratios → 2013 outcome, 70/30
+  random split, SMOTE on training.
+- p. 8 Table 2: validation AUC — RF 0.858, GAMSEL 0.839, plain GAM 0.818, lasso logit 0.776, LDA
+  0.770.
+- p. 9 Table 3, pp. 10–11 Figs. 2–3: linear effects — NI/TA, NI/total debt, cash flow/net worth,
+  WC/TA lower PD; TL/TA raises it. Non-linear — current ratio and quick assets/sales concave
+  (hump: very high liquidity is "not a good symptom" in retail); cash/TA and quick assets/TA
+  convex (U); NI/sales, current liabilities/TA and sales/TA monotone.
+- *Take:* an example that an additive model recovers non-monotone liquidity shapes. *Differ:*
+  tiny default count, retail only, random (not time) split — treat shapes as illustrations.
+
+**N-69 Banca d'Italia (2018), Economie regionali n. 23 (R-69)** — landing-page summary
+- The gap between the Mezzogiorno and the Centre-North in the deterioration rate of credit to
+  firms peaked at 4.8 percentage points at end-2012 and fell to about one point by early 2018.
+- *Take:* regional differences in firm credit quality are documented and time-varying (largest
+  in the 2011–12 crisis window). *Differ:* "deterioration rate" is a bank-loan flow measure, not
+  our missed-payment label; summary text only (PDF not opened).
+
 ## Claim map
 
 | Claim used in deck/report | Ref | Section/page | Verified by / date |
@@ -823,6 +1025,26 @@ SHAP paper).
 | Weight of evidence = log ratio of a bin's event share to its non-event share (= bin log-odds up to a constant); undefined/noisy in small bins | R-52 | Sec. 2; Secs. 1, 3.1 | lit-scout 2026-11-02 |
 | HQ_city codes 1–110 map to provinces/regions as in ISTAT's 2010–2016 (110-province) coding; macro-areas = ISTAT ripartizioni | R-53 | ISTAT CSV, cols. "Codice Comune numerico con 110 province", "Ripartizione geografica" | lit-scout 2026-11-02 |
 | ATECO 2007 = NACE Rev. 2 up to 4 digits; 21 sections / 88 divisions with ranges A 01–03 … U 99 | R-54 | p. 10 (Prospetto 1); pp. 51–54 | lit-scout 2026-11-02 |
+| RiskCalc v3.1 stated directions: profitability ↓, leverage ↑, liquidity ↓, inventories/sales ↑, other activity ratios differ, growth two-sided, size ↓ | R-01 | Sec. 3.1, p. 13 | lit-scout 2026-11-16 |
+| Size advantage shrank once a cash-flow ratio entered RiskCalc v3.1 | R-01 | Sec. 3.1, p. 13 | lit-scout 2026-11-16 |
+| PD falls with ROA at a diminishing rate (convex) | R-01; R-33 | R-01 p. 14 Fig. 2; R-33 p. 12 (operating margin) | lit-scout 2026-11-16 |
+| RiskCalc 4.0 France transforms: AP/sales, interest exp./sales, personnel exp./sales ↑; debt coverage, equity/assets, cash/assets, operating margin, real assets ↓; growth U-shaped | R-33 | p. 12; Fig. 5 p. 13 | lit-scout 2026-11-16 |
+| Interest coverage is non-monotone at very low values (tiny interest denominators) and loses power on private firms | R-05 | p. 34, Exh. 4.4 | lit-scout 2026-11-16 |
+| Debt/net worth and NI/equity behave perversely when equity is near zero or negative | R-05 | pp. 33–34 | lit-scout 2026-11-16 |
+| Short-/long-term debt mix carries little default information | R-05 | p. 36 + fn. 31 | lit-scout 2026-11-16 |
+| Cash/assets is the single most valuable private-firm predictor; private default frequency falls across the whole cash range | R-05 | p. 36; p. 51 Exh. 5.4 | lit-scout 2026-11-16 |
+| Asset turnover is non-monotone/flat and industry-dependent | R-05; R-32 | R-05 p. 37; R-32 pdf pp. 12–13, 26 | lit-scout 2026-11-16 |
+| Negative-net-worth private firms default at ~3× the average rate (extreme ratios not fatal) | R-05 | p. 47 | lit-scout 2026-11-16 |
+| Italian manufacturing: interest expense/sales is the sharpest financial discriminator; leverage and financial debt/sales weaker | R-60 | pp. 385–386, 391; Table 3 p. 392 | lit-scout 2026-11-16 |
+| Italian manufacturing: conditional on financial ratios, size (log sales) raises PD; ROS and labour productivity lower it; sector dummies rarely significant | R-60 | p. 391, p. 393; Table 3 p. 392 | lit-scout 2026-11-16 |
+| UK SMEs: insolvency risk is hump-shaped in assets (peak near £350k) | R-61 | pp. 19–20, 23; Fig. 1; Table 3 p. 12 | lit-scout 2026-11-16 |
+| UK SMEs: trade debtors/assets and trade creditors/liabilities raise insolvency risk; current ratio can rise in distress | R-61 | Table 4 p. 13; pp. 26–27 | lit-scout 2026-11-16 |
+| Non-financial/filing information (late filing, audit qualifications, no cash-flow statement) adds AUC for SMEs | R-61 | Table 3 p. 12; Table 9 p. 28 | lit-scout 2026-11-16 |
+| Abbreviated (abridged) accounts are common for small firms and still support a usable model | R-61 | p. 4; p. 23; Table 9 p. 28 | lit-scout 2026-11-16 |
+| Italian abbreviated balance sheets show only capital-letter and Roman-numeral items; Debiti (D) has only Arabic-numbered sub-items (banks 4, suppliers 7), so the bank/trade split is not required in short form | R-27; R-67 | art. 2435-bis; art. 2424 Passivo D | lit-scout 2026-11-16 (inference from two texts) |
+| South vs Centre-North gap in firm credit deterioration peaked at 4.8 pp end-2012, ~1 pp by early 2018 | R-69 | landing page | lit-scout 2026-11-16 |
+| Altman & Sabato (2007) SME model ratios: cash/TA, EBITDA/TA, EBITDA/interest, RE/TA, ST debt/equity | R-61 (secondary for R-62) | Sec. 3.2 p. 9; Table 2 p. 10 | lit-scout 2026-11-16 |
+| Beaver found cash flow/debt the best single ratio (as reported by Altman) | R-32 (secondary for R-63) | pdf p. 9 | lit-scout 2026-11-16 |
 
 ## Claims we must NOT make (or must word as assumptions)
 
@@ -871,3 +1093,11 @@ SHAP paper).
 17. "Moody's found ≈80% of private-firm statements are bad" as a general rate — R-10 p. 30 is one
     North American CRD example, mostly interim statements (fn. 19).
 18. A Dwyer paper on overfitting in ratio selection — searched, not found; do not cite.
+23. Anything from Bonfim (2009, R-65), Ciampi & Gordini (2013, R-64) beyond their abstracts,
+    or from Altman & Sabato (2007, R-62) beyond the five-ratio list reported in R-61.
+24. "Beaver (1966) showed …" as if read — only via R-32 pdf p. 9 ("as reported by Altman").
+25. "Larger firms are safer" as a literature fact without the conditional caveat (Contradiction 14).
+26. "Firms with very high cash are riskier" as a literature fact (Contradiction 15).
+27. Any goodwill/intangibles story for `goodwill_ratio` (Contradiction 17).
+28. "Missing bank/trade debt detail means the firm filed abbreviated accounts" as fact — the law
+    (R-27, R-67) makes it *possible*; whether it explains our missingness is a data hypothesis.

@@ -2026,3 +2026,47 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
   - D-009 sensitivity (`y_s5_d2012`): FY2007-2010 identical; FY2011 has 0 usable rows (184,159 censored). 1,015 of the 2,563 FY2011 defaults
     are dated Jan-May 2013, and 1,548 fall in Jun-Dec 2012. So the lockbox and the 2011 part of final_fit rest entirely on the D-009 primary
     treatment (email Q2).
+
+### D-152 TA test-run harness: Chloe's round-03 LightGBM bundle, with four robustness/compliance fixes
+- Date / phase / agent: 2026-11-16 / harness / orchestrator (Claude Code)
+- Status: ADOPTED for the TA test run (pending Chloe's sign-off on the fixes)
+- Decision: Submit `harness/turquoise.zip` = Chloe's bundle with (1) Method G imputation disabled at inference, (2) missing columns imputed instead of raising, (3) checksum mismatch warns instead of raising, (4) last-resort fallback PD for every row on any pipeline error.
+- Alternatives considered: submit Chloe's zip unchanged (rejected: fails rule 2 of CLAUDE.md / Appendix A "besides the current record"); per-row loop through the full pipeline (rejected: same result, slower).
+- Business reason: a bank scores each applicant on its own statement; a PD must not change because another applicant is in the batch.
+- Evidence: `reports/harness/2026-11-16_harness_test_report.md` — before fix 84/1,518 targeted rows PD depends on other rows (max abs 0.0124); after 0/1,518; all stress tests pass; full file 22.9 s; FY2011 AUC 0.854 / AR 0.708, PD/DR 1.10.
+- Source(s): Term Project Instructions 20261011, Appendix A p. 5.
+- Risks / what would change our mind: model is trained on FY2007-09 only; the final submission may refit on final_fit (D-151). FY2011 lockbox was looked at once to verify this already-chosen model (not used for selection).
+- Human reviewer (initials) and date: pending (KN, Chloe)
+
+### D-153 Round-1 11.15 validation/test feature files are fit on their own year; their metrics are not out-of-sample
+- Date / phase / agent: 2026-11-16 / data audit / orchestrator (Claude Code)
+- Status: OPEN (needs Chloe to regenerate files with `transform`, refit Platt, re-score)
+- Decision: Do not quote validation/test metrics computed from the 11.15 round-1 files. Quote the harness raw-input evaluation (D-152) until the files are regenerated.
+- Alternatives considered: keep the metrics with a caveat (rejected: calibration-in-the-large is directly contaminated, since mean TE equals the realised rate).
+- Business reason: the pricing use needs an honest level estimate; a leaked level overstates calibration quality.
+- Evidence: `reports/data/2026-11-16_audit/r5_eval_file_leakage.csv`: imputed rows match own-year medians 100.00% / 99.72% (FY2007 medians 2.25% / 1.40%); mean TE 0.0121 / 0.0158 equals own-year DR 0.0121 / 0.0158; corr(TE, own-year industry DR) 0.955 / 0.916.
+- Source(s): assignment Appendix A (no use of holdout data to estimate parameters); CLAUDE.md rule 5.
+- Risks / what would change our mind: if the round-03 production model's validation file was built with `transform`, only round-1 reporting is affected; to check in Chloe's run logs.
+- Human reviewer (initials) and date: pending (KN, Chloe)
+
+### D-154 Feature definition fixes proposed by the 11.15 audit
+- Date / phase / agent: 2026-11-16 / data audit / orchestrator (Claude Code)
+- Status: OPEN (team decision before the final model refit)
+- Decision (proposed): (1) `lt_debt_to_capital`: when debt_lt + eqty_tot <= 0, set it to the risky end (e.g. 1), or drop its +1 constraint; (2) when rev_operating <= 0, set AR_ratio and the margins to their risky end plus a flag; (3) replace the "zero denominator -> 1" rule with an explicit capped value; (4) add `roe_missing` or drop roe; (5) align the schema text with the code (neg_pl_flag, cash_interest_coverage, OCF margin, debt_to_eqty); (6) remove the constant feature zero_asst_tot and the near-constant zero_wc_net (18 rows) and legal_SRS (8 rows); (7) recompute the default rates in team docs 01-04 with the 12-month label.
+- Alternatives considered: leave as is (accuracy is barely affected: segment PD/DR 1.12 and 1.02), but the per-firm explanations would be wrong-signed.
+- Business reason: credit officers must be able to read every driver's direction (CLAUDE.md rule 8).
+- Evidence: `reports/data/2026-11-16_audit/2026-11-16_feature_pipeline_audit_report.md` §B1-B6, C1; `r4_*.csv`, `r6_*.csv`, `r7_segment_calibration.csv`.
+- Source(s): assumption plus team doc 02 method I (roe); literature support pending (docs/2026-11-16_feature_literature_claims.md).
+- Risks / what would change our mind: a refit showing a loss of holdout AUC or calibration.
+- Human reviewer (initials) and date: pending (KN, Chloe, Desmond)
+
+### D-155 v3 walk-forward split: firm-random early-stopping set inside the training window, three selection years (FY2008-10), FY2011 lockbox, prior-shift level
+- Date / phase / agent: 2026-11-18 / feature importance + re-run after A1 / orchestrator (Claude Code)
+- Status: OPEN (proposal; needs KN, Chloe, Desmond sign-off)
+- Decision: Rebuild the 80-feature files with the team's `preprocess.py` (teammate/project-update @ 4e0ba3a, firm_year mode) on Chloe's `company_random` design with 4 rounds: train = 80% of firms with fs_year <= t, early-stopping set = the other 20% of firms in the same years, test = fs_year t+1 for t+1 = 2008, 2009, 2010 (model selection) and 2011 (round 4 = one-time lockbox, D-087/D-119). Every preprocessing statistic is fitted on the round's training firms only and applied with `transform` to the early-stopping firms, the test year and the lockbox. Method G imputation is on for training rows and off for transformed rows (as in the harness, D-152). The level is set by a prior shift (D-072): per round tau = the last training year's default rate; final model tau = 1.464% (D-073 hedge, s5 window). Final model = all labelled FY2007-11 rows, tree count = round 4's early-stopping iteration (round 4 early stopping uses only FY2007-10 firms, not the lockbox).
+- Alternatives considered: Chloe's temporal_year design (val year t, test t+1): with 2011 as lockbox it leaves only two selection years, and its validation year was needed mainly for Platt, which the prior shift replaces; Platt on a held-out year (rejected: copies one year's level and removes that year from training); pooled walk-forward Platt applied to a refit model (rejected: double-counts the level, D-150 flag).
+- Business reason: the bank needs an honest out-of-time estimate on several cycle points (incl. the 2009 crisis) and one untouched check that mimics the holdout; a stated level target is defensible for pricing.
+- Evidence: `~/Downloads/2026-11-18_turquoise_colab/data/manifest.json` (copied into `data/splits/2026-11-18_walkforward_v3_company_random.json`): rows in = rows out in every split (no drops); 0 train/early-stopping firm overlap; 100% of industry TE values in early-stopping, test and lockbox files come from the frozen training mapping; mean TE in test files 0.0086 / 0.0103 / 0.0123 equals the training level (0.0087 / 0.0105 / 0.0124), not the test-year rate (0.0121 / 0.0158 / 0.0165).
+- Source(s): walk-forward design R-33 Sec. 4.8 p. 23; re-using test years R-07 Sec. 3.2 p. 95; prior shift R-22 eq. (4).
+- Risks / what would change our mind: the early-stopping set is in-time (checks overfitting, not drift); FY2011 was looked at before (D-087 correction, D-152), so the lockbox is clean for model choice but not for the level rule; audit B1-B5 feature definitions are unchanged in these files (D-154 still open).
+- Human reviewer (initials) and date: pending (KN, Chloe, Desmond)

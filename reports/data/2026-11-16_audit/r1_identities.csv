@@ -1,0 +1,11 @@
+identity,match_rate,rows_computable
+D: prof_operations = rev_operating - COGS,0.9998973983144008,1023375
+E: wc_net = asst_current - debt_st,0.9998231637855065,1023546
+E: margin_fin = eqty_tot - fixed assets,0.9995613231552163,982500
+E: roa = prof_operations/asst_tot*100 (+-0.01),0.9999443101047849,1023525
+I: roe = profit/eqty_tot*100 (+-0.01),0.9998863893374289,950615
+cf_operations = profit + (ebitda - prof_operations),0.9985715179039029,1023464
+balance: eqty+debt_st+debt_lt+liab_lt+liab_lt_emp = asst_tot (within 1%),0.8005307035976427,1023170
+assets: fixed+current = asst_tot (within 1%),0.7933862894067656,1023238
+bank_st+fin_st+AP_st = debt_st (+-1),0.013184787978706279,900735
+bank_lt+fin_lt+AP_lt = debt_lt (+-1),0.5970721419666453,931261

@@ -50,6 +50,26 @@ Roger grades whether AI use was "appropriate and additive (or just a shortcut)".
 - AI-generated: src/data/2026-11-08_build_labels_s5.py, data/interim/2026-11-08_panel_s5.parquet, data/splits/2026-11-08_walkforward_v2.json, data/splits/2026-11-08_walkforward_v2_test_rows.parquet, reports/data/2026-11-08_labels_s5.md, reports/data/2026-11-08_walkforward_v2_folds.csv, the v2 section of data/splits/README.md and the D-151 update (Claude Code, data-auditor sub-agent). The script reproduced the D-151 counts (835,016 / 11,336 / 2,897), and an independent recompute matched every row. v1 files were not modified.
 - Human verifier: pending (KN to re-run the script and check the sha256 values in the v2 JSON).
 
+## 2026-11-16 TA harness test run
+- AI-generated: tests and fixes to Chloe's harness bundle (`harness/2026-11-16_turquoise_submission/`, `harness/turquoise.zip`), `reports/harness/2026-11-16_harness_test_report.md`, `reports/harness/2026-11-16_stress_test.py`, D-152, and the confirmation-email draft to the TA (Claude Code). Model, trees, parameters and feature code are Chloe's and unchanged except the four fixes listed in D-152.
+- Human verifier: pending (KN to review the diff; Chloe to approve the Method G change).
+
+## 2026-11-16 Per-feature literature claims (literature-scout)
+- AI-generated (Claude Code, literature-scout sub-agent): `docs/2026-11-16_feature_literature_claims.md` (per-family claim tables for the 80-feature set) and `docs/REFERENCES.md` updates — new rows R-60..R-70, R-12 re-try note, notes N-01c, N-05c, N-32b, N-33b, N-60, N-61, N-66, N-69, 20 claim-map rows, Contradictions 14–18, must-not items 23–28. The agent read the cited pages itself: R-01 pp. 12–18, 33–35 and R-05 pp. 1–4, 30–38, 41–42, 47–53, 60–62 (teammates' local PDFs); R-33 pp. 11–13 and R-32 pdf pp. 8–13, 22–26 (downloaded); R-60 pp. 373–386, 389–396 and R-66 pp. 1–11 (local PDFs); R-61 printed pp. 1–29 (White Rose PDF); R-67 art. 2424 (brocardi); R-68 pp. 199–207, 224–226; R-70 (course file); R-62, R-64, R-65, R-12, R-63 at metadata/abstract level only; R-69 landing-page text only. Chart shapes marked "our reading of the chart" are interpretations of figures, not text.
+- Human verifier: pending (KN to open R-60 pp. 391–393, R-61 printed pp. 12–13, 19–23, 26–27, R-05 pp. 33–37 and 51, R-33 p. 12 and confirm the paraphrases; initials + date).
+
+## 2026-11-16 Feature pipeline audit (11.15 features)
+- AI-generated: src/audit/2026-11-16_feature_pipeline_audit.py, src/audit/2026-11-16_eval_file_leakage_check.py, reports/data/2026-11-16_audit/ (CSVs, audit_log.md, audit report), decision entries D-153 and D-154 (Claude Code). The decile binning was corrected once in-session (tie artifact); the earlier claim "601/277 rows dropped" was retracted in the report.
+- Human verifier: pending (KN to re-run both scripts; Chloe to confirm how the val/test files were produced).
+
+## 2026-11-16 Feature study guide
+- AI-generated: docs/2026-11-16_STUDY_GUIDE_features.md and reports/data/2026-11-16_audit/r6_feature_cards.md (Claude Code). Literature citations are taken only from docs/2026-11-16_feature_literature_claims.md (literature-scout, VERIFIED rows); numbers from the r6/r7 audit CSVs. The worked example was run and its narrative corrected to match the actual output.
+- Human verifier: pending (KN to spot-check R-60 p. 393, R-33 p. 12, R-05 p. 34 and run the example).
+
 ## 2026-11-17 Calibration study guide Part 18 (τ = 1.46% and prior-shift recipe)
 - AI-generated: Part 18 of `docs/2026-11-08_STUDY_GUIDE_calibration.md` (Claude Code). Numbers come from `experiments/calibration/2026-11-08_chloe_lgbm_v1/` (rates_by_cohort_her_window.csv, params_for_production.json, production_level_candidates.csv) and D-073 / D-150. σ, τ by horizon, δ and the worked examples were re-computed in Python in-session and match the files.
 - Human verifier: pending (KN to run the 18.8 snippet and confirm it prints σ 0.230, τ ≈ 1.464%, δ ≈ 0.0766).
+
+## 2026-11-18 v3 split files and Colab feature-importance notebook
+- AI-generated (Claude Code): `src/data/2026-11-18_build_colab_splits.py`, `data/splits/2026-11-18_walkforward_v3_company_random.json`, `experiments/importance/2026-11-18_feature_importance_colab.ipynb`, the upload folder `~/Downloads/2026-11-18_turquoise_colab/` (data, README), decision entry D-155. The preprocessing itself is the team's code (Chloe/Desmond), run unchanged except Method G switched off for transformed rows. The ATECO lookup was copied from the harness bundle after a checksum match (9cc6d08...). The notebook was smoke-tested locally on 10% of firms.
+- Human verifier: pending (KN to run the notebook on Colab and check REPORT.md; Chloe/Desmond to confirm the split and preprocessing use).

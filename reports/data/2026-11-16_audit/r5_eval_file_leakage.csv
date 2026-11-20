@@ -1,0 +1,3 @@
+file,fs_year,imputed_rows_matching_medians_train_FY2007,imputed_rows_compared,imputed_rows_matching_medians_own_year,te_distinct_per_industry_median,corr_te_trainyear_industry_dr,corr_te_ownyear_industry_dr,mean_te,own_year_default_rate,train_year_default_rate
+features_validation.csv,2008,0.022501677911618213,28309,0.9999646755448797,5.0,0.8376674100505889,0.9554483470600962,0.012053559408593,0.01205207487777523,0.008734774802254404
+features_test.csv,2009,0.013961549571524857,31157,0.9972397856019514,5.0,-0.30453463302031675,0.9164683600608012,0.015755156820761153,0.015755002961025864,0.008734774802254404
