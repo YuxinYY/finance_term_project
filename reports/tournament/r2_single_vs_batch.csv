@@ -1,0 +1,2 @@
+rows_tested,awkward_rows_in_pool,max_abs_feature_diff_single_vs_batch,max_abs_pd_diff_single_vs_batch,max_abs_feature_diff_string_row,max_abs_pd_diff_string_row,nan_pattern_mismatches,cat_mismatches,messy_rows_pd,messy_ok
+999,32249,0.0,0.0,0.0,0.0,0,0,"[0.04009, 0.04009, 0.04009, 0.04009]",True

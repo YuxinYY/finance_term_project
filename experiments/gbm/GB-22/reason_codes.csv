@@ -1,0 +1,19 @@
+firm,pd,view,rank,driver,plain_words,value,percentile_in_2010_sample,shap_logodds
+low PD (5th pct),0.000746748933286093,raw feature,1,payables_to_sales,large trade payables relative to sales,0.557484540433001,72.82,0.15517441472568783
+low PD (5th pct),0.000746748933286093,raw feature,2,ap_days,the firm takes long to pay suppliers,6.000780323650698,77.24499999999999,0.14025428577744029
+low PD (5th pct),0.000746748933286093,raw feature,3,tfr_ratio,"little staff-severance fund: few or short-tenured staff, or a holding/property structure",0.0049459109101458,45.965,0.09766189343722756
+low PD (5th pct),0.000746748933286093,family-merged,1,liquidity,"liquidity family, sum of its features",,,0.07300809321547641
+low PD (5th pct),0.000746748933286093,family-merged,2,geography,"geography family, sum of its features",,,0.0632475842027715
+low PD (5th pct),0.000746748933286093,family-merged,3,activity,"activity family, sum of its features",,,0.04456259900532543
+median PD,0.004877453001503703,raw feature,1,tangible_ratio,few fixed tangible assets to back the debt,0.009498822025178011,19.744999999999997,0.6072577404717729
+median PD,0.004877453001503703,raw feature,2,province_te,province with a historically high default rate,0.23375465367742798,95.575,0.17531104679566523
+median PD,0.004877453001503703,raw feature,3,asset_turnover,sales relative to assets,1.7711845242624413,91.32000000000001,0.12788291779327168
+median PD,0.004877453001503703,family-merged,1,asset structure,"asset structure family, sum of its features",,,0.5000723598842441
+median PD,0.004877453001503703,family-merged,2,geography,"geography family, sum of its features",,,0.2037695146297257
+median PD,0.004877453001503703,family-merged,3,data quality,"data quality family, sum of its features",,,0.11022034091581029
+high PD (99th pct),0.1425218737804374,raw feature,1,roa_net,weak net profit on assets,-0.14123343024961013,1.95,0.8086193895260297
+high PD (99th pct),0.1425218737804374,raw feature,2,roa_net_sect_pct,net profitability low against sector peers,0.01990668351216216,2.035,0.3263977483755901
+high PD (99th pct),0.1425218737804374,raw feature,3,extraord_to_assets,extraordinary items (one-off gains or losses),-0.01315176380614236,3.71,0.31788249231312243
+high PD (99th pct),0.1425218737804374,family-merged,1,profitability,"profitability family, sum of its features",,,1.6519208220435933
+high PD (99th pct),0.1425218737804374,family-merged,2,asset structure,"asset structure family, sum of its features",,,0.5773187449551043
+high PD (99th pct),0.1425218737804374,family-merged,3,leverage,"leverage family, sum of its features",,,0.4707227582578725

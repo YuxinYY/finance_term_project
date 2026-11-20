@@ -1,0 +1,445 @@
+{
+ "features": [
+  "log_assets",
+  "equity_ratio",
+  "st_debt_ratio",
+  "bank_debt_ratio",
+  "st_debt_share",
+  "wc_ratio",
+  "current_ratio",
+  "cash_ratio",
+  "roa_net",
+  "roa_oper",
+  "ebitda_margin",
+  "interest_coverage",
+  "cfo_to_debt",
+  "interest_to_assets",
+  "asset_turnover",
+  "ar_days",
+  "ap_days",
+  "tangible_ratio",
+  "intangible_ratio",
+  "extraord_to_assets",
+  "neg_equity",
+  "debt_split_missing",
+  "rev_nonpositive",
+  "ateco_group",
+  "legal_group",
+  "macro_area"
+ ],
+ "impute": false,
+ "record": {
+  "train_years": [
+   2007,
+   2008,
+   2009
+  ],
+  "n_train": 475861,
+  "train_defaults": 6195,
+  "features": [
+   "log_assets",
+   "equity_ratio",
+   "st_debt_ratio",
+   "bank_debt_ratio",
+   "st_debt_share",
+   "wc_ratio",
+   "current_ratio",
+   "cash_ratio",
+   "roa_net",
+   "roa_oper",
+   "ebitda_margin",
+   "interest_coverage",
+   "cfo_to_debt",
+   "interest_to_assets",
+   "asset_turnover",
+   "ar_days",
+   "ap_days",
+   "tangible_ratio",
+   "intangible_ratio",
+   "extraord_to_assets",
+   "neg_equity",
+   "debt_split_missing",
+   "rev_nonpositive",
+   "ateco_group",
+   "legal_group",
+   "macro_area"
+  ],
+  "monotone": [
+   -1,
+   -1,
+   1,
+   1,
+   1,
+   -1,
+   -1,
+   -1,
+   -1,
+   -1,
+   -1,
+   -1,
+   -1,
+   1,
+   0,
+   1,
+   1,
+   -1,
+   1,
+   0,
+   1,
+   1,
+   0,
+   0,
+   0,
+   0
+  ],
+  "inner_scheme": "time: inner-train [np.int64(2007), np.int64(2008)], validate 2009 (firm halves A / B)",
+  "rf": false,
+  "n_inner_train": 305475,
+  "defaults_inner_train": 3443,
+  "n_A": 85773,
+  "defaults_A": 1395,
+  "n_B": 84613,
+  "defaults_B": 1357,
+  "trials": [
+   {
+    "i": 0,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 500,
+     "_hl": null
+    },
+    "best_iter": 456,
+    "A_log_loss": 0.06753726350671417,
+    "A_auc": 0.8265949752823338,
+    "B_log_loss": 0.06545259714443243,
+    "B_auc": 0.8405722264129941,
+    "secs": 26.2
+   },
+   {
+    "i": 1,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 2000,
+     "_hl": null
+    },
+    "best_iter": 698,
+    "A_log_loss": 0.06755622974640511,
+    "A_auc": 0.8265705715303494,
+    "B_log_loss": 0.06534059479635793,
+    "B_auc": 0.8427954480003575,
+    "secs": 43.6
+   },
+   {
+    "i": 2,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 500,
+     "_hl": null
+    },
+    "best_iter": 341,
+    "A_log_loss": 0.06733240600049016,
+    "A_auc": 0.827895990486912,
+    "B_log_loss": 0.06511531331529732,
+    "B_auc": 0.8431258917191882,
+    "secs": 23.8
+   },
+   {
+    "i": 3,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 2000,
+     "_hl": null
+    },
+    "best_iter": 322,
+    "A_log_loss": 0.06727753144412187,
+    "A_auc": 0.8281792651620363,
+    "B_log_loss": 0.0651801450643171,
+    "B_auc": 0.8433146224987871,
+    "secs": 25.8
+   },
+   {
+    "i": 4,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 500,
+     "_hl": 4.0
+    },
+    "best_iter": 496,
+    "A_log_loss": 0.06752670378834731,
+    "A_auc": 0.826482543862399,
+    "B_log_loss": 0.06538049110665806,
+    "B_auc": 0.84106851600437,
+    "secs": 29.8
+   },
+   {
+    "i": 5,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 2000,
+     "_hl": 4.0
+    },
+    "best_iter": 496,
+    "A_log_loss": 0.06750969503090827,
+    "A_auc": 0.8265884081455944,
+    "B_log_loss": 0.06544005665982723,
+    "B_auc": 0.8410619129718185,
+    "secs": 29.0
+   },
+   {
+    "i": 6,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 500,
+     "_hl": 4.0
+    },
+    "best_iter": 341,
+    "A_log_loss": 0.06730218321986503,
+    "A_auc": 0.8276528407623962,
+    "B_log_loss": 0.06509399322880707,
+    "B_auc": 0.8430117902545471,
+    "secs": 24.4
+   },
+   {
+    "i": 7,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 2000,
+     "_hl": 4.0
+    },
+    "best_iter": 316,
+    "A_log_loss": 0.06727419658580956,
+    "A_auc": 0.828352453216372,
+    "B_log_loss": 0.06520032876258047,
+    "B_auc": 0.8426817404163444,
+    "secs": 23.2
+   },
+   {
+    "i": 8,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 500,
+     "_hl": 2.0
+    },
+    "best_iter": 496,
+    "A_log_loss": 0.06747059813398619,
+    "A_auc": 0.8262656117109464,
+    "B_log_loss": 0.06531058650485548,
+    "B_auc": 0.8415079495909271,
+    "secs": 27.3
+   },
+   {
+    "i": 9,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 2000,
+     "_hl": 2.0
+    },
+    "best_iter": 497,
+    "A_log_loss": 0.06751613468153612,
+    "A_auc": 0.8261909646902984,
+    "B_log_loss": 0.0653934225724556,
+    "B_auc": 0.8412573751270951,
+    "secs": 27.2
+   },
+   {
+    "i": 10,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 500,
+     "_hl": 2.0
+    },
+    "best_iter": 341,
+    "A_log_loss": 0.06728519784793832,
+    "A_auc": 0.8277686916810858,
+    "B_log_loss": 0.06507344517741342,
+    "B_auc": 0.8429000387967993,
+    "secs": 31.2
+   },
+   {
+    "i": 11,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 2000,
+     "_hl": 2.0
+    },
+    "best_iter": 322,
+    "A_log_loss": 0.06733036842269231,
+    "A_auc": 0.8271645151010587,
+    "B_log_loss": 0.06521720823413772,
+    "B_auc": 0.8420844757641797,
+    "secs": 22.2
+   },
+   {
+    "i": 12,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 500,
+     "_hl": 1.0
+    },
+    "best_iter": 497,
+    "A_log_loss": 0.06747297681292524,
+    "A_auc": 0.8260229292471299,
+    "B_log_loss": 0.06534065897389119,
+    "B_auc": 0.840862365964635,
+    "secs": 23.0
+   },
+   {
+    "i": 13,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 2000,
+     "_hl": 1.0
+    },
+    "best_iter": 497,
+    "A_log_loss": 0.06748334818230373,
+    "A_auc": 0.8260598385945612,
+    "B_log_loss": 0.06538987943966329,
+    "B_auc": 0.8408156490667703,
+    "secs": 23.7
+   },
+   {
+    "i": 14,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 500,
+     "_hl": 1.0
+    },
+    "best_iter": 322,
+    "A_log_loss": 0.06727380797155139,
+    "A_auc": 0.8271025478366637,
+    "B_log_loss": 0.0650909113203572,
+    "B_auc": 0.8421078386387373,
+    "secs": 20.1
+   },
+   {
+    "i": 15,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 2000,
+     "_hl": 1.0
+    },
+    "best_iter": 298,
+    "A_log_loss": 0.06725890479399217,
+    "A_auc": 0.8274344303680036,
+    "B_log_loss": 0.0651809222958246,
+    "B_auc": 0.8419262950741945,
+    "secs": 20.0
+   },
+   {
+    "i": 16,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 500,
+     "_hl": 0.5
+    },
+    "best_iter": 496,
+    "A_log_loss": 0.06741630740152624,
+    "A_auc": 0.8253174675387621,
+    "B_log_loss": 0.06530849076457877,
+    "B_auc": 0.8402413445572848,
+    "secs": 22.2
+   },
+   {
+    "i": 17,
+    "cfg": {
+     "num_leaves": 4,
+     "max_depth": 2,
+     "min_data_in_leaf": 2000,
+     "_hl": 0.5
+    },
+    "best_iter": 496,
+    "A_log_loss": 0.06746712641766335,
+    "A_auc": 0.8251717331744306,
+    "B_log_loss": 0.06541846660980462,
+    "B_auc": 0.8397107076900155,
+    "secs": 23.8
+   },
+   {
+    "i": 18,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 500,
+     "_hl": 0.5
+    },
+    "best_iter": 284,
+    "A_log_loss": 0.06720118131805475,
+    "A_auc": 0.826817705714284,
+    "B_log_loss": 0.06504632126864035,
+    "B_auc": 0.841605490366689,
+    "secs": 23.1
+   },
+   {
+    "i": 19,
+    "cfg": {
+     "num_leaves": 8,
+     "max_depth": 3,
+     "min_data_in_leaf": 2000,
+     "_hl": 0.5
+    },
+    "best_iter": 287,
+    "A_log_loss": 0.06716198325356525,
+    "A_auc": 0.8268604770595811,
+    "B_log_loss": 0.06513077506948468,
+    "B_auc": 0.8414002520057111,
+    "secs": 21.8
+   }
+  ],
+  "chosen_cfg": {
+   "num_leaves": 8,
+   "max_depth": 3,
+   "min_data_in_leaf": 2000,
+   "_hl": 0.5
+  },
+  "best_iter": 287,
+  "chosen_index": 19,
+  "calibration_compare_B": {
+   "raw": 0.06513077506948468,
+   "platt": 0.06466622526319436,
+   "isotonic": 0.06513684801729434,
+   "auc_raw": 0.8414002520057111,
+   "auc_platt": 0.841284774171684,
+   "auc_isotonic": 0.8378343887209865
+  },
+  "platt_on_B": {
+   "a": 0.25419385771020525,
+   "b": 0.9923993456620115
+  },
+  "n_final_trees": 344,
+  "final_fit_secs": 33.3,
+  "calibrator": {
+   "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+   "a": -0.1818427289756559,
+   "b": 0.9923993456620115,
+   "target_rate": 0.013018507505342947
+  },
+  "in_sample": {
+   "auc": 0.8457187177272031,
+   "log_loss": 0.054589842608828286
+  },
+  "fold": 3,
+  "test_year": 2010,
+  "wall_secs": 603.7,
+  "oot_auc": 0.8311277108790772,
+  "oot_log_loss": 0.07136663864526954
+ },
+ "lightgbm_version": "4.7.0",
+ "feature_version": "features-v1 (2026-10-30)"
+}

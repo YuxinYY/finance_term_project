@@ -1,0 +1,32 @@
+{
+ "r1b_oot_files": 30,
+ "r1b_cal_configs": 62,
+ "oot_files_now": 51,
+ "added_oot_files": 21,
+ "new_configurations_scored_on_2008_2010_in_round_2": [
+  "GB-08",
+  "GB-08b",
+  "GB-09",
+  "GB-10",
+  "GB-11",
+  "GB-11lgbrf",
+  "GB-20",
+  "GB-23",
+  "GB-25"
+ ],
+ "n_new_configurations": 9,
+ "n_new_common_level_vectors": 3,
+ "looks_total_files_plus_cal": 113,
+ "full2_configurations_scored_on_2008_2010": [
+  "GB-20",
+  "GB-23",
+  "GB-25"
+ ],
+ "inner_looks": {
+  "GB-21 ablation variants (2 inner slices, 2008 and 2009 B)": 14,
+  "GB-24 extras variants (2 inner slices)": 20,
+  "GB-24 extras2 variants (2 inner slices)": 10,
+  "feature-architect LightGBM sets scored on 2009 (round2_lgb_ablation.csv rows)": 13
+ },
+ "referee_new_configurations_this_round": 0
+}

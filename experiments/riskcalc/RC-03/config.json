@@ -1,0 +1,38 @@
+{
+ "exp_id": "RC-03",
+ "agent": "challenger-riskcalc",
+ "date": "2026-10-31",
+ "description": "RC-02 candidate set + in-window sign selection: any T_i with probit coef <= 0 in the fold's own training fit is dropped and the probit refitted",
+ "parent": "RC-02",
+ "model_config": {
+  "ratios": [
+   "log_assets",
+   "equity_ratio",
+   "st_debt_ratio",
+   "cash_ratio",
+   "roa_net",
+   "interest_coverage",
+   "interest_to_assets",
+   "ar_days",
+   "tangible_ratio",
+   "neg_equity",
+   "bank_debt_ratio",
+   "ap_days"
+  ],
+  "categoricals": [
+   "ateco_group"
+  ],
+  "link": "probit",
+  "min_defaults_per_bin": 30,
+  "max_bins": 50,
+  "prior_defaults": 2.0,
+  "monotone": true,
+  "final_bins": 100,
+  "drop_nonpositive": true
+ },
+ "feature_version": "features-v1 (2026-10-30)",
+ "model_version": "riskcalc-v1 (2026-10-31)",
+ "splits": "data/splits/walkforward.json v1",
+ "label": "y (primary, D-002/D-009)",
+ "pre_declared": "K bins = clip(train_defaults // 30, 10, 50); prior 2 pseudo-defaults; F with 100 index bins. No tuning on test years; fold 1 (one training year) uses the same pre-declared defaults."
+}

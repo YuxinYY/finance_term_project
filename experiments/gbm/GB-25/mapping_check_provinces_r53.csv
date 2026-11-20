@@ -1,0 +1,111 @@
+code,codes_py,istat_region,capoluogo,match
+1,Piemonte,Piemonte,Torino,True
+2,Piemonte,Piemonte,Vercelli,True
+3,Piemonte,Piemonte,Novara,True
+4,Piemonte,Piemonte,Cuneo,True
+5,Piemonte,Piemonte,Asti,True
+6,Piemonte,Piemonte,Alessandria,True
+96,Piemonte,Piemonte,Biella,True
+103,Piemonte,Piemonte,Verbania,True
+7,Valle d'Aosta,Valle d'Aosta/Vallée d'Aoste,Aosta,True
+8,Liguria,Liguria,Imperia,True
+9,Liguria,Liguria,Savona,True
+10,Liguria,Liguria,Genova,True
+11,Liguria,Liguria,La Spezia,True
+12,Lombardia,Lombardia,Varese,True
+13,Lombardia,Lombardia,Como,True
+14,Lombardia,Lombardia,Sondrio,True
+15,Lombardia,Lombardia,Milano,True
+16,Lombardia,Lombardia,Bergamo,True
+17,Lombardia,Lombardia,Brescia,True
+18,Lombardia,Lombardia,Pavia,True
+19,Lombardia,Lombardia,Cremona,True
+20,Lombardia,Lombardia,Mantova,True
+97,Lombardia,Lombardia,Lecco,True
+98,Lombardia,Lombardia,Lodi,True
+108,Lombardia,Lombardia,Monza,True
+21,Trentino-Alto Adige,Trentino-Alto Adige/Südtirol,Bolzano,True
+22,Trentino-Alto Adige,Trentino-Alto Adige/Südtirol,Trento,True
+23,Veneto,Veneto,Verona,True
+24,Veneto,Veneto,Vicenza,True
+25,Veneto,Veneto,Belluno,True
+26,Veneto,Veneto,Treviso,True
+27,Veneto,Veneto,Venezia,True
+28,Veneto,Veneto,Padova,True
+29,Veneto,Veneto,Rovigo,True
+30,Friuli-Venezia Giulia,Friuli-Venezia Giulia,Udine,True
+31,Friuli-Venezia Giulia,Friuli-Venezia Giulia,Gorizia,True
+32,Friuli-Venezia Giulia,Friuli-Venezia Giulia,Trieste,True
+93,Friuli-Venezia Giulia,Friuli-Venezia Giulia,Pordenone,True
+33,Emilia-Romagna,Emilia-Romagna,Piacenza,True
+34,Emilia-Romagna,Emilia-Romagna,Parma,True
+35,Emilia-Romagna,Emilia-Romagna,Reggio nell'Emilia,True
+36,Emilia-Romagna,Emilia-Romagna,Modena,True
+37,Emilia-Romagna,Emilia-Romagna,Bologna,True
+38,Emilia-Romagna,Emilia-Romagna,Ferrara,True
+39,Emilia-Romagna,Emilia-Romagna,Ravenna,True
+40,Emilia-Romagna,Emilia-Romagna,Forlì,True
+99,Emilia-Romagna,Emilia-Romagna,Rimini,True
+41,Marche,Marche,Pesaro,True
+42,Marche,Marche,Ancona,True
+43,Marche,Marche,Macerata,True
+44,Marche,Marche,Ascoli Piceno,True
+109,Marche,Marche,Fermo,True
+45,Toscana,Toscana,Massa,True
+46,Toscana,Toscana,Lucca,True
+47,Toscana,Toscana,Pistoia,True
+48,Toscana,Toscana,Firenze,True
+49,Toscana,Toscana,Livorno,True
+50,Toscana,Toscana,Pisa,True
+51,Toscana,Toscana,Arezzo,True
+52,Toscana,Toscana,Siena,True
+53,Toscana,Toscana,Grosseto,True
+100,Toscana,Toscana,Prato,True
+54,Umbria,Umbria,Perugia,True
+55,Umbria,Umbria,Terni,True
+56,Lazio,Lazio,Viterbo,True
+57,Lazio,Lazio,Rieti,True
+58,Lazio,Lazio,Roma,True
+59,Lazio,Lazio,Latina,True
+60,Lazio,Lazio,Frosinone,True
+61,Campania,Campania,Caserta,True
+62,Campania,Campania,Benevento,True
+63,Campania,Campania,Napoli,True
+64,Campania,Campania,Avellino,True
+65,Campania,Campania,Salerno,True
+66,Abruzzo,Abruzzo,L'Aquila,True
+67,Abruzzo,Abruzzo,Teramo,True
+68,Abruzzo,Abruzzo,Pescara,True
+69,Abruzzo,Abruzzo,Chieti,True
+70,Molise,Molise,Campobasso,True
+94,Molise,Molise,Isernia,True
+71,Puglia,Puglia,Foggia,True
+72,Puglia,Puglia,Bari,True
+73,Puglia,Puglia,Taranto,True
+74,Puglia,Puglia,Brindisi,True
+75,Puglia,Puglia,Lecce,True
+110,Puglia,Puglia,Andria,True
+76,Basilicata,Basilicata,Potenza,True
+77,Basilicata,Basilicata,Matera,True
+78,Calabria,Calabria,Cosenza,True
+79,Calabria,Calabria,Catanzaro,True
+80,Calabria,Calabria,Reggio di Calabria,True
+101,Calabria,Calabria,Crotone,True
+102,Calabria,Calabria,Vibo Valentia,True
+81,Sicilia,Sicilia,Trapani,True
+82,Sicilia,Sicilia,Palermo,True
+83,Sicilia,Sicilia,Messina,True
+84,Sicilia,Sicilia,Agrigento,True
+85,Sicilia,Sicilia,Caltanissetta,True
+86,Sicilia,Sicilia,Enna,True
+87,Sicilia,Sicilia,Catania,True
+88,Sicilia,Sicilia,Ragusa,True
+89,Sicilia,Sicilia,Siracusa,True
+90,Sardegna,Sardegna,Sassari,True
+91,Sardegna,Sardegna,Nuoro,True
+92,Sardegna,Sardegna,Cagliari,True
+95,Sardegna,Sardegna,Oristano,True
+104,Sardegna,Sardegna,,True
+105,Sardegna,Sardegna,,True
+106,Sardegna,Sardegna,,True
+107,Sardegna,Sardegna,Carbonia,True

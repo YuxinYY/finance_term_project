@@ -1,0 +1,5 @@
+exp,fold,n_test,max_abs_diff_vs_submitted,chosen_cfg_same,n_final_trees,n_final_trees_config,rows_of_test_fold_in_fit_calls,max_year_in_fit_calls,train_max_year,oof_true_rows_outside_train,test_scoring_oof_flags,wall_secs
+GB-25,1,161261,0.0,True,461,461,0,2007,2007,0,['False'],42.8
+GB-25,2,170386,0.0,True,576,576,0,2008,2008,0,['False'],102.9
+GB-25,3,174512,0.0,True,548,548,0,2009,2009,0,['False'],137.4
+GB-20,1,161261,0.0,True,444,444,0,2007,2007,0,['False'],32.0

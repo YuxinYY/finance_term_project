@@ -1,0 +1,7 @@
+exp,fold,inner_B_rows,inner_B_outside_train,inner_B_in_test,in_sample_rows,in_sample_equals_train,in_sample_in_test
+GB-20,1,21390,0,0,144214,True,0
+GB-20,2,80094,0,0,305475,True,0
+GB-20,3,84613,0,0,475861,True,0
+GB-25,1,21390,0,0,144214,True,0
+GB-25,2,80094,0,0,305475,True,0
+GB-25,3,84613,0,0,475861,True,0

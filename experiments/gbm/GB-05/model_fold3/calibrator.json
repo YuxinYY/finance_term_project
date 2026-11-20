@@ -1,0 +1,6 @@
+{
+ "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+ "a": -0.02720621770781806,
+ "b": 0.9922540187044927,
+ "target_rate": 0.013018507505342947
+}

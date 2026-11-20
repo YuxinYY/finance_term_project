@@ -1,0 +1,5 @@
+min dAUC,min dLL,GB-25,GB-20,GB-23,GB-08,GB-08b,GB-09,GB-10,GB-11,GB-02
+0.001,8e-05,True,True,True,True,True,False,False,True,True
+0.002,0.00015,True,True,True,True,False,False,False,False,True
+0.003,0.00025,True,True,True,True,False,False,False,False,True
+0.004,0.00035,True,True,True,False,False,False,False,False,True

@@ -1,0 +1,36 @@
+{
+  "source_run": "temporal_firm_year_v2/round_03/lightgbm",
+  "feature_count": 80,
+  "best_iteration": 424,
+  "versions": {
+    "numpy": "2.1.3",
+    "pandas": "3.0.1",
+    "scipy": "1.16.3",
+    "lightgbm": "4.6.0"
+  },
+  "source_sha256": {
+    "models/preprocessing/temporal_firm_year_round_03.joblib": "f8720acdd684acc5fbd1e4629dd0a9c0137bc1a026500c7b1792b85d1a3c1f62",
+    "model_artifacts/temporal_firm_year_v2/round_03/lightgbm/model.joblib": "56e1d0a6fc9be2d49cc722f93580f7ea1faf5b0f2a6fdb44a7ab4c4ea0c81de0",
+    "config/feature_schema.json": "f245c47eb77e9ca52121f31122ac7602406ea6104845ec68f8b77915fad8eb54",
+    "data/interim/ateco_sector_english.csv": "9cc6d0847f332098d8c6f40bbb8d9e33ce6b71ab3d4f047992a553ab51b63da0",
+    "notebooks/features/01_flag_anomalies.ipynb": "e9d313a131db8000024a0087a8e1c224796daa3ee14495c01f9aae94b71b7d48",
+    "notebooks/features/02_missing_values.ipynb": "41a8059d724ae98768c1e41e2c6e1483b89875a7095757428b5833e050008927",
+    "src/finance_project/data_processing/preprocess.py": "01afad244e9a76b54ca388019237e848c9f19a87e0f67552964790937245935b"
+  },
+  "bundle_sha256": {
+    "harness.py": "217f41a45fcc4d19c833b3c5ecce2e679a90a389f0228288d675fe271f22e3ae",
+    "requirements.txt": "0f9aa6fa0b1dc67ba2f42c16812d4016ccdebcbea26d76661480e5b33ac678b8",
+    "bundle_paths.py": "803742594c78d7de070a71f2b59e816404e74b6ea68d3198420907d199a4266b",
+    "feature_rules.py": "2de19a7781ce830cf45e40c517aa96868f2d757cd7d8d385587953c1ee2033d0",
+    "missing_rules.py": "8feacc9a1dcc7d9db76086347503079fca9e1f2fb2accbbad2567618b10da045",
+    "README.md": "c8ac037a33845df62c74f3f13c2cf67057ef9946dac4857a7dc9e770897ae7b8",
+    "inference.py": "4f6b18d55cdf0fb6cb08eb3dca91d22143b54c03984ae7ba8ff3bc3f844cb2c0",
+    "anomaly_rules.py": "f4dd8dcf30ab4fe6417a34f90ac1f88ad34dbf6f90f48c1a63abdaa5b61cbe12",
+    "artifacts/lightgbm.txt": "a609191ceb479db2ec109c7d4ca6c4e39ea6cdeac48395f12137ca0901a0fd3b",
+    "artifacts/preprocessing.json": "f6c93ee12e63b3764b6f3ba82c218f0dfe6905361126a47bcfd3e4bc91dcfcda",
+    "config/feature_schema.json": "f245c47eb77e9ca52121f31122ac7602406ea6104845ec68f8b77915fad8eb54",
+    "data/interim/ateco_sector_english.csv": "9cc6d0847f332098d8c6f40bbb8d9e33ce6b71ab3d4f047992a553ab51b63da0"
+  },
+  "invalid_feature_policy": "frozen training default-rate PD; preserve every input row in order",
+  "fallback_pd": 0.012373394262289918
+}

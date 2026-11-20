@@ -1,0 +1,99 @@
+# GAM-01 explainability (fold-3 model: trained on fs_year 2007-2009; explained on a 40,000-row random sample of 2010 test rows)
+
+EBM main effects only, monotone constraints from the expected-sign table. Chosen config {'max_leaves': 3, 'min_samples_leaf': 200}, 26 terms (26 main, 0 pairwise). An EBM is a sum of one lookup table per feature (plus pairs): PD = expit(intercept + sum of term scores) before the Platt/level step, so every firm's log-odds splits exactly into per-feature contributions (checked: the term contributions plus the intercept reproduce the model's log-odds). Method background (cyclic gradient boosting of shape functions, GA2M) is from Lou et al. 2012 and Nori et al. 2019 [UNVERIFIED: R-24/R-25 not verified]; the link to RiskCalc v3.1 as 'closely related to a GAM' is R-01 p. 14 fn. 11.
+
+## 1. Shape functions
+
+![shape functions](shape_functions.png)
+
+Red = the fold-3 model (what this section describes); grey = fold-1 and fold-2 models (shape stability across training windows). x-axes are cut at the training 1st-99th percentile; features marked slog are on a signed-log scale. Each curve is the log-odds contribution, centred at the training average. Missing values have their own score (printed in the table).
+
+Importance = mean |contribution| (log-odds) on the 2010 sample. `against_share` = share of the total variation of the step function that moves AGAINST the expected sign (0 = monotone as expected).
+
+| feature            | expected           |   importance | shape                                                                                                                           |   against_share | verdict           |
+|:-------------------|:-------------------|-------------:|:--------------------------------------------------------------------------------------------------------------------------------|----------------:|:------------------|
+| tangible_ratio     | -                  |        0.272 | 2nd pct +0.44 / median -0.03 / 98th pct -0.61 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| ateco_group        | none (categorical) |        0.178 | levels: I -0.46, OTHER -0.42, A -0.37, L -0.23, J -0.12, F -0.07, R -0.05, H -0.02, M -0.02, G +0.05, N +0.05, E +0.08, C +0.31 |         nan     | n/a               |
+| st_debt_ratio      | +                  |        0.173 | 2nd pct -0.27 / median -0.02 / 98th pct +0.42 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| asset_turnover     | none               |        0.163 | 2nd pct -0.47 / median +0.19 / 98th pct +0.18 log-odds; missing-bin +0.00                                                       |         nan     | no expectation    |
+| ar_days            | +                  |        0.148 | 2nd pct -0.20 / median -0.06 / 98th pct +0.28 log-odds; missing-bin +0.48                                                       |           0.000 | agrees (monotone) |
+| equity_ratio       | -                  |        0.144 | 2nd pct +0.34 / median -0.04 / 98th pct -0.18 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| cfo_to_debt        | -                  |        0.144 | 2nd pct +0.47 / median -0.06 / 98th pct -0.17 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| ebitda_margin      | -                  |        0.136 | 2nd pct +0.29 / median -0.04 / 98th pct -0.20 log-odds; missing-bin +0.29                                                       |           0.000 | agrees (monotone) |
+| extraord_to_assets | none               |        0.128 | 2nd pct +0.40 / median -0.12 / 98th pct +0.30 log-odds; missing-bin +0.00                                                       |         nan     | no expectation    |
+| ap_days            | +                  |        0.125 | 2nd pct -0.17 / median -0.08 / 98th pct +0.30 log-odds; missing-bin +0.01                                                       |           0.000 | agrees (monotone) |
+| interest_to_assets | +                  |        0.124 | 2nd pct -0.15 / median -0.08 / 98th pct +0.66 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| roa_net            | -                  |        0.104 | 2nd pct +0.35 / median -0.05 / 98th pct -0.13 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| interest_coverage  | -                  |        0.093 | 2nd pct +0.25 / median -0.04 / 98th pct -0.10 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| roa_oper           | -                  |        0.088 | 2nd pct +0.35 / median -0.05 / 98th pct -0.10 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| cash_ratio         | -                  |        0.068 | 2nd pct +0.09 / median +0.01 / 98th pct -0.12 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| st_debt_share      | +                  |        0.068 | 2nd pct -0.22 / median +0.05 / 98th pct +0.06 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| neg_equity         | +                  |        0.060 | 2nd pct -0.03 / median -0.03 / 98th pct +0.82 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| current_ratio      | -                  |        0.057 | 2nd pct +0.08 / median -0.01 / 98th pct -0.10 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| debt_split_missing | +                  |        0.045 | 2nd pct -0.03 / median -0.03 / 98th pct +0.14 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| legal_group        | none (categorical) |        0.038 | levels: OTHER -0.87, SAU -0.48, SPA -0.06, SRL +0.02, SRU +0.05                                                                 |         nan     | n/a               |
+| wc_ratio           | -                  |        0.035 | 2nd pct +0.11 / median -0.01 / 98th pct -0.05 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| bank_debt_ratio    | +                  |        0.031 | 2nd pct -0.03 / median -0.01 / 98th pct +0.09 log-odds; missing-bin -0.02                                                       |           0.000 | agrees (monotone) |
+| intangible_ratio   | +                  |        0.026 | 2nd pct -0.02 / median -0.02 / 98th pct +0.09 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| macro_area         | none (categorical) |        0.019 | levels: North-East -0.04, Centre -0.00, North-West +0.01, South +0.03, Islands +0.06, OTHER +0.65                               |         nan     | n/a               |
+| log_assets         | -                  |        0.016 | 2nd pct +0.10 / median -0.00 / 98th pct -0.12 log-odds; missing-bin +0.00                                                       |           0.000 | agrees (monotone) |
+| rev_nonpositive    | none               |        0.013 | 2nd pct +0.01 / median +0.01 / 98th pct -0.19 log-odds; missing-bin +0.00                                                       |         nan     | no expectation    |
+
+Family importance (sum of mean |contribution| of main effects):
+
+|                   |   mean_abs_contribution |
+|:------------------|------------------------:|
+| leverage          |                   0.476 |
+| profitability     |                   0.457 |
+| activity          |                   0.450 |
+| coverage          |                   0.361 |
+| asset structure   |                   0.298 |
+| industry          |                   0.178 |
+| liquidity         |                   0.160 |
+| missing indicator |                   0.045 |
+| firm type         |                   0.038 |
+| geography         |                   0.019 |
+| size              |                   0.016 |
+
+## 3. Reason codes for three example 2010 applicants
+
+Top-3 terms pushing the PD UP and the 2 strongest pulling it DOWN (log-odds contributions of the EBM before the monotone Platt/level map; the ranking is unchanged by that map). Percentiles vs a 100,000-row sample of 2007-09 applicants. Values on the natural scale (signed-log back-transformed; winsorised at the training 1st/99th percentile).
+
+### low PD (5th percentile): row_id 36984405872010, PD 0.09% (own calibration), industry section L, observed default in window: no
+
+Raises PD:
+1. weak working capital: net working capital / assets = -0.297 (percentile 6 of 2007-09 applicants; +0.09 log-odds)
+2. low current ratio: current ratio = 0.319 (percentile 8 of 2007-09 applicants; +0.08 log-odds)
+3. debt concentrated in the short term: short-term share of debt = 1 (percentile 100 of 2007-09 applicants; +0.06 log-odds)
+
+Lowers PD:
+- favourable tangible fixed assets / assets: tangible fixed assets / assets = 0.86 (percentile 91 of 2007-09 applicants; -0.44 log-odds)
+- industry (ATECO section) = L (lowers PD, -0.23 log-odds)
+
+### middle PD (median): row_id 23246208442010, PD 0.52% (own calibration), industry section M, observed default in window: no
+
+Raises PD:
+1. little tangible collateral: tangible fixed assets / assets = 0.0293 (percentile 29 of 2007-09 applicants; +0.22 log-odds)
+2. slow collection of receivables: days receivables outstanding = 302 (percentile 78 of 2007-09 applicants; +0.20 log-odds)
+3. heavy short-term liabilities: short-term liabilities / assets = 0.772 (percentile 79 of 2007-09 applicants; +0.19 log-odds)
+
+Lowers PD:
+- favourable days payables outstanding: days payables outstanding = 0 (percentile 2 of 2007-09 applicants; -0.17 log-odds)
+- favourable interest expense / assets: interest expense / assets = 0.0012 (percentile 17 of 2007-09 applicants; -0.14 log-odds)
+
+### high PD (99th percentile): row_id 13071208972010, PD 13.89% (own calibration), industry section C, observed default in window: yes
+
+Raises PD:
+1. losses / low net profitability: net profit / assets = -0.171 (percentile 2 of 2007-09 applicants; +0.42 log-odds)
+2. low cash flow relative to debt: cash flow / debt = -0.149 (percentile 3 of 2007-09 applicants; +0.40 log-odds)
+3. weak operating profitability: operating profit / assets = -0.182 (percentile 1 of 2007-09 applicants; +0.37 log-odds)
+
+Lowers PD:
+- favourable interest expense / assets: interest expense / assets = 0.00246 (percentile 22 of 2007-09 applicants; -0.14 log-odds)
+- favourable bank debt / assets: bank debt / assets = 3.79e-05 (percentile 18 of 2007-09 applicants; -0.03 log-odds)
+
+## 4. Cost
+
+- Max |sum of term contributions + intercept - model log-odds| over the sample: 5.33e-15.
+- Prediction (feature transform + EBM + calibration), 100,000 rows: 0.9 s total, feature transform 0.8 s; one row at a time: 67 ms/row (dominated by the transform's fixed cost). Complexity O(n x (F + T)) lookups (T = terms), linear in n, no dependence on other rows; the harness needs the `interpret` package (0.7.8) or an export of the term tables.
+

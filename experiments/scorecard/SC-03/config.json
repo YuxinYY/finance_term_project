@@ -1,0 +1,83 @@
+{
+ "exp_id": "SC-03",
+ "folds": [
+  {
+   "fold": 1,
+   "n_train": 144214,
+   "train_years": [
+    2007
+   ],
+   "chosen": null,
+   "coef": {
+    "const": -4.640595638156159,
+    "log_assets": 0.25468328088111303,
+    "equity_ratio": 0.2322212069994071,
+    "st_debt_ratio": 0.4168663812190723,
+    "cash_ratio": 0.16430699390991824,
+    "roa_net": 0.6138528853367021,
+    "interest_coverage": 0.27212035459325506,
+    "interest_to_assets": 0.571157000517781,
+    "ar_days": 0.6278025773326853,
+    "tangible_ratio": 0.7468269873301071,
+    "neg_equity": 0.153548411223573,
+    "ateco_group": 1.3315859046600855,
+    "legal_group": 0.14194241938490088,
+    "macro_area": 0.26367696410768937
+   }
+  },
+  {
+   "fold": 2,
+   "n_train": 305475,
+   "train_years": [
+    2007,
+    2008
+   ],
+   "chosen": null,
+   "coef": {
+    "const": -4.458853945453398,
+    "log_assets": 0.5997460846752679,
+    "equity_ratio": 0.20437615896510786,
+    "st_debt_ratio": 0.4251417970957369,
+    "cash_ratio": 0.3730458255474216,
+    "roa_net": 0.6082663129724822,
+    "interest_coverage": 0.2859104868457694,
+    "interest_to_assets": 0.4809031930970529,
+    "ar_days": 0.5311898818648747,
+    "tangible_ratio": 0.6341323154363411,
+    "neg_equity": 0.1490926308666718,
+    "ateco_group": 1.093645558247232,
+    "legal_group": 0.19175000142606521,
+    "macro_area": 0.10453531212259154
+   }
+  },
+  {
+   "fold": 3,
+   "n_train": 475861,
+   "train_years": [
+    2007,
+    2008,
+    2009
+   ],
+   "chosen": null,
+   "coef": {
+    "const": -4.311564773827432,
+    "log_assets": 0.4268241851461435,
+    "equity_ratio": 0.2460935127884022,
+    "st_debt_ratio": 0.42222181905149747,
+    "cash_ratio": 0.2799914291817752,
+    "roa_net": 0.6032402384286157,
+    "interest_coverage": 0.28145783106338135,
+    "interest_to_assets": 0.47182752974478065,
+    "ar_days": 0.5340386916931197,
+    "tangible_ratio": 0.5630063219488253,
+    "neg_equity": 0.13592290778217764,
+    "ateco_group": 0.9852249935774897,
+    "legal_group": 0.16694975613045746,
+    "macro_area": 0.5376572179728084
+   }
+  }
+ ],
+ "split": "data/splits/walkforward.json",
+ "tuning": "none: no tunable hyper-parameter (unpenalised GLM); SC-03 uses pre-declared 20 initial quantile bins, min bin 2%, PAV monotone; all folds use the same pre-declared settings",
+ "features_version": "features-v1 (2026-10-30)"
+}

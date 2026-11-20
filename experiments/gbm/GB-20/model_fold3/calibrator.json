@@ -1,0 +1,6 @@
+{
+ "method": "platt_slope_from_B_intercept_anchored_to_train_rate (anchor on OOF-encoded train matrix)",
+ "a": -0.13251238463596104,
+ "b": 0.9611573112245586,
+ "target_rate": 0.013018507505342947
+}

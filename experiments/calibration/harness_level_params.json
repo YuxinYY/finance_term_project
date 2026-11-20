@@ -1,0 +1,31 @@
+{
+ "created_by": "calibration-specialist, experiments/calibration/s8_harness_level_params.py",
+ "method": "prior shift (Saerens et al. 2002, eq. 4) = logit intercept shift by the log prior-odds ratio",
+ "floor": 0.0003,
+ "cap": 0.99,
+ "primary_label": "s6",
+ "tau": {
+  "s6": 0.014930473105579,
+  "s3": 0.0138922894054854,
+  "s0": 0.0136522601110381
+ },
+ "r_w": {
+  "fit_2007_2010": 0.01408883825128042,
+  "fit_2007_2011_with_11m_label": 0.013807552443529268
+ },
+ "delta": {
+  "s6": {
+   "fit_2007_2010": 0.05887545532748284,
+   "fit_2007_2011_with_11m_label": 0.07932786959635685
+  },
+  "s3": {
+   "fit_2007_2010": -0.014248241008296247,
+   "fit_2007_2011_with_11m_label": 0.006204173260577761
+  },
+  "s0": {
+   "fit_2007_2010": -0.031920505585079084,
+   "fit_2007_2011_with_11m_label": -0.011468091316205076
+  }
+ },
+ "note": "Use tau['s6'] unless Roger/TA confirm a different label window (D-002a). r_w must be the default rate of the exact rows passed to the final fit; recompute delta if those rows change."
+}

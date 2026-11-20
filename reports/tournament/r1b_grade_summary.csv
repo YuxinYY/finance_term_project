@@ -1,0 +1,6 @@
+table,n_grades,max_share,observed_defaults,expected_defaults,obs_over_pred_total,grades_under,grades_over,excess_defaults_in_under_grades,share_firms_in_under_grades,observed_dr_monotone
+old_11_grades_2010_CAL-01 (reproduces grade_table_2010.csv),11,0.1959406802970569,2968.0,2511.390651097539,1.1818153415132415,"4,5,6,7,8,9",11,513.9211489049219,0.5587524067112861,True
+new_grid_training_years_2007-2009_fold3_insample (edge-setting sample),16,0.0989154395926541,,,,,,,,
+new_grid_OOT_2008-2009_CAL-01 (share check),16,0.1032573790807696,,,,,,,,
+new_grid_2010_CAL-01,16,0.1003541303749885,2968.0,2511.390651097539,1.1818153415132415,"6,8,9,10,11,12,13,14",16,501.5646067083982,0.4995816906573757,True
+new_grid_2010_GB-01_own_level,16,0.119132208673329,2968.0,2072.495330636595,1.4320900781418593,"5,6,7,8,9,10,11,12,13,14,15",,881.6448346247864,0.6007839002475469,True

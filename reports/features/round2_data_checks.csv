@@ -1,0 +1,19 @@
+check,value
+goodwill - ebitda < 0 (share of rows),0.00011557996978109154
+goodwill - ebitda == 0 (share),0.2616583414064191
+  of which liab_lt_emp (TFR) > 0,0.009428734349023797
+goodwill - ebitda > 0: liab_lt_emp > 0,0.931833971117489
+  ==0 rows in section L (real estate),0.5251419530490792
+  all rows in section L,0.19287775211668953
+"Spearman(goodwill - ebitda, liab_lt_emp)",0.9282698020806989
+"median personnel / sales (rev > 0, pc >= 0)",0.09342426651712862
+"gross margin == operating margin (|diff| < 1e-6, share)",0.9999304704542886
+all 5 key amounts multiples of 1000 (share),0.0010570313599979825
+  default rate if all rounded,0.003976143141153081
+  n rows / n defaults if all rounded,503 / 2
+>= 3 of 5 key amounts multiples of 1000 (share),0.001475220705205932
+  default rate if >= 3 rounded,0.009971509971509971
+  n rows / n defaults if >= 3 rounded,702 / 7
+base default rate,0.013018507505342947
+"net liabilities <= 0 (net-cash firms, share)",0.02922702217664402
+  default rate of net-cash firms,0.007046304285303422

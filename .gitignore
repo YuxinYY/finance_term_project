@@ -37,3 +37,18 @@ __pycache__/
 .pytest_cache/
 .venv/
 *.py[cod]
+
+# ---- added by merge of kiet-full-repo (agent kit) ----
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/harness_test_data_2011.csv
+!data/raw/train_demo_subset.csv
+data/splits/*
+!data/splits/.gitkeep
+!data/splits/README.md
+*.parquet
+*.pkl
+.ipynb_checkpoints/
+.DS_Store
+.*.out
+experiments/calibration/cache/

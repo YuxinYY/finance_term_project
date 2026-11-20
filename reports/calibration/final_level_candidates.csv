@@ -1,0 +1,14 @@
+rule,target
+a_pooled (2007-2010 complete labels),0.01408883825128042
+b_last_complete_year (fs2010),0.0170074264233978
+"b_last_year incl. fs2011 estimate (11 of 12 months, seasonally scaled)",0.0143139693241553
+c_trend_logit (2007-2010),0.02206364706216607
+c_trend_logit (2007-2011 est.),0.01897703988366565
+c2_half_trend (2007-2010),0.019374509474559893
+d_ttc_equal_weight (2007-2011 est.),0.013966852561225937
+"e_last_6m_annualised, latest complete half-year (Jan-Jun 2012, cohort 2010)",0.016937595931946603
+"e_last_6m_annualised, latest half-year (Dec 2012-May 2013, cohort 2011, seasonally scaled)",0.013772900724753442
+"f_mean_last2 (fs2010, fs2011 est.)",0.01566069787377655
+scenario: expected-log-loss optimum over fs2008-2011 rates,0.01507
+scenario: minimax-regret optimum over fs2008-2011 rates,0.01486
+"RECOMMENDED: fs2011 anchor + convexity, logit random walk, h = 2 years",0.014930473105579021

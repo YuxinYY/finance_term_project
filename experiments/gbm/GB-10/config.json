@@ -1,0 +1,1052 @@
+{
+ "exp": "GB-10",
+ "desc": "GB-01 + recency weights, half-life chosen on inner slice A from {none,4,2,1,0.5} yrs",
+ "features": "full",
+ "relax": [],
+ "rf": false,
+ "base_params": {
+  "objective": "binary",
+  "learning_rate": 0.03,
+  "feature_fraction": 0.8,
+  "bagging_fraction": 0.8,
+  "bagging_freq": 1,
+  "lambda_l2": 10.0,
+  "min_sum_hessian_in_leaf": 1.0,
+  "max_bin": 255,
+  "cat_smooth": 50.0,
+  "cat_l2": 10.0,
+  "min_data_per_group": 500,
+  "max_cat_threshold": 16,
+  "monotone_constraints_method": "intermediate",
+  "monotone_penalty": 0.0,
+  "seed": 0,
+  "deterministic": true,
+  "force_col_wise": true,
+  "num_threads": 2,
+  "verbose": -1
+ },
+ "max_rounds": 4000,
+ "early_stopping_rounds": 150,
+ "n_final_factor": 1.2,
+ "selection": "min log loss on inner slice A (early stopping also on A); B = Platt slope + untouched check",
+ "search_space": null,
+ "half_lives": [
+  null,
+  4.0,
+  2.0,
+  1.0,
+  0.5
+ ],
+ "class_weighting": "recency weights only (no class weights)",
+ "lockbox": "fs_year >= 2011 never read",
+ "folds": [
+  {
+   "train_years": [
+    2007
+   ],
+   "n_train": 144214,
+   "train_defaults": 1379,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "inner_scheme": "single training year: firm split 70/15/15 (train / A / B)",
+   "rf": false,
+   "n_inner_train": 101261,
+   "defaults_inner_train": 946,
+   "n_A": 21563,
+   "defaults_A": 230,
+   "n_B": 21390,
+   "defaults_B": 203,
+   "trials": [
+    {
+     "i": 0,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "_hl": null
+     },
+     "best_iter": 282,
+     "A_log_loss": 0.0487775020449029,
+     "A_auc": 0.8230367729930566,
+     "B_log_loss": 0.043980087683884034,
+     "B_auc": 0.8297345639730284,
+     "secs": 3.6
+    },
+    {
+     "i": 1,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "_hl": 4.0
+     },
+     "best_iter": 282,
+     "A_log_loss": 0.0487775020449029,
+     "A_auc": 0.8230367729930566,
+     "B_log_loss": 0.043980087683884034,
+     "B_auc": 0.8297345639730284,
+     "secs": 3.5
+    },
+    {
+     "i": 2,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "_hl": 2.0
+     },
+     "best_iter": 282,
+     "A_log_loss": 0.0487775020449029,
+     "A_auc": 0.8230367729930566,
+     "B_log_loss": 0.043980087683884034,
+     "B_auc": 0.8297345639730284,
+     "secs": 3.8
+    },
+    {
+     "i": 3,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "_hl": 1.0
+     },
+     "best_iter": 282,
+     "A_log_loss": 0.0487775020449029,
+     "A_auc": 0.8230367729930566,
+     "B_log_loss": 0.043980087683884034,
+     "B_auc": 0.8297345639730284,
+     "secs": 3.6
+    },
+    {
+     "i": 4,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 1000,
+      "_hl": 0.5
+     },
+     "best_iter": 282,
+     "A_log_loss": 0.0487775020449029,
+     "A_auc": 0.8230367729930566,
+     "B_log_loss": 0.043980087683884034,
+     "B_auc": 0.8297345639730284,
+     "secs": 3.6
+    }
+   ],
+   "chosen_cfg": {
+    "num_leaves": 8,
+    "max_depth": 3,
+    "min_data_in_leaf": 1000,
+    "_hl": null
+   },
+   "best_iter": 282,
+   "chosen_index": 0,
+   "calibration_compare_B": {
+    "raw": 0.043980087683884034,
+    "platt": 0.04400576991597301,
+    "isotonic": 0.04552691017435196,
+    "auc_raw": 0.8297345639730284,
+    "auc_platt": 0.8292786193597199,
+    "auc_isotonic": 0.8206907712020638
+   },
+   "platt_on_B": {
+    "a": 0.08163219521144766,
+    "b": 1.0166415508516298
+   },
+   "n_final_trees": 338,
+   "final_fit_secs": 3.3,
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": 0.06536836742557794,
+    "b": 1.0166415508516298,
+    "target_rate": 0.00956217842927871
+   },
+   "in_sample": {
+    "auc": 0.8476111969944173,
+    "log_loss": 0.04331677284273686
+   },
+   "fold": 1,
+   "test_year": 2008,
+   "wall_secs": 33.4,
+   "oot_auc": 0.8441402930248821,
+   "oot_log_loss": 0.054228942749847714
+  },
+  {
+   "train_years": [
+    2007,
+    2008
+   ],
+   "n_train": 305475,
+   "train_defaults": 3443,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "inner_scheme": "time: inner-train [np.int64(2007)], validate 2008 (firm halves A / B)",
+   "rf": false,
+   "n_inner_train": 144214,
+   "defaults_inner_train": 1379,
+   "n_A": 81167,
+   "defaults_A": 1028,
+   "n_B": 80094,
+   "defaults_B": 1036,
+   "trials": [
+    {
+     "i": 0,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": null
+     },
+     "best_iter": 663,
+     "A_log_loss": 0.05277445963609163,
+     "A_auc": 0.851175277993397,
+     "B_log_loss": 0.05589075324630424,
+     "B_auc": 0.8352598224401204,
+     "secs": 9.3
+    },
+    {
+     "i": 1,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": null
+     },
+     "best_iter": 601,
+     "A_log_loss": 0.052715820405711586,
+     "A_auc": 0.8519010718875953,
+     "B_log_loss": 0.055902386712785156,
+     "B_auc": 0.835085606471804,
+     "secs": 8.4
+    },
+    {
+     "i": 2,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": null
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.052586713269189345,
+     "A_auc": 0.8533459956710431,
+     "B_log_loss": 0.05579006951682878,
+     "B_auc": 0.8363929282748377,
+     "secs": 7.4
+    },
+    {
+     "i": 3,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": null
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.05261272089396726,
+     "A_auc": 0.8527899457571847,
+     "B_log_loss": 0.05570966372635284,
+     "B_auc": 0.8371767963523383,
+     "secs": 6.2
+    },
+    {
+     "i": 4,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": 4.0
+     },
+     "best_iter": 663,
+     "A_log_loss": 0.05277445963609163,
+     "A_auc": 0.851175277993397,
+     "B_log_loss": 0.05589075324630424,
+     "B_auc": 0.8352598224401204,
+     "secs": 8.0
+    },
+    {
+     "i": 5,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": 4.0
+     },
+     "best_iter": 601,
+     "A_log_loss": 0.052715820405711586,
+     "A_auc": 0.8519010718875953,
+     "B_log_loss": 0.055902386712785156,
+     "B_auc": 0.835085606471804,
+     "secs": 6.9
+    },
+    {
+     "i": 6,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": 4.0
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.052586713269189345,
+     "A_auc": 0.8533459956710431,
+     "B_log_loss": 0.05579006951682878,
+     "B_auc": 0.8363929282748377,
+     "secs": 6.5
+    },
+    {
+     "i": 7,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": 4.0
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.05261272089396726,
+     "A_auc": 0.8527899457571847,
+     "B_log_loss": 0.05570966372635284,
+     "B_auc": 0.8371767963523383,
+     "secs": 6.0
+    },
+    {
+     "i": 8,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": 2.0
+     },
+     "best_iter": 663,
+     "A_log_loss": 0.05277445963609163,
+     "A_auc": 0.851175277993397,
+     "B_log_loss": 0.05589075324630424,
+     "B_auc": 0.8352598224401204,
+     "secs": 7.8
+    },
+    {
+     "i": 9,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": 2.0
+     },
+     "best_iter": 601,
+     "A_log_loss": 0.052715820405711586,
+     "A_auc": 0.8519010718875953,
+     "B_log_loss": 0.055902386712785156,
+     "B_auc": 0.835085606471804,
+     "secs": 6.8
+    },
+    {
+     "i": 10,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": 2.0
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.052586713269189345,
+     "A_auc": 0.8533459956710431,
+     "B_log_loss": 0.05579006951682878,
+     "B_auc": 0.8363929282748377,
+     "secs": 12.5
+    },
+    {
+     "i": 11,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": 2.0
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.05261272089396726,
+     "A_auc": 0.8527899457571847,
+     "B_log_loss": 0.05570966372635284,
+     "B_auc": 0.8371767963523383,
+     "secs": 13.4
+    },
+    {
+     "i": 12,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": 1.0
+     },
+     "best_iter": 663,
+     "A_log_loss": 0.05277445963609163,
+     "A_auc": 0.851175277993397,
+     "B_log_loss": 0.05589075324630424,
+     "B_auc": 0.8352598224401204,
+     "secs": 15.1
+    },
+    {
+     "i": 13,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": 1.0
+     },
+     "best_iter": 601,
+     "A_log_loss": 0.052715820405711586,
+     "A_auc": 0.8519010718875953,
+     "B_log_loss": 0.055902386712785156,
+     "B_auc": 0.835085606471804,
+     "secs": 14.0
+    },
+    {
+     "i": 14,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": 1.0
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.052586713269189345,
+     "A_auc": 0.8533459956710431,
+     "B_log_loss": 0.05579006951682878,
+     "B_auc": 0.8363929282748377,
+     "secs": 15.6
+    },
+    {
+     "i": 15,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": 1.0
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.05261272089396726,
+     "A_auc": 0.8527899457571847,
+     "B_log_loss": 0.05570966372635284,
+     "B_auc": 0.8371767963523383,
+     "secs": 15.0
+    },
+    {
+     "i": 16,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": 0.5
+     },
+     "best_iter": 663,
+     "A_log_loss": 0.05277445963609163,
+     "A_auc": 0.851175277993397,
+     "B_log_loss": 0.05589075324630424,
+     "B_auc": 0.8352598224401204,
+     "secs": 19.0
+    },
+    {
+     "i": 17,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": 0.5
+     },
+     "best_iter": 601,
+     "A_log_loss": 0.052715820405711586,
+     "A_auc": 0.8519010718875953,
+     "B_log_loss": 0.055902386712785156,
+     "B_auc": 0.835085606471804,
+     "secs": 23.0
+    },
+    {
+     "i": 18,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": 0.5
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.052586713269189345,
+     "A_auc": 0.8533459956710431,
+     "B_log_loss": 0.05579006951682878,
+     "B_auc": 0.8363929282748377,
+     "secs": 15.7
+    },
+    {
+     "i": 19,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": 0.5
+     },
+     "best_iter": 408,
+     "A_log_loss": 0.05261272089396726,
+     "A_auc": 0.8527899457571847,
+     "B_log_loss": 0.05570966372635284,
+     "B_auc": 0.8371767963523383,
+     "secs": 21.9
+    }
+   ],
+   "chosen_cfg": {
+    "num_leaves": 8,
+    "max_depth": 3,
+    "min_data_in_leaf": 500,
+    "_hl": null
+   },
+   "best_iter": 408,
+   "chosen_index": 2,
+   "calibration_compare_B": {
+    "raw": 0.05579006951682878,
+    "platt": 0.055486456590328276,
+    "isotonic": 0.055729404090325035,
+    "auc_raw": 0.8363929282748377,
+    "auc_platt": 0.8354860504642944,
+    "auc_isotonic": 0.8322343019068839
+   },
+   "platt_on_B": {
+    "a": 0.03905889235561267,
+    "b": 0.9425486410689068
+   },
+   "n_final_trees": 490,
+   "final_fit_secs": 19.9,
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": -0.2025584431030698,
+    "b": 0.9425486410689068,
+    "target_rate": 0.011270971437924543
+   },
+   "in_sample": {
+    "auc": 0.8589835866460577,
+    "log_loss": 0.047937917131492536
+   },
+   "fold": 2,
+   "test_year": 2009,
+   "wall_secs": 291.6,
+   "oot_auc": 0.8359284598093827,
+   "oot_log_loss": 0.066168760724847
+  },
+  {
+   "train_years": [
+    2007,
+    2008,
+    2009
+   ],
+   "n_train": 475861,
+   "train_defaults": 6195,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "inner_scheme": "time: inner-train [np.int64(2007), np.int64(2008)], validate 2009 (firm halves A / B)",
+   "rf": false,
+   "n_inner_train": 305475,
+   "defaults_inner_train": 3443,
+   "n_A": 85773,
+   "defaults_A": 1395,
+   "n_B": 84613,
+   "defaults_B": 1357,
+   "trials": [
+    {
+     "i": 0,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": null
+     },
+     "best_iter": 456,
+     "A_log_loss": 0.06753726350671417,
+     "A_auc": 0.8265949752823338,
+     "B_log_loss": 0.06545259714443243,
+     "B_auc": 0.8405722264129941,
+     "secs": 26.2
+    },
+    {
+     "i": 1,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": null
+     },
+     "best_iter": 698,
+     "A_log_loss": 0.06755622974640511,
+     "A_auc": 0.8265705715303494,
+     "B_log_loss": 0.06534059479635793,
+     "B_auc": 0.8427954480003575,
+     "secs": 43.6
+    },
+    {
+     "i": 2,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": null
+     },
+     "best_iter": 341,
+     "A_log_loss": 0.06733240600049016,
+     "A_auc": 0.827895990486912,
+     "B_log_loss": 0.06511531331529732,
+     "B_auc": 0.8431258917191882,
+     "secs": 23.8
+    },
+    {
+     "i": 3,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": null
+     },
+     "best_iter": 322,
+     "A_log_loss": 0.06727753144412187,
+     "A_auc": 0.8281792651620363,
+     "B_log_loss": 0.0651801450643171,
+     "B_auc": 0.8433146224987871,
+     "secs": 25.8
+    },
+    {
+     "i": 4,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": 4.0
+     },
+     "best_iter": 496,
+     "A_log_loss": 0.06752670378834731,
+     "A_auc": 0.826482543862399,
+     "B_log_loss": 0.06538049110665806,
+     "B_auc": 0.84106851600437,
+     "secs": 29.8
+    },
+    {
+     "i": 5,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": 4.0
+     },
+     "best_iter": 496,
+     "A_log_loss": 0.06750969503090827,
+     "A_auc": 0.8265884081455944,
+     "B_log_loss": 0.06544005665982723,
+     "B_auc": 0.8410619129718185,
+     "secs": 29.0
+    },
+    {
+     "i": 6,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": 4.0
+     },
+     "best_iter": 341,
+     "A_log_loss": 0.06730218321986503,
+     "A_auc": 0.8276528407623962,
+     "B_log_loss": 0.06509399322880707,
+     "B_auc": 0.8430117902545471,
+     "secs": 24.4
+    },
+    {
+     "i": 7,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": 4.0
+     },
+     "best_iter": 316,
+     "A_log_loss": 0.06727419658580956,
+     "A_auc": 0.828352453216372,
+     "B_log_loss": 0.06520032876258047,
+     "B_auc": 0.8426817404163444,
+     "secs": 23.2
+    },
+    {
+     "i": 8,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": 2.0
+     },
+     "best_iter": 496,
+     "A_log_loss": 0.06747059813398619,
+     "A_auc": 0.8262656117109464,
+     "B_log_loss": 0.06531058650485548,
+     "B_auc": 0.8415079495909271,
+     "secs": 27.3
+    },
+    {
+     "i": 9,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": 2.0
+     },
+     "best_iter": 497,
+     "A_log_loss": 0.06751613468153612,
+     "A_auc": 0.8261909646902984,
+     "B_log_loss": 0.0653934225724556,
+     "B_auc": 0.8412573751270951,
+     "secs": 27.2
+    },
+    {
+     "i": 10,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": 2.0
+     },
+     "best_iter": 341,
+     "A_log_loss": 0.06728519784793832,
+     "A_auc": 0.8277686916810858,
+     "B_log_loss": 0.06507344517741342,
+     "B_auc": 0.8429000387967993,
+     "secs": 31.2
+    },
+    {
+     "i": 11,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": 2.0
+     },
+     "best_iter": 322,
+     "A_log_loss": 0.06733036842269231,
+     "A_auc": 0.8271645151010587,
+     "B_log_loss": 0.06521720823413772,
+     "B_auc": 0.8420844757641797,
+     "secs": 22.2
+    },
+    {
+     "i": 12,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": 1.0
+     },
+     "best_iter": 497,
+     "A_log_loss": 0.06747297681292524,
+     "A_auc": 0.8260229292471299,
+     "B_log_loss": 0.06534065897389119,
+     "B_auc": 0.840862365964635,
+     "secs": 23.0
+    },
+    {
+     "i": 13,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": 1.0
+     },
+     "best_iter": 497,
+     "A_log_loss": 0.06748334818230373,
+     "A_auc": 0.8260598385945612,
+     "B_log_loss": 0.06538987943966329,
+     "B_auc": 0.8408156490667703,
+     "secs": 23.7
+    },
+    {
+     "i": 14,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": 1.0
+     },
+     "best_iter": 322,
+     "A_log_loss": 0.06727380797155139,
+     "A_auc": 0.8271025478366637,
+     "B_log_loss": 0.0650909113203572,
+     "B_auc": 0.8421078386387373,
+     "secs": 20.1
+    },
+    {
+     "i": 15,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": 1.0
+     },
+     "best_iter": 298,
+     "A_log_loss": 0.06725890479399217,
+     "A_auc": 0.8274344303680036,
+     "B_log_loss": 0.0651809222958246,
+     "B_auc": 0.8419262950741945,
+     "secs": 20.0
+    },
+    {
+     "i": 16,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 500,
+      "_hl": 0.5
+     },
+     "best_iter": 496,
+     "A_log_loss": 0.06741630740152624,
+     "A_auc": 0.8253174675387621,
+     "B_log_loss": 0.06530849076457877,
+     "B_auc": 0.8402413445572848,
+     "secs": 22.2
+    },
+    {
+     "i": 17,
+     "cfg": {
+      "num_leaves": 4,
+      "max_depth": 2,
+      "min_data_in_leaf": 2000,
+      "_hl": 0.5
+     },
+     "best_iter": 496,
+     "A_log_loss": 0.06746712641766335,
+     "A_auc": 0.8251717331744306,
+     "B_log_loss": 0.06541846660980462,
+     "B_auc": 0.8397107076900155,
+     "secs": 23.8
+    },
+    {
+     "i": 18,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 500,
+      "_hl": 0.5
+     },
+     "best_iter": 284,
+     "A_log_loss": 0.06720118131805475,
+     "A_auc": 0.826817705714284,
+     "B_log_loss": 0.06504632126864035,
+     "B_auc": 0.841605490366689,
+     "secs": 23.1
+    },
+    {
+     "i": 19,
+     "cfg": {
+      "num_leaves": 8,
+      "max_depth": 3,
+      "min_data_in_leaf": 2000,
+      "_hl": 0.5
+     },
+     "best_iter": 287,
+     "A_log_loss": 0.06716198325356525,
+     "A_auc": 0.8268604770595811,
+     "B_log_loss": 0.06513077506948468,
+     "B_auc": 0.8414002520057111,
+     "secs": 21.8
+    }
+   ],
+   "chosen_cfg": {
+    "num_leaves": 8,
+    "max_depth": 3,
+    "min_data_in_leaf": 2000,
+    "_hl": 0.5
+   },
+   "best_iter": 287,
+   "chosen_index": 19,
+   "calibration_compare_B": {
+    "raw": 0.06513077506948468,
+    "platt": 0.06466622526319436,
+    "isotonic": 0.06513684801729434,
+    "auc_raw": 0.8414002520057111,
+    "auc_platt": 0.841284774171684,
+    "auc_isotonic": 0.8378343887209865
+   },
+   "platt_on_B": {
+    "a": 0.25419385771020525,
+    "b": 0.9923993456620115
+   },
+   "n_final_trees": 344,
+   "final_fit_secs": 33.3,
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": -0.1818427289756559,
+    "b": 0.9923993456620115,
+    "target_rate": 0.013018507505342947
+   },
+   "in_sample": {
+    "auc": 0.8457187177272031,
+    "log_loss": 0.054589842608828286
+   },
+   "fold": 3,
+   "test_year": 2010,
+   "wall_secs": 603.7,
+   "oot_auc": 0.8311277108790772,
+   "oot_log_loss": 0.07136663864526954
+  }
+ ]
+}

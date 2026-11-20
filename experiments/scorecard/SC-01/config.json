@@ -1,0 +1,47 @@
+{
+ "exp_id": "SC-01",
+ "folds": [
+  {
+   "fold": 1,
+   "n_train": 144214,
+   "train_years": [
+    2007
+   ],
+   "chosen": "roa_net",
+   "coef": {
+    "const": -4.7670338620089865,
+    "roa_net": -14.85431644567246
+   }
+  },
+  {
+   "fold": 2,
+   "n_train": 305475,
+   "train_years": [
+    2007,
+    2008
+   ],
+   "chosen": "roa_net",
+   "coef": {
+    "const": -4.702178660633333,
+    "roa_net": -14.658845576832865
+   }
+  },
+  {
+   "fold": 3,
+   "n_train": 475861,
+   "train_years": [
+    2007,
+    2008,
+    2009
+   ],
+   "chosen": "roa_net",
+   "coef": {
+    "const": -4.591819029585552,
+    "roa_net": -14.021272734502796
+   }
+  }
+ ],
+ "split": "data/splits/walkforward.json",
+ "tuning": "none: no tunable hyper-parameter (unpenalised GLM); SC-03 uses pre-declared 20 initial quantile bins, min bin 2%, PAV monotone; all folds use the same pre-declared settings",
+ "features_version": "features-v1 (2026-10-30)"
+}

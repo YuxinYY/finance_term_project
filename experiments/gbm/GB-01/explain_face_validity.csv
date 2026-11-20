@@ -1,0 +1,27 @@
+feature,mean_abs_shap,expected,shap_spearman,pd_trend,pd_violation_share,verdict
+tangible_ratio,0.41203765961576594,-,-0.9727867420360254,-4.40 -> -5.73 (range 1.33),0.0,agrees
+equity_ratio,0.21277068102593152,-,-0.8589859492224766,-4.82 -> -5.41 (range 0.59),0.0,agrees
+roa_net,0.20728212101210952,-,-0.9367499180591243,-4.22 -> -5.50 (range 1.28),0.0,agrees
+st_debt_ratio,0.1833781023545992,+,0.9564975951300602,-5.45 -> -4.88 (range 0.57),0.0,agrees
+ap_days,0.146695011784894,+,0.9233910548833537,-5.42 -> -4.93 (range 0.48),0.0,agrees
+ar_days,0.1415811672395622,+,0.9596688582414655,-5.40 -> -4.81 (range 0.58),0.0,agrees
+ateco_group,0.12075058000298777,none (categorical),,"levels: I -0.29, A -0.25, OTHER -0.22, L -0.13, M -0.05, F -0.04, J -0.02, R -0.00, E +0.02, H +0.03, G +0.03, N +0.09, C +0.23",,n/a
+asset_turnover,0.11189977877231967,none,0.6642330427048191,-5.36 -> -4.87 (range 0.49),,no expectation
+interest_coverage,0.11011216203803806,-,-0.8131279116265339,-5.05 -> -5.32 (range 0.27),0.0,agrees
+cfo_to_debt,0.10091529558541973,-,-0.8991357223534308,-4.98 -> -5.33 (range 0.34),0.0,agrees
+extraord_to_assets,0.0963841313175251,none,-0.22025960938595165,-4.94 -> -4.93 (range 0.41),,no expectation
+cash_ratio,0.06957733455767641,-,-0.9558900139890993,-5.14 -> -5.36 (range 0.22),0.0,agrees
+interest_to_assets,0.0688019377111609,+,0.6232805152369536,-5.27 -> -5.00 (range 0.27),0.0,agrees
+roa_oper,0.05997637270730871,-,-0.8490844921882513,-4.95 -> -5.29 (range 0.34),0.0,agrees
+ebitda_margin,0.04227447179369137,-,-0.932333679714725,-5.15 -> -5.29 (range 0.14),0.0,agrees
+st_debt_share,0.04137135086082346,+,0.8479486488480013,-5.42 -> -5.21 (range 0.21),0.0,agrees
+legal_group,0.03314945721479108,none (categorical),,"levels: SAU -0.36, SPA -0.08, OTHER -0.00, SRL +0.02, SRU +0.03",,n/a
+intangible_ratio,0.025618407194631338,+,0.6205277213235947,-5.26 -> -5.17 (range 0.10),0.0,agrees
+log_assets,0.02240263000270086,-,-0.9418818811215802,-5.15 -> -5.30 (range 0.15),0.0,agrees
+current_ratio,0.012660903425457368,-,-0.801804428486647,-5.22 -> -5.26 (range 0.03),0.0,agrees
+bank_debt_ratio,0.00898884460445296,+,0.9429338518113437,-5.26 -> -5.23 (range 0.03),0.0,agrees
+macro_area,0.007830247916474062,none (categorical),,"levels: North-East -0.01, OTHER +0.00, Centre +0.00, North-West +0.00, South +0.01, Islands +0.01",,n/a
+wc_ratio,0.003292450158568216,-,-0.45170325097216213,-5.24 -> -5.25 (range 0.01),0.0,agrees
+neg_equity,0.0,+,,-5.24 -> -5.24 (range 0.00),0.0,agrees
+debt_split_missing,0.0,+,,-5.24 -> -5.24 (range 0.00),0.0,agrees
+rev_nonpositive,0.0,none,,-5.24 -> -5.24 (range 0.00),,no expectation

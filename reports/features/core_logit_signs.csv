@@ -1,0 +1,11 @@
+feature,expected,coef_std,multivariate_sign,agrees
+log_assets,−,0.01306953271730245,+,NO
+equity_ratio,−,-0.0761031407622042,−,yes
+st_debt_ratio,+,0.35972870003154994,+,yes
+cash_ratio,−,-0.03530705356983482,−,yes
+roa_net,−,-0.5404560020955159,−,yes
+interest_coverage,−,-0.16046841286577182,−,yes
+interest_to_assets,+,0.23213364267808842,+,yes
+ar_days,+,0.1367349393742617,+,yes
+tangible_ratio,−,-0.32041050809576416,−,yes
+neg_equity,+,0.15927453628154176,+,yes

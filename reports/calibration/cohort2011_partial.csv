@@ -1,0 +1,11 @@
+item,value
+cohort 2011 rows alive at window start (ok+censored),183953
+window,2012-06-30 to 2013-06-30 (observed to 2013-05-31)
+defaults observed in first 11 months,2357
+11-month rate,0.012813055508744082
+"12-month rate, scaled 12/11",0.013977878736811727
+"12-month rate, scaled by mean 11-of-12 share of cohorts 2007-2010",0.0143139693241553
+  range using min/max share,0.01410 .. 0.01461
+mean 11-of-12 share (2007-2010 cohorts),0.8951434237826417
+lower bound: treat unobserved month as zero defaults (keep-as-0),0.012813055508744082
+cohort 2010 12-month rate (complete),0.01700742642339782

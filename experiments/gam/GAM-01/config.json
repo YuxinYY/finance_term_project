@@ -1,0 +1,426 @@
+{
+ "exp": "GAM-01",
+ "spec": {
+  "interactions": 0,
+  "monotone": true,
+  "desc": "EBM main effects only, monotone constraints from the expected-sign table"
+ },
+ "base_params": {
+  "max_bins": 128,
+  "max_interaction_bins": 32,
+  "learning_rate": 0.03,
+  "smoothing_rounds": 75,
+  "interaction_smoothing_rounds": 75,
+  "early_stopping_rounds": 100,
+  "max_rounds": 30000,
+  "inner_bags": 0,
+  "validation_size": 0.15,
+  "n_jobs": 8,
+  "random_state": 0
+ },
+ "inner_bags": 4,
+ "final_bags": 8,
+ "grid": [
+  {
+   "max_leaves": 2,
+   "min_samples_leaf": 200
+  },
+  {
+   "max_leaves": 2,
+   "min_samples_leaf": 1000
+  },
+  {
+   "max_leaves": 3,
+   "min_samples_leaf": 200
+  },
+  {
+   "max_leaves": 3,
+   "min_samples_leaf": 1000
+  }
+ ],
+ "default_cfg_fold1": {
+  "max_leaves": 2,
+  "min_samples_leaf": 500
+ },
+ "fixed_cfg_from": "GAM-01",
+ "class_weighting": "none",
+ "interpret_version": "0.7.8",
+ "folds": [
+  {
+   "exp": "GAM-01",
+   "train_years": [
+    2007
+   ],
+   "n_train": 144214,
+   "train_defaults": 1379,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "interactions": 0,
+   "inner_scheme": "single training year: random firm split 70/15/15, pre-declared DEFAULT config",
+   "n_inner_train": 101261,
+   "defaults_inner_train": 946,
+   "n_A": 21563,
+   "defaults_A": 230,
+   "n_B": 21390,
+   "defaults_B": 203,
+   "grid": [
+    {
+     "cfg": {
+      "max_leaves": 2,
+      "min_samples_leaf": 500
+     },
+     "A_log_loss": 0.04929025804553056,
+     "A_auc": 0.813150477215337,
+     "secs": 35.6
+    }
+   ],
+   "chosen_cfg": {
+    "max_leaves": 2,
+    "min_samples_leaf": 500
+   },
+   "platt_on_B": {
+    "a": 0.07609405025185124,
+    "b": 1.0217012362821252
+   },
+   "B_log_loss_raw": 0.045009409025887764,
+   "B_log_loss_platt": 0.04500569306175143,
+   "final_fit_secs": 54.9,
+   "sparse_missing_reset": [
+    "st_debt_share: st_debt_share missing bin (49 rows, 0 defaults)",
+    "current_ratio: current_ratio missing bin (55 rows, 0 defaults)",
+    "roa_net: roa_net missing bin (10 rows, 0 defaults)",
+    "roa_oper: roa_oper missing bin (10 rows, 0 defaults)",
+    "interest_coverage: interest_coverage missing bin (67 rows, 1 defaults)",
+    "cfo_to_debt: cfo_to_debt missing bin (44 rows, 1 defaults)",
+    "interest_to_assets: interest_to_assets missing bin (62 rows, 0 defaults)",
+    "asset_turnover: asset_turnover missing bin (10 rows, 0 defaults)",
+    "ar_days: ar_days missing bin (276 rows, 11 defaults)",
+    "tangible_ratio: tangible_ratio missing bin (19 rows, 0 defaults)",
+    "intangible_ratio: intangible_ratio missing bin (19 rows, 0 defaults)",
+    "extraord_to_assets: extraord_to_assets missing bin (15 rows, 0 defaults)"
+   ],
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": 0.0836384887921271,
+    "b": 1.0217012362821252,
+    "target_rate": 0.00956217842927871
+   },
+   "fold": 1,
+   "test_year": 2008,
+   "tau_rule_e": 0.011651539618019,
+   "r_w": 0.00956217842927871,
+   "delta_prior_shift": 0.19973451817418564,
+   "predict_secs_test": 1.35,
+   "predict_secs_per_100k": 0.84,
+   "wall_secs": 105.5,
+   "fit_secs_total_incl_features_and_grid": 104.1
+  },
+  {
+   "exp": "GAM-01",
+   "train_years": [
+    2007,
+    2008
+   ],
+   "n_train": 305475,
+   "train_defaults": 3443,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "interactions": 0,
+   "inner_scheme": "time: inner-train [np.int64(2007)], last year 2008 split by firm into A (early stop/grid) and B (Platt slope)",
+   "n_inner_train": 144214,
+   "defaults_inner_train": 1379,
+   "n_A": 81167,
+   "defaults_A": 1028,
+   "n_B": 80094,
+   "defaults_B": 1036,
+   "grid": [
+    {
+     "cfg": {
+      "max_leaves": 3,
+      "min_samples_leaf": 1000
+     },
+     "A_log_loss": 0.053190094201893134,
+     "A_auc": 0.8451027793488968,
+     "secs": 66.2
+    }
+   ],
+   "chosen_cfg": {
+    "max_leaves": 3,
+    "min_samples_leaf": 1000
+   },
+   "platt_on_B": {
+    "a": 0.0833196083994693,
+    "b": 0.9873956128230279
+   },
+   "B_log_loss_raw": 0.05612869842958833,
+   "B_log_loss_platt": 0.056032715157541435,
+   "final_fit_secs": 114.2,
+   "sparse_missing_reset": [
+    "st_debt_ratio: st_debt_ratio missing bin (1 rows, 0 defaults)",
+    "st_debt_share: st_debt_share missing bin (135 rows, 0 defaults)",
+    "wc_ratio: wc_ratio missing bin (2 rows, 0 defaults)",
+    "current_ratio: current_ratio missing bin (120 rows, 0 defaults)",
+    "cash_ratio: cash_ratio missing bin (12 rows, 0 defaults)",
+    "roa_net: roa_net missing bin (17 rows, 0 defaults)",
+    "roa_oper: roa_oper missing bin (17 rows, 0 defaults)",
+    "interest_coverage: interest_coverage missing bin (193 rows, 4 defaults)",
+    "cfo_to_debt: cfo_to_debt missing bin (65 rows, 1 defaults)",
+    "interest_to_assets: interest_to_assets missing bin (187 rows, 3 defaults)",
+    "asset_turnover: asset_turnover missing bin (17 rows, 0 defaults)",
+    "tangible_ratio: tangible_ratio missing bin (50 rows, 0 defaults)",
+    "intangible_ratio: intangible_ratio missing bin (51 rows, 0 defaults)",
+    "extraord_to_assets: extraord_to_assets missing bin (96 rows, 2 defaults)"
+   ],
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": -0.04507042948231077,
+    "b": 0.9873956128230279,
+    "target_rate": 0.011270971437924543
+   },
+   "fold": 2,
+   "test_year": 2009,
+   "tau_rule_e": 0.0150247503148341,
+   "r_w": 0.011270971437924543,
+   "delta_prior_shift": 0.29127213633887816,
+   "predict_secs_test": 1.42,
+   "predict_secs_per_100k": 0.83,
+   "wall_secs": 197.7,
+   "fit_secs_total_incl_features_and_grid": 196.3
+  },
+  {
+   "exp": "GAM-01",
+   "train_years": [
+    2007,
+    2008,
+    2009
+   ],
+   "n_train": 475861,
+   "train_defaults": 6195,
+   "features": [
+    "log_assets",
+    "equity_ratio",
+    "st_debt_ratio",
+    "bank_debt_ratio",
+    "st_debt_share",
+    "wc_ratio",
+    "current_ratio",
+    "cash_ratio",
+    "roa_net",
+    "roa_oper",
+    "ebitda_margin",
+    "interest_coverage",
+    "cfo_to_debt",
+    "interest_to_assets",
+    "asset_turnover",
+    "ar_days",
+    "ap_days",
+    "tangible_ratio",
+    "intangible_ratio",
+    "extraord_to_assets",
+    "neg_equity",
+    "debt_split_missing",
+    "rev_nonpositive",
+    "ateco_group",
+    "legal_group",
+    "macro_area"
+   ],
+   "monotone": [
+    -1,
+    -1,
+    1,
+    1,
+    1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    -1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    0,
+    0
+   ],
+   "interactions": 0,
+   "inner_scheme": "time: inner-train [np.int64(2007), np.int64(2008)], last year 2009 split by firm into A (early stop/grid) and B (Platt slope)",
+   "n_inner_train": 305475,
+   "defaults_inner_train": 3443,
+   "n_A": 85773,
+   "defaults_A": 1395,
+   "n_B": 84613,
+   "defaults_B": 1357,
+   "grid": [
+    {
+     "cfg": {
+      "max_leaves": 3,
+      "min_samples_leaf": 200
+     },
+     "A_log_loss": 0.06774696041958518,
+     "A_auc": 0.8159795640559621,
+     "secs": 106.5
+    }
+   ],
+   "chosen_cfg": {
+    "max_leaves": 3,
+    "min_samples_leaf": 200
+   },
+   "platt_on_B": {
+    "a": 0.07736031585534146,
+    "b": 0.9611815648824039
+   },
+   "B_log_loss_raw": 0.06588861290687355,
+   "B_log_loss_platt": 0.06556503587727572,
+   "final_fit_secs": 173.9,
+   "sparse_missing_reset": [
+    "st_debt_ratio: st_debt_ratio missing bin (4 rows, 0 defaults)",
+    "st_debt_share: st_debt_share missing bin (337 rows, 4 defaults)",
+    "wc_ratio: wc_ratio missing bin (5 rows, 0 defaults)",
+    "current_ratio: current_ratio missing bin (200 rows, 0 defaults)",
+    "cash_ratio: cash_ratio missing bin (15 rows, 0 defaults)",
+    "roa_net: roa_net missing bin (18 rows, 0 defaults)",
+    "roa_oper: roa_oper missing bin (19 rows, 0 defaults)",
+    "interest_coverage: interest_coverage missing bin (321 rows, 7 defaults)",
+    "cfo_to_debt: cfo_to_debt missing bin (258 rows, 5 defaults)",
+    "interest_to_assets: interest_to_assets missing bin (283 rows, 5 defaults)",
+    "asset_turnover: asset_turnover missing bin (19 rows, 0 defaults)",
+    "tangible_ratio: tangible_ratio missing bin (101 rows, 1 defaults)",
+    "intangible_ratio: intangible_ratio missing bin (161 rows, 5 defaults)",
+    "extraord_to_assets: extraord_to_assets missing bin (231 rows, 6 defaults)"
+   ],
+   "calibrator": {
+    "method": "platt_slope_from_B_intercept_anchored_to_train_rate",
+    "a": -0.13390342487125684,
+    "b": 0.9611815648824039,
+    "target_rate": 0.013018507505342947
+   },
+   "fold": 3,
+   "test_year": 2010,
+   "tau_rule_e": 0.0161304638543875,
+   "r_w": 0.013018507505342947,
+   "delta_prior_shift": 0.21749563462808386,
+   "predict_secs_test": 1.38,
+   "predict_secs_per_100k": 0.79,
+   "wall_secs": 305.3,
+   "fit_secs_total_incl_features_and_grid": 303.9
+  }
+ ]
+}

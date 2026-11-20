@@ -1,0 +1,6 @@
+{
+ "expected_loss_optimum_equal_weights": 0.01507,
+ "mean_of_core_rates": 0.015064999999999999,
+ "minimax_regret_optimum": 0.01486,
+ "minimax_regret_value_1e4": 1.5203559080315598
+}

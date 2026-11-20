@@ -1,0 +1,18 @@
+field,formula,missing,reconstructable,share_recovered,accuracy_on_present_rows
+margin_fin,eqty_tot - (intang + tang + fin fixed),40758,40737,0.9994847637273664,0.9999124681933842
+wc_net,asst_current - debt_st,6,0,0.0,0.9999794830911362
+prof_operations,rev_operating - COGS,21,0,0.0,0.9999843654574325
+rev_operating,prof_operations + COGS,174,153,0.8793103448275862,0.9999960913643581
+COGS,rev_operating - prof_operations,24,3,0.125,0.9999921827287163
+roa,100 * prof_operations / asst_tot,27,6,0.2222222222222222,1.0
+roe,100 * profit / eqty_tot (no truncation),72937,72902,0.9995201338141135,0.9999915843865123
+cf_operations,profit + ebitda - prof_operations,88,6,0.06818181818181818,0.9991323583438206
+ebitda,cf_operations - profit + prof_operations,81,0,0.0,0.9991597164140605
+profit,cf_operations - ebitda + prof_operations,20,0,0.0,0.999113793939015
+debt_st,asst_current - wc_net,5,0,0.0,0.9999872990564176
+asst_current,wc_net + debt_st,1,0,0.0,0.999989253047738
+eqty_tot,margin_fin + fixed assets,1,0,0.0,0.9998839694656488
+asst_tang_fixed,asst_tot - other 3 components (approx.: omits residual asset item),103,17,0.1650485436893204,0.4388109120263321
+asst_intang_fixed,asst_tot - other 3 components (approx.),162,47,0.29012345679012347,0.19048354341805132
+asst_fixed_fin,asst_tot - other 3 components (approx.),237,116,0.48945147679324896,0.22030553986462584
+days_rec,365 * AR / rev_operating (a NEW definition; the file's days_rec does not follow it),740211,705601,0.9532430617756288,0.011928085540505716

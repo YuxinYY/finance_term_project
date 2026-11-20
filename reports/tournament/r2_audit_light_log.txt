@@ -1,0 +1,54 @@
+[    36s] [{'exp': 'GB-25', 'fold': 3, 'source': 'saved model_fold3', 'n_test': 174512, 'max_abs_diff': 0.0, 'max_abs_diff_no_id_column': 0.0}, {'exp': 'GB-20', 'fold': 3, 'source': 'saved model_fold3', 'n_test': 174512, 'max_abs_diff': 0.0, 'max_abs_diff_no_id_column': 0.0}]
+[    53s] [{'exp': 'GB-25', 'params_identical_to_refit_on_train_rows': True, 'train_years_in_params': [2007, 2008, 2009], 'n_train_rows_params': 475861, 'n_train_expected': 475861, 'record_train_years': [2007, 2008, 2009], 'te_p0_division': 0.013018507505342947, 'train_rate': 0.013018507505342947, 'n_levels_division': 83, 'm_division': 554.7468097804018, 'm_province': 1834.1786565883287, 'm_region': 3878.739086900889, 'calibrator_target_equals_train_rate': True, 'features_equal_FULL2': True, 'banned_in_features': []}, {'exp': 'GB-20', 'params_identical_to_refit_on_train_rows': True, 'train_years_in_params': [2007, 2008, 2009], 'n_train_rows_params': 475861, 'n_train_expected': 475861, 'record_train_years': [2007, 2008, 2009], 'te_p0_division': 0.013018507505342947, 'train_rate': 0.013018507505342947, 'n_levels_division': 83, 'm_division': 554.7468097804018, 'm_province': 1834.1786565883287, 'm_region': 3878.739086900889, 'calibrator_target_equals_train_rate': True, 'features_equal_FULL2': True, 'banned_in_features': []}]
+[    53s]      exp  fold  inner_B_rows  inner_B_outside_train  inner_B_in_test  in_sample_rows  in_sample_equals_train  in_sample_in_test
+0  GB-20     1         21390                      0                0          144214                    True                  0
+1  GB-20     2         80094                      0                0          305475                    True                  0
+2  GB-20     3         84613                      0                0          475861                    True                  0
+3  GB-25     1         21390                      0                0          144214                    True                  0
+4  GB-25     2         80094                      0                0          305475                    True                  0
+5  GB-25     3         84613                      0                0          475861                    True                  0
+[    91s] [{'flipped_fold': 0, 'rows_flipped': 28630, 'max_firms_folds_per_firm_fold1': 1, 'max_firms_folds_per_firm_fold3': 1, 'own_fold_max_change_oof': 0.0, 'other_folds_max_change_oof': 0.9530613925297999, 'full_table_max_change': 0.8481674868897946}, {'flipped_fold': 3, 'rows_flipped': 28739, 'max_firms_folds_per_firm_fold1': 1, 'max_firms_folds_per_firm_fold3': 1, 'own_fold_max_change_oof': 0.0, 'other_folds_max_change_oof': 0.9429720708311928, 'full_table_max_change': 0.8385593744435287}] {'ateco_div_te': {'oof': 0.5677625793419299, 'full_table': 0.6000650379996717}, 'province_te': {'oof': 0.5558902975138811, 'full_table': 0.6012063062668115}, 'region_te': {'oof': 0.524864689052184, 'full_table': 0.5421447151719683}}
+[ 70008s]                                                                          0
+rows_tested                                                            999
+awkward_rows_in_pool                                                 32249
+max_abs_feature_diff_single_vs_batch                                   0.0
+max_abs_pd_diff_single_vs_batch                                        0.0
+max_abs_feature_diff_string_row                                        0.0
+max_abs_pd_diff_string_row                                             0.0
+nan_pattern_mismatches                                                   0
+cat_mismatches                                                           0
+messy_rows_pd                         [0.04009, 0.04009, 0.04009, 0.04009]
+messy_ok                                                              True
+[ 70014s] predict 100k rows secs 6.442329168319702
+[ 70131s] face validity GB-25 file monotone method ['[monotone_constraints_method: intermediate]']
+[ 70277s] face validity GB-20 file monotone method ['[monotone_constraints_method: intermediate]']
+[ 70324s] face validity GB-01 file monotone method ['[monotone_constraints_method: intermediate]']
+[ 70324s]        constrained  violating_rows
+exp                               
+GB-01           20             0.0
+GB-20           35             0.0
+GB-25           36             0.0
+[ 70335s]                                      0         1         2
+exp                              GB-25     GB-20     GB-01
+firms                             3000      3000      3000
+any_step_down_share           0.061667  0.783333  0.046667
+worst_step_logodds           -0.134754 -0.249684 -0.030093
+net_fall_share_0.25x_to_4x       0.025  0.227333  0.026667
+mean_net_logodds_0.25x_to_4x  0.466614  0.451747  0.374887
+mean_step_1x_to_2x            0.158562  0.158145  0.131969
+share_pd_falls_1x_to_2x       0.016667       0.2     0.009
+[ 70350s]       exp             feature  share_top3_raiser  mean_abs_shap
+0   GB-25      asset_turnover             0.2920         0.1645
+1   GB-25  extraord_to_assets             0.1266         0.0944
+2   GB-25     rev_nonpositive             0.0000         0.0000
+3   GB-25              bs_gap             0.0366         0.0406
+4   GB-25     fin_fixed_ratio             0.0004         0.0124
+5   GB-25           tfr_ratio             0.2062         0.1116
+6   GB-20      asset_turnover             0.2826         0.1662
+7   GB-20  extraord_to_assets             0.1252         0.1019
+8   GB-20     rev_nonpositive             0.0000         0.0000
+9   GB-20   interest_to_sales             0.0682         0.0747
+10  GB-20              bs_gap             0.0385         0.0491
+11  GB-20     fin_fixed_ratio             0.0020         0.0184
+12  GB-20           tfr_ratio             0.1980         0.1296
+[ 70350s] LIGHT DONE

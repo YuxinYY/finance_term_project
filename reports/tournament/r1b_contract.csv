@@ -1,0 +1,11 @@
+exp,file,n_rows,expected_rows,dup_row_fold,nan_pd,pd_outside_open_01,missing_test_rows,min_pd,max_pd,extra_rows,PASS
+GB-01,experiments/gbm/GB-01/oot_predictions.parquet,506159,506159,0,0,0,0,0.00021638726520958198,0.8466862194180891,0,True
+CAL-01,experiments/calibration/CAL-01/oot_predictions.parquet,506159,506159,0,0,0,0,0.0003,0.8808092174818271,0,True
+SC-03,experiments/scorecard/SC-03/oot_predictions.parquet,506159,506159,0,0,0,0,0.000201084321886015,0.567384014325866,0,True
+RC-02,experiments/riskcalc/RC-02/oot_predictions.parquet,506159,506159,0,0,0,0,0.00026185196911733153,0.6308757985632792,0,True
+GAM-01,experiments/gam/GAM-01/oot_predictions.parquet,506159,506159,0,0,0,0,0.0003,0.8112767907214957,0,True
+GAM-01+CAL,experiments/gam/GAM-01/oot_predictions_calibrated.parquet,506159,506159,0,0,0,0,0.0003,0.8434194658895102,0,True
+GAM-01raw,experiments/gam/GAM-01/oot_predictions_raw.parquet,506159,506159,0,0,0,0,0.00010582062930871461,0.8397723716141903,0,True
+GAM-02,experiments/gam/GAM-02/oot_predictions.parquet,506159,506159,0,0,0,0,0.0003,0.8255200060177401,0,True
+GAM-02+CAL,experiments/gam/GAM-02/oot_predictions_calibrated.parquet,506159,506159,0,0,0,0,0.0003,0.8546688367073305,0,True
+GAM-02raw,experiments/gam/GAM-02/oot_predictions_raw.parquet,506159,506159,0,0,0,0,1.7987162230362816e-05,0.8529050844771466,0,True

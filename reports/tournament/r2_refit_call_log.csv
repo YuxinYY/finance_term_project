@@ -1,0 +1,33 @@
+exp,fold,phase,call,n,years,oof
+GB-25,1,fit,fit,101261,[2007],
+GB-25,1,fit,transform,101261,[2007],True
+GB-25,1,fit,transform,21563,[2007],False
+GB-25,1,fit,transform,21390,[2007],False
+GB-25,1,fit,fit,144214,[2007],
+GB-25,1,fit,transform,144214,[2007],True
+GB-25,1,fit,transform,144214,[2007],False
+GB-25,1,score_test,transform,161261,[2008],False
+GB-25,2,fit,fit,144214,[2007],
+GB-25,2,fit,transform,144214,[2007],True
+GB-25,2,fit,transform,81167,[2008],False
+GB-25,2,fit,transform,80094,[2008],False
+GB-25,2,fit,fit,305475,"[2007, 2008]",
+GB-25,2,fit,transform,305475,"[2007, 2008]",True
+GB-25,2,fit,transform,305475,"[2007, 2008]",False
+GB-25,2,score_test,transform,170386,[2009],False
+GB-25,3,fit,fit,305475,"[2007, 2008]",
+GB-25,3,fit,transform,305475,"[2007, 2008]",True
+GB-25,3,fit,transform,85773,[2009],False
+GB-25,3,fit,transform,84613,[2009],False
+GB-25,3,fit,fit,475861,"[2007, 2008, 2009]",
+GB-25,3,fit,transform,475861,"[2007, 2008, 2009]",True
+GB-25,3,fit,transform,475861,"[2007, 2008, 2009]",False
+GB-25,3,score_test,transform,174512,[2010],False
+GB-20,1,fit,fit,101261,[2007],
+GB-20,1,fit,transform,101261,[2007],True
+GB-20,1,fit,transform,21563,[2007],False
+GB-20,1,fit,transform,21390,[2007],False
+GB-20,1,fit,fit,144214,[2007],
+GB-20,1,fit,transform,144214,[2007],True
+GB-20,1,fit,transform,144214,[2007],False
+GB-20,1,score_test,transform,161261,[2008],False

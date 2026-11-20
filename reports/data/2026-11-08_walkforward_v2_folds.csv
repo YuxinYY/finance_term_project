@@ -1,0 +1,6 @@
+fold,role,train_years,n_train,train_defaults,train_default_rate,test_year,n_test,test_defaults,test_default_rate,n_test_seen_firm,n_test_new_firm,test_defaults_seen_firm,test_defaults_new_firm,test_default_rate_seen_firm,test_default_rate_new_firm
+1,model_selection,2007,144251,1260,0.008735,2008,161383,1945,0.012052,131538,29845,1609,336,0.012232,0.011258
+2,model_selection,2007-2008,305634,3205,0.010486,2009,170549,2687,0.015755,153363,17186,2432,255,0.015858,0.014838
+3,model_selection,2007-2009,476183,5892,0.012373,2010,174674,2881,0.016494,157924,16750,2604,277,0.016489,0.016537
+4,lockbox,2007-2010,650857,8773,0.013479,2011,184159,2563,0.013917,167667,16492,2356,207,0.014052,0.012552
+final_fit,final_fit (refit of the chosen model; no test rows),2007-2011,835016,11336,0.013576,,,,,,,,,,

@@ -1,0 +1,7 @@
+feature,treatment,auc_feature_alone,auc_feature_plus_flag,auc_on_block_missing_rows
+bank_debt_ratio,share_x_total (adopted),0.5740601733128663,0.5751412695739919,0.5534355014991637
+bank_debt_ratio,sector_median,0.567949629631707,0.5708249111151188,0.46226664830925535
+bank_debt_ratio,NaN rows dropped (tree view),0.5786774116045467,,
+ap_days,share_x_total (adopted),0.5951592692799084,0.5951685386562223,0.6116213580308909
+ap_days,sector_median,0.5844363275938091,0.5864676492047461,0.5376167414435687
+ap_days,NaN rows dropped (tree view),0.5905348752233694,,

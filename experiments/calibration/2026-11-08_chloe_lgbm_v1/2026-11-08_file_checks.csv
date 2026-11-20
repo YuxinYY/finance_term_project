@@ -1,0 +1,4 @@
+file,rows,fs_years,pred_start_dt,defaults,default_rate,dup_id_fs_year,n_features
+features_train.csv,144251,[2007],['2008-06-01'],1260,0.008734774802254404,0,171
+features_validation.csv,161383,[2008],['2009-06-01'],1945,0.01205207487777523,0,171
+features_test.csv,170549,[2009],['2010-06-01'],2687,0.015755002961025864,0,171

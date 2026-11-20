@@ -1,0 +1,31 @@
+Intel MKL WARNING: Support of Intel(R) Streaming SIMD Extensions 4.2 (Intel(R) SSE4.2) enabled only processors has been deprecated. Intel oneAPI Math Kernel Library 2025.0 will require Intel(R) Advanced Vector Extensions (Intel(R) AVX) instructions.
+      exp  n_rows  missing_test_rows  nan_pd  pd_outside_open_01  PASS
+0   SC-01  506159                  0       0                   0  True
+1   SC-02  506159                  0       0                   0  True
+2   SC-03  506159                  0       0                   0  True
+3   SC-04  506159                  0       0                   0  True
+4   RC-01  506159                  0       0                   0  True
+5   RC-02  506159                  0       0                   0  True
+6   RC-03  506159                  0       0                   0  True
+7   GB-01  506159                  0       0                   0  True
+8   GB-02  506159                  0       0                   0  True
+9   GB-03  506159                  0       0                   0  True
+10  GB-04  506159                  0       0                   0  True
+11  GB-05  506159                  0       0                   0  True
+12  GB-06  506159                  0       0                   0  True
+   fs_year    rows  ...  panel_defaults_ok  make_labels_defaults_ok
+0     2007  144528  ...               1379                     1379
+1     2008  161863  ...               2064                     2064
+2     2009  171150  ...               2752                     2752
+3     2010  175399  ...               2968                     2968
+4     2011  184973  ...                  0                     2357
+5     2012  185639  ...                  0                        0
+
+[6 rows x 9 columns]
+L1 deltas {1: 0.0, 2: 0.12869320627768488, 3: 0.21882417733745285}
+       metric  shared_ci_low  fast_ci_low  ...  n_firms  n_boot  max_abs_diff
+0       d_auc       0.014762     0.014762  ...    15000      40  1.040834e-16
+1  d_log_loss      -0.003655    -0.003655  ...    15000      40  2.688821e-17
+
+[2 rows x 11 columns]
+done

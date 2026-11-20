@@ -1,0 +1,16 @@
+exp,file,sha256_12,n_rows,expected_rows,dup_row_fold,nan_pd,pd_outside_open_01,min_pd,max_pd,rows_fs_year_ge_2011,missing_test_rows,extra_rows,PASS
+GB-20,experiments/gbm/GB-20/oot_predictions.parquet,f949543c5999,506159,506159,0,0,0,0.0001377311939654943,0.8477041222660183,0,0,0,True
+GB-25,experiments/gbm/GB-25/oot_predictions.parquet,dcefaa2d9437,506159,506159,0,0,0,0.0001887108064626231,0.8343334369452958,0,0,0,True
+GB-23,experiments/gbm/GB-23/oot_predictions.parquet,523619b1f124,506159,506159,0,0,0,0.00016499591106016725,0.8458425753378332,0,0,0,True
+GB-08,experiments/gbm/GB-08/oot_predictions.parquet,90b8c7e757c4,506159,506159,0,0,0,0.00012139850440179803,0.8715052443688669,0,0,0,True
+GB-08b,experiments/gbm/GB-08b/oot_predictions.parquet,c2f5a11beab8,506159,506159,0,0,0,0.00017296854308950575,0.8823612713311323,0,0,0,True
+GB-09,experiments/gbm/GB-09/oot_predictions.parquet,72cc2aadc211,506159,506159,0,0,0,0.0002257582323216025,0.8485037404998299,0,0,0,True
+GB-10,experiments/gbm/GB-10/oot_predictions.parquet,107341d85258,506159,506159,0,0,0,0.00021638726520958198,0.8466862194180891,0,0,0,True
+GB-11,experiments/gbm/GB-11/oot_predictions.parquet,bf35879cec58,506159,506159,0,0,0,1e-06,0.7927988570913942,0,0,0,True
+GB-01,experiments/gbm/GB-01/oot_predictions.parquet,b226c06eee27,506159,506159,0,0,0,0.00021638726520958198,0.8466862194180891,0,0,0,True
+GB-02,experiments/gbm/GB-02/oot_predictions.parquet,c2e5fbdb7fca,506159,506159,0,0,0,0.00011665091519912164,0.9065620680941928,0,0,0,True
+GAM-01,experiments/gam/GAM-01/oot_predictions.parquet,b7b583d8502e,506159,506159,0,0,0,0.0003,0.8112767907214957,0,0,0,True
+CAL-01,experiments/calibration/CAL-01/oot_predictions.parquet,7071061357f5,506159,506159,0,0,0,0.0003,0.8808092174818271,0,0,0,True
+GB-20+CAL,experiments/gbm/GB-20/oot_predictions_common_cal.parquet,66f5446db4fb,506159,506159,0,0,0,0.0003,0.8752382184587023,0,0,0,True
+GB-25+CAL,experiments/gbm/GB-25/oot_predictions_common_cal.parquet,02df9f3caae4,506159,506159,0,0,0,0.0003,0.862255564011256,0,0,0,True
+GAM-01+CAL,experiments/gam/GAM-01/oot_predictions_calibrated.parquet,6cee15f15e7c,506159,506159,0,0,0,0.0003,0.8434194658895102,0,0,0,True

@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "created": "2026-10-30",
+  "created_by": "data-auditor (src/data/build_panel.py)",
+  "panel": "data/interim/panel.parquet",
+  "row_id": "id * 10000 + fs_year (int64; unique; reproducible from any file with id and fs_year)",
+  "label": {
+    "column": "y",
+    "status_column": "label_status",
+    "start_months": 6,
+    "horizon_months": 12,
+    "data_end": "2013-05-31",
+    "d009_treatment": "primary (def_date as given)"
+  },
+  "design": "expanding window, out-of-time: train on fs_year < test_year (i.e. <= t), test on fs_year == test_year (t+1); only test years whose label windows are fully observed under the primary label",
+  "train_rows": "panel rows with fs_year in train_years AND label_status == 'ok'",
+  "test_rows": "panel rows with fs_year == test_year AND label_status == 'ok' (listed in walkforward_test_rows.parquet)",
+  "firm_seen_in_train": "True if the firm id has at least one panel row (any label_status) with fs_year in train_years",
+  "folds": [
+    {
+      "fold": 1,
+      "train_years": [
+        2007
+      ],
+      "test_year": 2008,
+      "n_train": 144214,
+      "train_defaults": 1379,
+      "train_default_rate": 0.009562,
+      "n_test": 161261,
+      "test_defaults": 2064,
+      "test_default_rate": 0.012799,
+      "n_test_seen_firm": 131426,
+      "n_test_new_firm": 29835,
+      "test_defaults_seen_firm": 1677,
+      "test_defaults_new_firm": 387
+    },
+    {
+      "fold": 2,
+      "train_years": [
+        2007,
+        2008
+      ],
+      "test_year": 2009,
+      "n_train": 305475,
+      "train_defaults": 3443,
+      "train_default_rate": 0.011271,
+      "n_test": 170386,
+      "test_defaults": 2752,
+      "test_default_rate": 0.016152,
+      "n_test_seen_firm": 153214,
+      "n_test_new_firm": 17172,
+      "test_defaults_seen_firm": 2496,
+      "test_defaults_new_firm": 256
+    },
+    {
+      "fold": 3,
+      "train_years": [
+        2007,
+        2008,
+        2009
+      ],
+      "test_year": 2010,
+      "n_train": 475861,
+      "train_defaults": 6195,
+      "train_default_rate": 0.013019,
+      "n_test": 174512,
+      "test_defaults": 2968,
+      "test_default_rate": 0.017007,
+      "n_test_seen_firm": 157775,
+      "n_test_new_firm": 16737,
+      "test_defaults_seen_firm": 2689,
+      "test_defaults_new_firm": 279
+    }
+  ],
+  "sensitivity_folds_not_primary": [
+    {
+      "fold": "S0-2011",
+      "label_column": "y_s0",
+      "status_column": "status_s0",
+      "train_years": [
+        2007,
+        2008,
+        2009,
+        2010
+      ],
+      "test_year": 2011,
+      "n_train": 652940,
+      "train_defaults": 6981,
+      "n_test": 184973,
+      "test_defaults": 2347,
+      "n_test_seen_firm": 168448,
+      "n_test_new_firm": 16525
+    },
+    {
+      "fold": "S3-2011",
+      "label_column": "y_s3",
+      "status_column": "status_s3",
+      "train_years": [
+        2007,
+        2008,
+        2009,
+        2010
+      ],
+      "test_year": 2011,
+      "n_train": 651823,
+      "train_defaults": 8153,
+      "n_test": 184477,
+      "test_defaults": 2408,
+      "n_test_seen_firm": 167965,
+      "n_test_new_firm": 16512
+    }
+  ],
+  "excluded_test_years": {
+    "2011": "label window not fully observed under primary label",
+    "2012": "label window not fully observed under primary label"
+  }
+}

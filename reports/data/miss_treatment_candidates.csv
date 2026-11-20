@@ -1,0 +1,37 @@
+field,n_missing,share,rate_ratio_missing_vs_present,candidate
+eqty_corp_family_tot,1023552,1.0,,drop (100% missing)
+days_rec,740211,0.723178695366723,1.0951236092527794,(a) recompute 365*AR/rev_operating; drop the provided field
+debt_fin_st,122772,0.11994700806602888,1.134435913235058,(b) block-missing indicator (one flag per block) + within-sector median of the component SHARE of debt_st/debt_lt; or (c)
+debt_bank_st,121331,0.11853916557243795,1.1316973846745981,(b) block-missing indicator (one flag per block) + within-sector median of the component SHARE of debt_st/debt_lt; or (c)
+AP_st,120635,0.11785918057900331,1.134191639421662,(b) block-missing indicator (one flag per block) + within-sector median of the component SHARE of debt_st/debt_lt; or (c)
+AP_lt,92244,0.09012145938848246,1.0042562727802782,(b) block-missing indicator (one flag per block) + within-sector median of the component SHARE of debt_st/debt_lt; or (c)
+debt_fin_lt,92068,0.08994950916025761,1.0000731388703068,(b) block-missing indicator (one flag per block) + within-sector median of the component SHARE of debt_st/debt_lt; or (c)
+debt_bank_lt,90971,0.0888777512036516,0.9980886282963898,(b) block-missing indicator (one flag per block) + within-sector median of the component SHARE of debt_st/debt_lt; or (c)
+roe,72937,0.07125871475020322,8.536142024043663,(a) recompute profit/eqty_tot + negative-equity flag; never median-impute (missing = extreme/negative equity)
+margin_fin,40758,0.03982015569311574,9.735932406598327,"(a) reconstruct (100% recoverable, identity exact on 100.0%)"
+prof_financing,656,0.0006409053961107984,1.6364837117830897,(b) or (c); missing is rare
+exp_financing,367,0.00035855530544613267,1.3765957627046854,(b) or (c); missing is rare
+inc_extraord,305,0.00029798192959419747,1.8872376984782202,(b) or (c); missing is rare
+liab_lt,294,0.00028723504033014444,1.6962561710033297,(b) or (c); missing is rare
+HQ_city,277,0.00027062621146751705,4.138761427739342,category 'missing' (unseen-category fallback)
+asst_fixed_fin,237,0.00023154661414368787,1.203108547487791,"(a) reconstruct where inputs present (49% recoverable, exact on 22.0%) else (b)"
+rev_operating,174,0.0001699962483586569,1.6703673018503176,"(a) reconstruct where inputs present (88% recoverable, exact on 100.0%) else (b)"
+asst_intang_fixed,162,0.00015827236916150816,2.1913344333632607,"(a) reconstruct where inputs present (29% recoverable, exact on 19.0%) else (b)"
+liab_lt_emp,162,0.00015827236916150816,2.204948597363877,(b) or (c); missing is rare
+debt_lt,155,0.00015143343962983807,1.8806009216136699,(b) or (c); missing is rare
+asst_tang_fixed,103,0.00010062996310886012,0.689074543863107,"(a) reconstruct where inputs present (17% recoverable, exact on 43.9%) else (b)"
+cf_operations,88,8.597511411242418e-05,1.6702209494211395,"(a) reconstruct where inputs present (7% recoverable, exact on 99.9%) else (b)"
+ebitda,81,7.913618458075408e-05,1.7970897544488953,(b) or (c); missing is rare
+taxes,32,3.126367785906334e-05,0.0,(b) or (c); missing is rare
+roa,27,2.6378728193584693e-05,2.8393276577166557,"(a) reconstruct where inputs present (22% recoverable, exact on 100.0%) else (b)"
+inc_financing,26,2.5401738260488966e-05,0.0,(b) or (c); missing is rare
+COGS,24,2.3447758394297504e-05,0.0,"(a) reconstruct where inputs present (12% recoverable, exact on 100.0%) else (b)"
+prof_operations,21,2.051678859501032e-05,0.0,(b) or (c); missing is rare
+goodwill,21,2.051678859501032e-05,0.0,(b) or (c); missing is rare
+profit,20,1.9539798661914588e-05,0.0,(b) or (c); missing is rare
+cash_and_equiv,17,1.66088288626274e-05,0.0,(b) or (c); missing is rare
+AR,12,1.1723879197148752e-05,0.0,(b) or (c); missing is rare
+wc_net,6,5.861939598574376e-06,0.0,(b) or (c); missing is rare
+debt_st,5,4.884949665478647e-06,0.0,(b) or (c); missing is rare
+eqty_tot,1,9.769899330957295e-07,,(b) or (c); missing is rare
+asst_current,1,9.769899330957295e-07,0.0,(b) or (c); missing is rare

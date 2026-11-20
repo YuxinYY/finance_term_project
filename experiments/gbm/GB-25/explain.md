@@ -1,0 +1,3 @@
+# GB-25 explainability (fold-3 model)
+
+GB-25 differs from GB-20 only in the + constraint on interest_to_sales. Shapes, top drivers and reason-code method otherwise follow `../GB-20/explain.md`; tfr_ratio and encoding readings are unchanged in method (D-123, D-124). Comparison of the two models on the same 20,000 2010 rows: `gb25_shap_deciles.csv`, `gb25_interest_family.csv`, `gb25_top_decile_moves.csv`; monotone check `gb25_monotone.csv`. Summary and decision: `../comparison_r2b.md` section 8, `../decisions_r2b.md` D-130. Wording for a credit officer: "interest cost is high relative to sales", which can now only raise the PD.

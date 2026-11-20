@@ -1,0 +1,181 @@
+{
+  "n_rows": 1023552,
+  "columns_in_file": [
+    "Unnamed: 0",
+    "id",
+    "stmt_date",
+    "HQ_city",
+    "legal_struct",
+    "ateco_sector",
+    "def_date",
+    "fs_year",
+    "asst_intang_fixed",
+    "asst_tang_fixed",
+    "asst_fixed_fin",
+    "asst_current",
+    "AR",
+    "cash_and_equiv",
+    "asst_tot",
+    "eqty_tot",
+    "eqty_corp_family_tot",
+    "liab_lt",
+    "liab_lt_emp",
+    "debt_bank_st",
+    "debt_bank_lt",
+    "debt_fin_st",
+    "debt_fin_lt",
+    "AP_st",
+    "AP_lt",
+    "debt_st",
+    "debt_lt",
+    "rev_operating",
+    "COGS",
+    "prof_operations",
+    "goodwill",
+    "inc_financing",
+    "exp_financing",
+    "prof_financing",
+    "inc_extraord",
+    "taxes",
+    "profit",
+    "days_rec",
+    "ebitda",
+    "roa",
+    "roe",
+    "wc_net",
+    "margin_fin",
+    "cf_operations"
+  ],
+  "na_tokens": {
+    "HQ_city": {
+      "''": 277
+    },
+    "def_date": {
+      "''": 978827
+    },
+    "asst_intang_fixed": {
+      "''": 162
+    },
+    "asst_tang_fixed": {
+      "''": 103
+    },
+    "asst_fixed_fin": {
+      "''": 237
+    },
+    "asst_current": {
+      "''": 1
+    },
+    "AR": {
+      "''": 12
+    },
+    "cash_and_equiv": {
+      "''": 17
+    },
+    "eqty_tot": {
+      "''": 1
+    },
+    "eqty_corp_family_tot": {
+      "''": 1023552
+    },
+    "liab_lt": {
+      "''": 294
+    },
+    "liab_lt_emp": {
+      "''": 162
+    },
+    "debt_bank_st": {
+      "''": 121331
+    },
+    "debt_bank_lt": {
+      "''": 90971
+    },
+    "debt_fin_st": {
+      "''": 122772
+    },
+    "debt_fin_lt": {
+      "''": 92068
+    },
+    "AP_st": {
+      "''": 120635
+    },
+    "AP_lt": {
+      "''": 92244
+    },
+    "debt_st": {
+      "''": 5
+    },
+    "debt_lt": {
+      "''": 155
+    },
+    "rev_operating": {
+      "''": 174
+    },
+    "COGS": {
+      "''": 24
+    },
+    "prof_operations": {
+      "''": 21
+    },
+    "goodwill": {
+      "''": 21
+    },
+    "inc_financing": {
+      "''": 26
+    },
+    "exp_financing": {
+      "''": 367
+    },
+    "prof_financing": {
+      "''": 656
+    },
+    "inc_extraord": {
+      "''": 305
+    },
+    "taxes": {
+      "''": 32
+    },
+    "profit": {
+      "''": 20
+    },
+    "days_rec": {
+      "''": 740211
+    },
+    "ebitda": {
+      "''": 81
+    },
+    "roa": {
+      "''": 27
+    },
+    "roe": {
+      "''": 72937
+    },
+    "wc_net": {
+      "''": 6
+    },
+    "margin_fin": {
+      "''": 40758
+    },
+    "cf_operations": {
+      "''": 88
+    }
+  },
+  "index_cols_dropped": [
+    "Unnamed: 0"
+  ],
+  "numeric_sentinels_found": {
+    "eqty_tot": 3,
+    "prof_operations": 9,
+    "goodwill": 5,
+    "inc_financing": 23,
+    "prof_financing": 31,
+    "inc_extraord": 148,
+    "taxes": 11,
+    "profit": 11,
+    "ebitda": 4,
+    "wc_net": 1,
+    "margin_fin": 4,
+    "cf_operations": 9
+  },
+  "extra_columns": [],
+  "missing_expected_columns": []
+}

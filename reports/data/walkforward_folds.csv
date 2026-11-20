@@ -1,0 +1,4 @@
+fold,test_year,n_train,train_defaults,train_default_rate,n_test,test_defaults,test_default_rate,n_test_seen_firm,n_test_new_firm,test_defaults_seen_firm,test_defaults_new_firm,train_years
+1,2008,144214,1379,0.009562,161261,2064,0.012799,131426,29835,1677,387,2007-2007
+2,2009,305475,3443,0.011271,170386,2752,0.016152,153214,17172,2496,256,2007-2008
+3,2010,475861,6195,0.013019,174512,2968,0.017007,157775,16737,2689,279,2007-2009
