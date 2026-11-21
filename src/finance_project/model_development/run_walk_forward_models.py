@@ -27,8 +27,8 @@ from sklearn.metrics import (
 
 from finance_project.common import project_path, write_json
 from finance_project.model_development.ebm_model import EBMConfig, export_ebm_explanations, fit_ebm
-from finance_project.model_development.lightgbm_model import LightGBMConfig, fit_monotone_lightgbm
-from finance_project.model_development.woe_logistic import WOELogisticConfig, fit_woe_logistic
+from finance_project.model_development.lightgbm_model import LightGBMConfig, fit_monotone_lightgbm, explain_lightgbm
+from finance_project.model_development.logistic import WOELogisticConfig, fit_woe_logistic, LogisticConfig, fit_logistic
 
 
 METADATA_COLUMNS = ("id", "fs_year", "pred_start_dt", "label")
@@ -44,6 +44,9 @@ class RunnerConfig:
     save_figures: bool = True
     calibration: str = "platt"
     random_state: int = 42
+    lightgbm_explanations: bool = True
+    explanation_max_rows: int = 3000
+    explanation_repeats: int = 3
 
 
 @dataclass
@@ -244,20 +247,23 @@ def run_model_for_round(
     model_family: str,
     config: RunnerConfig | None = None,
     woe_config: WOELogisticConfig | None = None,
+    logistic_config: LogisticConfig | None = None,
     lightgbm_config: LightGBMConfig | None = None,
     ebm_config: EBMConfig | None = None,
 ) -> dict[str, Any]:
     """Train one model family for one round and write its artifacts and reports."""
     config = config or RunnerConfig()
-    if model_family not in {"woe_logistic", "lightgbm", "ebm"}:
-        raise ValueError("model_family must be 'woe_logistic', 'lightgbm', or 'ebm'.")
+    if model_family not in {"logistic", "woe_logistic", "lightgbm", "ebm"}:
+        raise ValueError("Unknown model family.")
 
     train, validation, test, feature_columns = load_feature_splits(round_dir)
     x_train, y_train = _features_and_target(train, feature_columns)
     x_validation, y_validation = _features_and_target(validation, feature_columns)
     x_test, y_test = _features_and_target(test, feature_columns)
 
-    if model_family == "woe_logistic":
+    if model_family == "logistic":
+        model, model_details = fit_logistic(x_train, y_train, x_validation, y_validation, logistic_config)
+    elif model_family == "woe_logistic":
         model, model_details = fit_woe_logistic(x_train, y_train, x_validation, y_validation, woe_config)
     elif model_family == "lightgbm":
         model, model_details = fit_monotone_lightgbm(
@@ -279,6 +285,8 @@ def run_model_for_round(
     prediction_path = artifact_dir / "test_predictions.csv"
     validation_prediction_path = artifact_dir / "validation_predictions.csv"
     artifact_dir.mkdir(parents=True, exist_ok=True)
+    if model_family == "logistic":
+        model.marginal_effects(x_train).to_csv(artifact_dir / "marginal_effects.csv", index=False)
     joblib.dump(
         {
             "model_family": model_family,
@@ -303,6 +311,29 @@ def run_model_for_round(
         if model_family == "ebm"
         else {}
     )
+    if model_family == "lightgbm" and config.lightgbm_explanations:
+        ale, importance = explain_lightgbm(model, x_test, y_test, max_rows=config.explanation_max_rows,
+                                            repeats=config.explanation_repeats, random_state=config.random_state)
+        ale_path, importance_path = artifact_dir / "ale.csv", artifact_dir / "permutation_importance.csv"
+        ale.to_csv(ale_path, index=False)
+        importance.to_csv(importance_path, index=False)
+        explanation_paths.update({"ale": str(ale_path), "permutation_importance": str(importance_path)})
+        if config.save_figures:
+            import matplotlib.pyplot as plt
+            figure_dir = project_path(config.figure_dir) / config.run_name / round_name / model_family
+            figure_dir.mkdir(parents=True, exist_ok=True)
+            top = importance.head(5)["feature"].tolist()
+            fig, axes = plt.subplots(len(top), 1, figsize=(8, 3 * len(top)), squeeze=False)
+            for ax, name in zip(axes.flat, top):
+                curve = ale.loc[ale.feature == name]
+                ax.plot(curve.feature_value, curve.ale, marker="o")
+                ax.axhline(0, color="gray", linewidth=0.7)
+                ax.set(xlabel=f"{name} (model input units)", ylabel="Centered ALE (raw PD)", title=name)
+            fig.tight_layout()
+            path = figure_dir / "ale_top_features.png"
+            fig.savefig(path, dpi=150)
+            plt.close(fig)
+            explanation_paths["ale_figure"] = str(path)
     figure_paths = (
         save_discrimination_figures(
             y_test,
@@ -358,7 +389,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-dir", default="data/processed/walk_forward_temporal")
     parser.add_argument(
         "--models",
-        choices=["woe_logistic", "lightgbm", "ebm", "both", "all"],
+        choices=["logistic", "woe_logistic", "lightgbm", "ebm", "both", "all"],
         default="both",
     )
     parser.add_argument(
@@ -386,6 +417,9 @@ def parse_args() -> argparse.Namespace:
         help="Root directory for ROC and precision--recall figures.",
     )
     parser.add_argument("--no-figures", action="store_true", help="Skip writing ROC and PR-curve figures.")
+    parser.add_argument("--no-lightgbm-explanations", action="store_true", help="Skip test-set ALE and permutation importance.")
+    parser.add_argument("--explanation-max-rows", type=int, default=3000)
+    parser.add_argument("--explanation-repeats", type=int, default=3)
     parser.add_argument("--calibration", choices=["none", "platt", "isotonic"], default="platt")
     parser.add_argument("--random-state", type=int, default=42)
     parser.add_argument("--woe-bins", type=int, default=10)
@@ -413,6 +447,9 @@ def main() -> None:
         save_figures=not args.no_figures,
         calibration=args.calibration,
         random_state=args.random_state,
+        lightgbm_explanations=not args.no_lightgbm_explanations,
+        explanation_max_rows=args.explanation_max_rows,
+        explanation_repeats=args.explanation_repeats,
     )
     woe_config = WOELogisticConfig(n_bins=args.woe_bins, smoothing=args.woe_smoothing, random_state=args.random_state)
     lightgbm_config = LightGBMConfig(
@@ -432,8 +469,8 @@ def main() -> None:
         random_state=args.random_state,
     )
     model_families = {
-        "both": ["woe_logistic", "lightgbm"],
-        "all": ["woe_logistic", "lightgbm", "ebm"],
+        "both": ["logistic", "lightgbm"],
+        "all": ["logistic", "lightgbm", "ebm"],
     }.get(args.models, [args.models])
     summaries = []
     for round_number in args.rounds:
@@ -444,6 +481,7 @@ def main() -> None:
                 model_family=model_family,
                 config=runner_config,
                 woe_config=woe_config,
+                logistic_config=LogisticConfig(random_state=args.random_state),
                 lightgbm_config=lightgbm_config,
                 ebm_config=ebm_config,
             )

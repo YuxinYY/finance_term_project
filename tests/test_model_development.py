@@ -8,13 +8,14 @@ from finance_project.model_development.ebm_model import EBMConfig
 from finance_project.model_development.lightgbm_model import (
     LightGBMConfig,
     fit_final_monotone_lightgbm,
+    explain_lightgbm,
 )
 from finance_project.model_development.run_walk_forward_models import (
     RunnerConfig,
     load_feature_splits,
     run_model_for_round,
 )
-from finance_project.model_development.woe_logistic import WOELogisticConfig, fit_woe_logistic
+from finance_project.model_development.logistic import WOELogisticConfig, fit_woe_logistic, LogisticConfig, fit_logistic
 from finance_project.model_development.train_production_best_algo import (
     load_out_of_time_calibration_predictions,
 )
@@ -68,6 +69,32 @@ def test_woe_logistic_keeps_missing_values_finite_and_selects_on_validation():
     assert ((probabilities > 0) & (probabilities < 1)).all()
 
 
+def test_plain_logistic_marginal_effects_and_runner(tmp_path):
+    round_dir = _write_round(tmp_path)
+    train, validation, _, columns = load_feature_splits(round_dir)
+    model, _ = fit_logistic(train[columns], train.label, validation[columns], validation.label,
+                            LogisticConfig(c_values=(1.0,)))
+    effects = model.marginal_effects(train[columns])
+    row = effects.query("feature == 'cash_ratio' and baseline == 'median' and point == 'p50'").iloc[0]
+    baseline = train[columns].median().to_frame().T
+    baseline.loc[:, "cash_ratio"] = row.feature_value
+    step = 1e-5
+    upper, lower = baseline.copy(), baseline.copy()
+    upper["cash_ratio"] += step
+    lower["cash_ratio"] -= step
+    numerical = (model.predict_proba(upper)[0] - model.predict_proba(lower)[0]) / (2 * step)
+    assert row.marginal_effect == pytest.approx(numerical, abs=1e-8)
+    binary = effects.query("feature == 'loss_flag' and baseline == 'mean'").iloc[0]
+    base = train[columns].mean().to_frame().T
+    zero, one = base.copy(), base.copy()
+    zero["loss_flag"], one["loss_flag"] = 0, 1
+    assert binary.marginal_effect == pytest.approx(model.predict_proba(one)[0] - model.predict_proba(zero)[0])
+    run_model_for_round(round_dir=round_dir, model_family="logistic",
+                        config=RunnerConfig(output_dir=str(tmp_path / "artifacts"), run_name="run", save_figures=False),
+                        logistic_config=LogisticConfig(c_values=(1.0,)))
+    assert (tmp_path / "artifacts" / "run" / "round_01" / "logistic" / "marginal_effects.csv").is_file()
+
+
 def test_runner_aligns_absent_dummy_and_writes_woe_artifacts(tmp_path):
     round_dir = _write_round(tmp_path)
     train, validation, test, feature_columns = load_feature_splits(round_dir)
@@ -91,6 +118,25 @@ def test_runner_aligns_absent_dummy_and_writes_woe_artifacts(tmp_path):
     ).is_file()
     assert (tmp_path / "figures" / "test_run" / "round_01" / "woe_logistic" / "roc_curve.png").is_file()
     assert (tmp_path / "figures" / "test_run" / "round_01" / "woe_logistic" / "pr_curve.png").is_file()
+
+
+def test_ale_and_permutation_recover_known_signal():
+    class ToyModel:
+        feature_columns = ["signal", "unused", "flag"]
+        def predict_proba(self, x):
+            return 0.2 + 0.5 * x["signal"].to_numpy() + 0.1 * x["flag"].to_numpy()
+
+    rng = np.random.default_rng(4)
+    x = pd.DataFrame({"signal": np.linspace(0, 1, 200), "unused": rng.normal(size=200),
+                      "flag": np.tile([0, 1], 100)})
+    y = pd.Series((rng.random(200) < ToyModel().predict_proba(x)).astype(int))
+    ale, importance = explain_lightgbm(ToyModel(), x, y, n_bins=4, repeats=5)
+    curve = ale[ale.feature == "signal"]
+    assert curve.ale.iloc[-1] - curve.ale.iloc[0] == pytest.approx(0.5)
+    assert ale.loc[ale.feature == "unused", "ale"].abs().max() == pytest.approx(0)
+    flag = ale[ale.feature == "flag"]
+    assert flag.ale.iloc[1] - flag.ale.iloc[0] == pytest.approx(0.1)
+    assert importance.set_index("feature").loc["unused", "roc_auc_drop_mean"] == pytest.approx(0)
 
 
 def test_lightgbm_runner_uses_validation_for_early_stopping(tmp_path):

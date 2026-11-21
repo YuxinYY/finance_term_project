@@ -163,3 +163,78 @@ def fit_woe_logistic(
         "selected_c": selected_c,
         "woe_bins_requested": float(config.n_bins),
     }
+
+
+@dataclass(frozen=True)
+class LogisticConfig:
+    """Settings for regularized logistic regression on model-ready features."""
+    c_values: tuple[float, ...] = (0.01, 0.1, 1.0, 10.0)
+    max_iter: int = 1_000
+    random_state: int = 42
+
+
+@dataclass
+class LogisticModel:
+    estimator: LogisticRegression
+    selected_c: float
+    feature_columns: list[str]
+
+    def predict_proba(self, features: pd.DataFrame) -> np.ndarray:
+        missing = set(self.feature_columns) - set(features.columns)
+        if missing:
+            raise ValueError(f"Features missing fitted columns: {sorted(missing)}")
+        return self.estimator.predict_proba(features[self.feature_columns])[:, 1]
+
+    def marginal_effects(self, train_features: pd.DataFrame) -> pd.DataFrame:
+        """Raw-model slopes at quantiles and 0-to-1 changes for binary features.
+
+        Other features are held at their training mean or median. Values are in
+        the units supplied to the model (standardized units when preprocessed).
+        """
+        x = train_features[self.feature_columns].astype(float)
+        if not np.isfinite(x.to_numpy()).all():
+            raise ValueError("Marginal effects require finite training features.")
+        coefficients = self.estimator.coef_[0]
+        rows = []
+        for baseline_name, baseline in (("mean", x.mean()), ("median", x.median())):
+            base = baseline.to_numpy(dtype=float)
+            base_logit = float(self.estimator.intercept_[0] + base @ coefficients)
+            for i, feature in enumerate(self.feature_columns):
+                values = x[feature]
+                binary = values.isin([0, 1]).all()
+                if binary:
+                    logit0 = base_logit - coefficients[i] * base[i]
+                    from scipy.special import expit
+                    p0, p1 = expit(logit0), expit(logit0 + coefficients[i])
+                    rows.append(dict(feature=feature, baseline=baseline_name, point="0_to_1",
+                                     feature_value=0.0, predicted_probability=float(p0),
+                                     marginal_effect=float(p1 - p0), effect_type="discrete_change"))
+                else:
+                    from scipy.special import expit
+                    for quantile in (0.05, 0.25, 0.50, 0.75, 0.95):
+                        value = float(values.quantile(quantile))
+                        p = float(expit(base_logit + coefficients[i] * (value - base[i])))
+                        rows.append(dict(feature=feature, baseline=baseline_name, point=f"p{int(quantile * 100):02d}",
+                                         feature_value=value, predicted_probability=p,
+                                         marginal_effect=float(coefficients[i] * p * (1 - p)),
+                                         effect_type="derivative_per_model_unit"))
+        return pd.DataFrame(rows)
+
+
+def fit_logistic(train_features: pd.DataFrame, train_target: pd.Series,
+                 validation_features: pd.DataFrame, validation_target: pd.Series,
+                 config: LogisticConfig | None = None) -> tuple[LogisticModel, dict[str, float]]:
+    """Train on prepared features and select regularization on validation data."""
+    config = config or LogisticConfig()
+    columns = list(train_features.columns)
+    if not np.isfinite(train_features.to_numpy(dtype=float)).all() or not np.isfinite(validation_features[columns].to_numpy(dtype=float)).all():
+        raise ValueError("Logistic regression requires finite model-ready features.")
+    candidates = []
+    for c in config.c_values:
+        estimator = LogisticRegression(C=c, solver="lbfgs", max_iter=config.max_iter, random_state=config.random_state)
+        estimator.fit(train_features[columns], train_target)
+        probabilities = estimator.predict_proba(validation_features[columns])[:, 1]
+        candidates.append((float(roc_auc_score(validation_target, probabilities)),
+                           float(log_loss(validation_target, probabilities, labels=[0, 1])), c, estimator))
+    auc, loss, c, estimator = min(candidates, key=lambda row: (-row[0], row[1], row[2]))
+    return LogisticModel(estimator, c, columns), {"validation_roc_auc": auc, "validation_log_loss": loss, "selected_c": c}

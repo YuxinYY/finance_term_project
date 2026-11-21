@@ -7,6 +7,7 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
+from sklearn.metrics import average_precision_score, roc_auc_score
 
 
 @dataclass(frozen=True)
@@ -58,6 +59,76 @@ class LightGBMModel:
     def predict_proba(self, features: pd.DataFrame) -> np.ndarray:
         aligned = features.reindex(columns=self.feature_columns)
         return self.estimator.predict_proba(aligned)[:, 1]
+
+
+def explain_lightgbm(model: LightGBMModel, features: pd.DataFrame, target: pd.Series,
+                     *, max_rows: int = 3000, n_bins: int = 10,
+                     repeats: int = 3, random_state: int = 42) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Compute centered first-order ALE and permutation importance on a test sample.
+
+    ALE uses raw PD, quantile bins and weighted centering. Importance is the
+    decrease in raw-model ROC AUC and PR AUC; it does not refit the model.
+    """
+    if max_rows < 2 or n_bins < 2 or repeats < 1:
+        raise ValueError("max_rows and n_bins must be at least 2; repeats must be positive.")
+    x = features[model.feature_columns].reset_index(drop=True)
+    y = pd.Series(np.asarray(target)).reset_index(drop=True)
+    if len(x) != len(y) or len(x) == 0 or not np.isfinite(x.to_numpy(dtype=float)).all():
+        raise ValueError("Explanation data must be nonempty, finite and aligned with target.")
+    if not y.isin([0, 1]).all() or y.nunique() != 2:
+        raise ValueError("Permutation importance requires both binary target classes.")
+    if len(x) > max_rows:
+        from sklearn.model_selection import train_test_split
+        indices, _ = train_test_split(np.arange(len(x)), train_size=max_rows,
+                                      stratify=y, random_state=random_state)
+        x, y = x.iloc[indices].reset_index(drop=True), y.iloc[indices].reset_index(drop=True)
+    rng = np.random.default_rng(random_state)
+    baseline = model.predict_proba(x)
+    base_auc, base_pr = roc_auc_score(y, baseline), average_precision_score(y, baseline)
+    ale_rows, importance_rows = [], []
+    for feature in model.feature_columns:
+        values = x[feature].to_numpy(dtype=float)
+        auc_drops, pr_drops = [], []
+        shuffled = x.copy()
+        for _ in range(repeats):
+            shuffled[feature] = rng.permutation(values)
+            prediction = model.predict_proba(shuffled)
+            auc_drops.append(base_auc - roc_auc_score(y, prediction))
+            pr_drops.append(base_pr - average_precision_score(y, prediction))
+        importance_rows.append({"feature": feature, "baseline_roc_auc": base_auc,
+                                "baseline_pr_auc": base_pr, "roc_auc_drop_mean": np.mean(auc_drops),
+                                "roc_auc_drop_std": np.std(auc_drops), "pr_auc_drop_mean": np.mean(pr_drops),
+                                "pr_auc_drop_std": np.std(pr_drops), "repeats": repeats, "sample_rows": len(x)})
+        unique = np.unique(values)
+        if len(unique) == 1:
+            ale_rows.append({"feature": feature, "feature_value": unique[0], "ale": 0.0,
+                             "bin_count": len(x), "kind": "constant"})
+            continue
+        if np.isin(unique, [0, 1]).all():
+            low, high = x.copy(), x.copy()
+            low[feature], high[feature] = 0, 1
+            difference = float(np.mean(model.predict_proba(high) - model.predict_proba(low)))
+            for value in (0, 1):
+                ale_rows.append({"feature": feature, "feature_value": value,
+                                 "ale": difference * (value - np.mean(values)),
+                                 "bin_count": int((values == value).sum()), "kind": "binary"})
+            continue
+        edges = np.unique(np.quantile(values, np.linspace(0, 1, n_bins + 1)))
+        bins = np.clip(np.searchsorted(edges, values, side="left") - 1, 0, len(edges) - 2)
+        lower, upper = x.copy(), x.copy()
+        lower[feature], upper[feature] = edges[bins], edges[bins + 1]
+        differences = model.predict_proba(upper) - model.predict_proba(lower)
+        local, counts = [], []
+        for idx in range(len(edges) - 1):
+            mask = bins == idx
+            counts.append(int(mask.sum()))
+            local.append(float(differences[mask].mean()) if mask.any() else 0.0)
+        cumulative = np.r_[0.0, np.cumsum(local)]
+        center = float(np.average((cumulative[:-1] + cumulative[1:]) / 2, weights=counts))
+        for idx, edge in enumerate(edges):
+            ale_rows.append({"feature": feature, "feature_value": edge, "ale": cumulative[idx] - center,
+                             "bin_count": counts[idx - 1] if idx else 0, "kind": "continuous"})
+    return pd.DataFrame(ale_rows), pd.DataFrame(importance_rows).sort_values("roc_auc_drop_mean", ascending=False)
 
 
 def fit_monotone_lightgbm(
