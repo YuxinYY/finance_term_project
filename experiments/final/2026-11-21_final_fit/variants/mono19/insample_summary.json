@@ -1,0 +1,14 @@
+{
+  "variant": "mono19",
+  "description": "full monotone with cur_debt_ratio released (19 constraints)",
+  "n_constraints": 19,
+  "trees": 310,
+  "anchor_a": 0.0022829648437212237,
+  "mean_raw_pd": 0.013549033757200058,
+  "mean_final_pd": 0.014504368249249694,
+  "insample_auc": 0.885230536808681,
+  "insample_logloss_raw": 0.05250561407169404,
+  "min_pd": 0.0003,
+  "max_pd": 0.9071095615881763,
+  "seconds": 27.4
+}

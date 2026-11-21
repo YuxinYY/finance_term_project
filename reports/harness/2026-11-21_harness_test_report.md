@@ -63,3 +63,11 @@ PASS  same-firm multi-year rows: max change 0.00e+00 when scored alone
    the same venv: 184,973 PDs, mean 1.635%; Spearman(new, old) = 0.962.
 Not tested: Windows or Linux (only macOS available). Runtime code is plain Python (pathlib, pandas) like the 11-16 bundle;
 the LightGBM text model is platform-independent.
+
+## Variant bundles (D-161), same tests in the same clean venv (Python 3.13.7, pinned requirements)
+| variant | constraints | trees | full file (1,023,552 rows) | harness vs training max diff | stress tests |
+|---|---|---|---|---|---|
+| mono20 | 20 | 240 | 1,023,552 PDs, 0 fallbacks, 48.2 s | 2.2e-16 | 25 PASS / 0 FAIL |
+| lit13 | 13 | 200 | 1,023,552 PDs, 0 fallbacks, 28.1 s | 2.2e-16 | 25 PASS / 0 FAIL |
+| mono19 | 19 | 310 | 1,023,552 PDs, 0 fallbacks, 37.1 s | 3.3e-16 | 25 PASS / 0 FAIL |
+Zips: `harness/2026-11-21_variants/2026-11-21_Turquoise_harness_<variant>.zip` (files at the zip root, same layout).

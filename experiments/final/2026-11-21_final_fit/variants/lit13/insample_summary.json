@@ -1,0 +1,14 @@
+{
+  "variant": "lit13",
+  "description": "13 direct-literature constraints (lit13, D-159)",
+  "n_constraints": 13,
+  "trees": 200,
+  "anchor_a": 0.0010909959322402596,
+  "mean_raw_pd": 0.013562953447645996,
+  "mean_final_pd": 0.014506724538206287,
+  "insample_auc": 0.8786390552571718,
+  "insample_logloss_raw": 0.05324833332301559,
+  "min_pd": 0.0003,
+  "max_pd": 0.8892015584204244,
+  "seconds": 20.5
+}

@@ -1,0 +1,14 @@
+{
+  "variant": "mono20",
+  "description": "full monotone, 20 constraints (D-157)",
+  "n_constraints": 20,
+  "trees": 240,
+  "anchor_a": 0.0007750756488272405,
+  "mean_raw_pd": 0.013566686204999446,
+  "mean_final_pd": 0.014505074256770908,
+  "insample_auc": 0.8783738534487668,
+  "insample_logloss_raw": 0.05322280259226936,
+  "min_pd": 0.0003,
+  "max_pd": 0.8972999366900143,
+  "seconds": 27.7
+}

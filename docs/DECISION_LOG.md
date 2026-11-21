@@ -2135,3 +2135,12 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Source(s): assignment Appendix A (R-30); D-072 (R-22 eq. 4), D-075 (R-15 para. 285 by analogy).
 - Risks / what would change our mind: calibration choice made by the orchestrator from ADOPTED D-072/D-075 (KN had not answered the calibration question; switching = one number in preprocessing.json); no out-of-sample metric exists for the final fit by design (FY2011 lockbox is now training data); D-154 construction issues remain (zero/negative denominators).
 - Human reviewer (initials) and date: pending (KN)
+
+### D-161 Alternative final models kept ready (monotone variants), same preprocessing and level recipe as D-160
+- Date / phase / agent: 2026-11-21 / Phase 2 / orchestrator (Claude Code), at KN's request
+- Status: OPEN (alternatives on hand; D-160 unconstrained remains the bundle for the TA test unless KN switches)
+- Decision: fit on all 835,016 FY2007-2011 rows with the D-160 frozen preprocessing, setting and calibration recipe: mono20 (full monotone, D-157, 240 trees), lit13 (13 direct-literature constraints, 200 trees), mono19 (mono20 with cur_debt_ratio released, 310 trees). Tree count rule = mean round-3 best iteration of that configuration (same rule as D-160's 210). Each has its own harness bundle in harness/2026-11-21_variants/.
+- Evidence: `experiments/final/2026-11-21_final_fit/variants/variants_summary.csv` (in-sample only); development comparison in `reports/final_model/2026-11-21_development_results.md` (Sections 4-5: mono vs free +0.0008 AUC; lit13 +0.0009; mono19 +0.0001 vs mono20, validation, noise below ~0.0003).
+- Source(s): D-157, D-158, D-159, D-160.
+- Risks / what would change our mind: mono19's 310 trees come from 2 seed runs only; lit13 is withdrawn as a recommendation (D-159 correction).
+- Human reviewer (initials) and date: pending (KN)
