@@ -1,4 +1,4 @@
 family,anchor,spearman_anchor_vs_family_shap,mean_abs_family_shap
-cash_flow,operating_cash_flow_ratio,-0.84,0.2157
-profitability,roa,-0.757,0.2305
-liquidity,cur_debt_ratio,-0.501,0.1219
+cash_flow,operating_cash_flow_ratio,-0.839,0.2149
+profitability,roa,-0.752,0.2298
+liquidity,cur_debt_ratio,-0.502,0.1219

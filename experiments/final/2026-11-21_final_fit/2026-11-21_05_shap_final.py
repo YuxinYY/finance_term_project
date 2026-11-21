@@ -1,8 +1,8 @@
 """SHAP for the FINAL model (unconstrained LightGBM, 210 trees, 75 features, fit on FY2007-2011).
 
 Exact TreeSHAP via LightGBM pred_contrib (log-odds scale of the raw model; the level calibration is one constant
-shift, so it does not change any contribution). Rows: a fixed random sample of 50,000 of the 835,016 training
-rows (seed 11) + the per-firm example table.
+shift, so it does not change any contribution). Rows: ALL 835,016 training rows (rerun 2026-11-21 after a first
+run on a 50,000-row sample; the sample ranking is kept in 2026-11-21_shap_global_sample50k.csv for comparison).
 Outputs (reports/final_model/): 2026-11-21_shap_global.csv, 2026-11-21_shap_direction.csv,
 2026-11-21_shap_family.csv, 2026-11-21_shap_firm_examples.csv, 2026-11-21_shap_bar.png, 2026-11-21_shap_summary.md
 """
@@ -21,7 +21,7 @@ params = json.loads((HERE / "final_params.json").read_text())
 feats = params["feature_columns"]
 booster = lgb.Booster(model_file=str(HERE / "final_lightgbm.txt"))
 df = pd.read_parquet(HERE / "final_train_features.parquet")
-X = df.sample(50000, random_state=11)
+X = df  # all 835,016 rows
 contrib = booster.predict(X[feats], pred_contrib=True)
 sh = pd.DataFrame(contrib[:, :-1], columns=feats, index=X.index)
 base_value = float(contrib[0, -1])
@@ -71,14 +71,14 @@ try:
     top = g.head(20)[::-1]
     fig, ax = plt.subplots(figsize=(7, 6))
     ax.barh(top.index, top.mean_abs_shap, color="#4C72B0")
-    ax.set_xlabel("mean |SHAP| (log-odds), 50,000 training rows"); ax.set_title("Final model: top 20 drivers")
+    ax.set_xlabel("mean |SHAP| (log-odds), all 835,016 training rows"); ax.set_title("Final model: top 20 drivers")
     fig.tight_layout(); fig.savefig(OUT / "2026-11-21_shap_bar.png", dpi=150)
 except Exception as e:  # plotting is optional
     print("plot skipped:", e)
 
 dis = d[(d.agrees == False)]  # noqa: E712
 md = ["# Final model SHAP summary (2026-11-21)\n",
-      f"Model: unconstrained LightGBM, 210 trees, 75 features, fit on all FY2007-2011 rows. Exact TreeSHAP on 50,000 "
+      f"Model: unconstrained LightGBM, 210 trees, 75 features, fit on all FY2007-2011 rows. Exact TreeSHAP on all 835,016 "
       f"training rows (log-odds; calibration is a constant shift). Base value {base_value:.4f}.\n",
       "\n## Top 15 drivers\n\n", g.head(15).round(4).to_markdown(), "\n",
       "\n## Direction vs expected sign (features with a candidate sign)\n\n",
