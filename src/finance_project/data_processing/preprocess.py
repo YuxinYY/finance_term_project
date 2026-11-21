@@ -27,6 +27,7 @@ import joblib
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import GroupKFold, StratifiedGroupKFold
+from sklearn.preprocessing import StandardScaler
 
 from finance_project.common import project_path, write_json
 
@@ -191,6 +192,7 @@ class PreprocessingConfig:
     target_encoding_smoothing: float = 20.0
     target_encoding_folds: int = 5
     random_state: int = 42
+    normalize: bool = True
 
     def __post_init__(self) -> None:
         if self.feature_mode not in FEATURE_SCHEMA["mode_features"]:
@@ -213,6 +215,8 @@ class PreprocessingArtifacts:
     city_categories: list[str]
     city_reference_category: str
     feature_columns: list[str]
+    scaler: StandardScaler | None = None
+    scaled_columns: list[str] | None = None
 
 
 def _load_notebook_functions(notebook: str) -> dict[str, Any]:
@@ -639,6 +643,19 @@ def _report_feature_quality(
     return frame.loc[finite_rows].copy()
 
 
+def _apply_normalization(frame: pd.DataFrame, artifacts: PreprocessingArtifacts) -> pd.DataFrame:
+    """Apply training-fitted scaling to continuous features, preserving binary flags."""
+    if not artifacts.config.normalize:
+        return frame
+    if artifacts.scaler is None or artifacts.scaled_columns is None:
+        raise ValueError("Preprocessing artifact has no fitted scaler; refit preprocessing.")
+    if frame.empty or not artifacts.scaled_columns:
+        return frame
+    result = frame.copy()
+    result[artifacts.scaled_columns] = artifacts.scaler.transform(result[artifacts.scaled_columns])
+    return result
+
+
 def fit_preprocessor(
     train: pd.DataFrame,
     history: pd.DataFrame,
@@ -701,6 +718,20 @@ def fit_preprocessor(
     )
     transformed = _finalize_features(engineered, artifacts, training=True)
     transformed = _report_feature_quality(transformed, artifacts.feature_columns, stage="fit")
+    if config.normalize:
+        binary = set(_period_binary_features())
+        artifacts.scaled_columns = [
+            col for col in artifacts.feature_columns
+            if col not in binary and not col.startswith(("legal_", "city_"))
+            and col != "no_prior_observation"
+        ]
+        if transformed.empty:
+            raise ValueError("No training rows remain to fit normalization.")
+        if artifacts.scaled_columns:
+            artifacts.scaler = StandardScaler().fit(transformed[artifacts.scaled_columns])
+        else:
+            artifacts.scaler = StandardScaler()
+        transformed = _apply_normalization(transformed, artifacts)
     return transformed, artifacts
 
 
@@ -718,7 +749,8 @@ def transform_with_preprocessor(
     _require_columns(history, include_target=False, config=config)
     engineered = _build_features(anchors, history, artifacts.sector_medians, config)
     transformed = _finalize_features(engineered, artifacts, training=False)
-    return _report_feature_quality(transformed, artifacts.feature_columns, stage="transform")
+    transformed = _report_feature_quality(transformed, artifacts.feature_columns, stage="transform")
+    return _apply_normalization(transformed, artifacts)
 
 
 def bootstrap_minority_class(
@@ -806,6 +838,7 @@ def _fit_command(args: argparse.Namespace) -> None:
         target_encoding_smoothing=args.target_encoding_smoothing,
         target_encoding_folds=args.target_encoding_folds,
         random_state=args.random_state,
+        normalize=not args.no_normalization,
     )
     transformed, artifacts = fit_preprocessor(_read_csv(args.input), _read_csv(args.history), config)
     bootstrap_summary: dict[str, int | float | bool] = {"applied": False}
@@ -891,6 +924,7 @@ def parse_args() -> argparse.Namespace:
     fit.add_argument("--target-encoding-smoothing", type=float, default=20.0)
     fit.add_argument("--target-encoding-folds", type=int, default=5)
     fit.add_argument("--random-state", type=int, default=42)
+    fit.add_argument("--no-normalization", action="store_true", help="Keep continuous features on their original scales.")
     fit.add_argument(
         "--bootstrap-minority",
         action="store_true",

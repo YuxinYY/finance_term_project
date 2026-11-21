@@ -1,5 +1,6 @@
 # Tests CSV cleanup and leakage-safe, ID-disjoint walk-forward dataset splits.
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -177,7 +178,7 @@ def test_preprocessor_fits_on_train_and_uses_decay_weighted_history_for_transfor
         ],
         ignore_index=True,
     )
-    config = PreprocessingConfig(target_encoding_folds=2, random_state=7)
+    config = PreprocessingConfig(target_encoding_folds=2, random_state=7, normalize=False)
 
     transformed_train, artifacts = fit_preprocessor(train, history, config)
     transformed_test = transform_with_preprocessor(test, history, artifacts)
@@ -272,7 +273,7 @@ def test_firm_year_feature_mode_uses_direct_anchor_values_not_decay_aggregation(
         ],
         ignore_index=True,
     )
-    config = PreprocessingConfig(feature_mode="firm_year", target_encoding_folds=2, random_state=7)
+    config = PreprocessingConfig(feature_mode="firm_year", target_encoding_folds=2, random_state=7, normalize=False)
 
     _, artifacts = fit_preprocessor(train, history, config)
     transformed_test = transform_with_preprocessor(test, history, artifacts)
@@ -281,6 +282,24 @@ def test_firm_year_feature_mode_uses_direct_anchor_values_not_decay_aggregation(
     assert "no_prior_observation" not in transformed_test.columns
     assert transformed_test.loc[0, "cur_asst_ratio"] == pytest.approx(30 / 100)
     assert transformed_test.loc[0, "neg_bs_flag"] == 0
+
+
+def test_normalization_uses_training_parameters_and_keeps_binary_flags():
+    train = pd.DataFrame([
+        _raw_row(1, 2007, 0, sector=10, current_assets=10),
+        _raw_row(2, 2007, 1, sector=10, current_assets=20),
+        _raw_row(3, 2007, 0, sector=20, current_assets=30),
+        _raw_row(4, 2007, 1, sector=20, current_assets=40),
+    ])
+    test = pd.DataFrame([_raw_row(5, 2008, 0, sector=10, current_assets=50)])
+    config = PreprocessingConfig(feature_mode="firm_year", target_encoding_folds=2)
+    transformed_train, artifacts = fit_preprocessor(train, train.drop(columns="label"), config)
+    transformed_test = transform_with_preprocessor(test, test.drop(columns="label"), artifacts)
+    assert transformed_train["cur_asst_ratio"].mean() == pytest.approx(0)
+    assert transformed_train["cur_asst_ratio"].std(ddof=0) == pytest.approx(1)
+    assert transformed_test["cur_asst_ratio"].iloc[0] == pytest.approx((0.5 - 0.25) / np.std([0.1, 0.2, 0.3, 0.4]))
+    assert set(transformed_train["neg_bs_flag"]).issubset({0, 1})
+    assert "neg_bs_flag" not in artifacts.scaled_columns
 
 
 def test_bootstrap_minority_class_targets_requested_ratio_without_changing_features():
