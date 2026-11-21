@@ -1,0 +1,81 @@
+# Monotone sign table, 75 features (2026-11-20)
+
+Rule: constrain only if economic sign AND FY2007 training data agree (see script docstring). Constrained: 20 of 75. Candidates dropped for disagreement: 7.
+
+| feature                     |   candidate | source                                                | fy2007_check                                                            | agrees   |   constraint |
+|:----------------------------|------------:|:------------------------------------------------------|:------------------------------------------------------------------------|:---------|-------------:|
+| size                        |          -1 | FEATURE_SPEC log_assets                               | decile DR rho=-0.37; DR d1..d10 0.9 0.9 0.9 0.8 0.9 0.8 1.0 1.0 0.7 0.8 | False    |            0 |
+| equity_ratio                |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.98; DR d1..d10 3.3 1.1 0.9 0.8 0.7 0.6 0.4 0.4 0.3 0.3 | True     |           -1 |
+| debt_to_eqty                |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| st_debt_share               |           1 | old LightGBM bundle (team)                            | decile DR rho=+0.13; DR d1..d10 0.2 0.7 0.8 1.1 0.9 1.1 0.9 0.0 0.0 3.1 | False    |            0 |
+| lt_debt_to_capital          |           1 | old LightGBM bundle (team)                            | decile DR rho=+0.35; DR d1..d10 0.7 0.0 3.1 0.2 0.5 0.5 0.6 0.7 0.9 1.4 | False    |            0 |
+| bank_debt_conc              |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| tangible_asset_ratio        |          -1 | FEATURE_SPEC tangible_ratio                           | decile DR rho=-0.95; DR d1..d10 1.2 1.4 1.3 1.0 0.9 0.7 0.8 0.6 0.5 0.3 | True     |           -1 |
+| goodwill_ratio              |           1 | FEATURE_SPEC intangible_ratio                         | decile DR rho=-0.89; DR d1..d10 2.1 1.1 0.7 1.0 0.8 1.0 0.6 0.6 0.4 0.5 | False    |            0 |
+| cash_ratio                  |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.96; DR d1..d10 1.1 1.0 1.0 1.1 1.0 0.9 0.8 0.7 0.6 0.5 | True     |           -1 |
+| cash_to_financing_exp_ratio |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.95; DR d1..d10 1.2 1.3 1.1 1.1 0.9 0.7 0.9 0.6 0.5 0.5 | True     |           -1 |
+| cur_asst_ratio              |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| AR_ratio                    |           1 | old LightGBM bundle (team)                            | decile DR rho=+0.83; DR d1..d10 0.6 0.6 0.6 0.7 0.6 0.8 0.9 1.2 1.4 1.3 | True     |            1 |
+| payables_ratio              |           1 | old LightGBM bundle (team)                            | decile DR rho=+0.75; DR d1..d10 0.5 0.5 0.7 0.9 1.0 1.0 1.0 0.9 0.9 1.5 | True     |            1 |
+| wc_ratio                    |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.71; DR d1..d10 1.9 1.1 1.0 0.8 0.7 0.7 0.6 0.5 0.7 0.7 | True     |           -1 |
+| cur_debt_ratio              |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.88; DR d1..d10 1.0 1.7 1.3 1.1 0.7 0.7 0.5 0.6 0.6 0.4 | True     |           -1 |
+| quick_ratio                 |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.73; DR d1..d10 0.8 1.0 1.4 1.5 1.0 0.8 0.9 0.5 0.4 0.4 | True     |           -1 |
+| asset_turnover              |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| roa                         |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.90; DR d1..d10 3.6 0.8 0.8 0.7 0.5 0.6 0.5 0.6 0.4 0.3 | True     |           -1 |
+| roe                         |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| op_margin                   |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.88; DR d1..d10 2.7 1.6 0.7 0.7 0.6 0.5 0.5 0.4 0.3 0.5 | True     |           -1 |
+| net_prof_margin             |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.88; DR d1..d10 2.7 1.7 1.0 0.8 0.7 0.4 0.4 0.3 0.3 0.5 | True     |           -1 |
+| profit                      |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| ebitda                      |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| COGS                        |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| exp_financing               |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| int_coverage                |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.85; DR d1..d10 3.0 1.4 1.0 0.8 0.6 0.4 0.4 0.3 0.3 0.4 | True     |           -1 |
+| financing_expense_ratio     |           1 | old LightGBM bundle (team)                            | decile DR rho=+0.93; DR d1..d10 0.6 0.5 0.5 0.6 0.7 0.7 0.7 0.9 1.1 2.3 | True     |            1 |
+| ebitda_to_debt              |          -1 | old LightGBM bundle (team)                            | decile DR rho=-1.00; DR d1..d10 3.4 1.0 0.9 0.8 0.7 0.6 0.5 0.3 0.3 0.2 | True     |           -1 |
+| operating_cash_flow_margin  |          -1 | FEATURE_SPEC ebitda_margin (cash analogue)            | decile DR rho=-0.87; DR d1..d10 3.0 1.6 0.9 0.7 0.5 0.4 0.4 0.3 0.4 0.5 | True     |           -1 |
+| cash_interest_coverage      |          -1 | FEATURE_SPEC interest_coverage (cash analogue)        | decile DR rho=-0.95; DR d1..d10 3.5 1.1 1.0 0.7 0.5 0.5 0.4 0.4 0.3 0.4 | True     |           -1 |
+| operating_cash_flow_ratio   |          -1 | old LightGBM bundle (team)                            | decile DR rho=-0.94; DR d1..d10 3.8 0.9 0.9 0.7 0.6 0.5 0.4 0.3 0.3 0.4 | True     |           -1 |
+| operating_cash_flow_to_debt |          -1 | FEATURE_SPEC cfo_to_debt                              | decile DR rho=-0.97; DR d1..d10 3.7 0.9 1.0 0.7 0.6 0.5 0.4 0.3 0.2 0.3 | True     |           -1 |
+| neg_bs_flag                 |           1 | FEATURE_SPEC neg_equity                               | DR 1:0.0054 vs 0:0.0088, z=-1.0                                         | False    |            0 |
+| neg_pl_flag                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| debt_detail_missing         |           1 | FEATURE_SPEC debt_split_missing                       | DR 1:0.0085 vs 0:0.0088, z=-0.3                                         | False    |            0 |
+| loss_flag                   |           1 | old LightGBM bundle (team)                            | DR 1:0.0180 vs 0:0.0048, z=+24.6                                        | True     |            1 |
+| zero_total_debt             |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_debt_st                |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_debt_lt                |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_bank_debt              |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_cash                   |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_asst_current           |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_ar                     |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_rev_operating          |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_AP_st                  |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_wc_net                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_ebitda                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_prof_operations        |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_profit                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_cf_operations          |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| zero_exp_financing          |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| ateco_sector_te             |           1 | old LightGBM bundle (team)                            | decile DR rho=+0.68; DR d1..d10 0.5 0.6 0.8 0.8 1.1 0.6 1.1 1.2 0.6 1.4 | False    |            0 |
+| legal_SAU                   |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| legal_SPA                   |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| legal_SRS                   |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| legal_SRU                   |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Basilicata             |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Calabria               |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Campania               |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Emilia-Romagna         |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Friuli-Venezia Giulia  |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Lazio                  |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Liguria                |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Marche                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Molise                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Piemonte               |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Puglia                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Sardegna               |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Sicilia                |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Toscana                |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Trentino-Alto Adige    |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Umbria                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Unknown                |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Valle d'Aosta          |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |
+| city_Veneto                 |           0 | no economic sign (level, dummy, zero-flag, ambiguous) |                                                                         |          |            0 |

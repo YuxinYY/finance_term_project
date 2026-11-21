@@ -1,0 +1,12 @@
+issue,column,formula,what_happens,rows,share_pct,default_rate_pct,vs_average,median_percentile_of_value,feature_median_value
+1a zero denominator,int_coverage,ebitda / exp_financing,"exp_financing = 0, so the ratio becomes EBITDA in euros",28790,3.45,1.34,1.0,97.5,13018.5
+1b zero denominator,cash_interest_coverage,cf_operations / exp_financing,"exp_financing = 0, so the ratio becomes cf_operations in euros",28790,3.45,1.34,1.0,97.8,27620.5
+1c zero denominator,cash_to_financing_exp_ratio,cash_and_equiv / exp_financing,"exp_financing = 0, so the ratio becomes cash in euros",28790,3.45,1.34,1.0,97.9,92234.0
+1d zero denominator,op_margin,prof_operations / rev_operating,"rev_operating = 0, so the ratio becomes operating profit in euros",25613,3.07,1.88,1.4,1.7,-10600.0
+1e zero denominator,AR_ratio,AR / rev_operating,"rev_operating = 0, so the ratio becomes receivables in euros",25613,3.07,1.88,1.4,98.3,139110.0
+1f zero denominator,quick_ratio,cash_and_equiv+AR / debt_st,"debt_st = 0, so the ratio becomes cash + AR in euros",1384,0.17,2.17,1.6,99.9,247444.0
+2a negative revenue,op_margin,prof_operations / rev_operating,rev_operating < 0 and operating loss: two negatives give a positive margin,1594,0.19,10.54,7.8,99.4,2.3001112937927246
+2b negative revenue,net_prof_margin,profit / rev_operating,rev_operating < 0 and net loss: two negatives give a positive margin,1690,0.2,9.7,7.1,98.4,2.1911332607269287
+2c negative revenue,operating_cash_flow_margin,cf_operations / rev_operating,rev_operating < 0 and negative cash earnings: positive margin,1621,0.19,10.06,7.4,98.3,2.2258594036102295
+3a negative equity,lt_debt_to_capital,debt_lt / debt_lt+eqty_tot,"debt_lt + eqty_tot < 0 (equity more negative than LT debt): ratio <= 0, next to firms with no LT debt",11636,1.39,18.33,13.5,14.3,0.0
+3b negative equity,debt_to_eqty,debt_st+debt_lt / eqty_tot,"eqty_tot < 0: debt/equity turns negative, i.e. 'less levered' than a debt-free firm",31269,3.74,11.05,8.1,1.9,-37.040401458740234

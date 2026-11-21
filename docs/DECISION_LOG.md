@@ -2070,3 +2070,68 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Source(s): walk-forward design R-33 Sec. 4.8 p. 23; re-using test years R-07 Sec. 3.2 p. 95; prior shift R-22 eq. (4).
 - Risks / what would change our mind: the early-stopping set is in-time (checks overfitting, not drift); FY2011 was looked at before (D-087 correction, D-152), so the lockbox is clean for model choice but not for the level rule; audit B1-B5 feature definitions are unchanged in these files (D-154 still open).
 - Human reviewer (initials) and date: pending (KN, Chloe, Desmond)
+
+### D-156 Chloe's 11.20 75-feature files are clean for Phase-1 development (resolves D-153 for these files)
+- Date / phase / agent: 2026-11-20 / final model, Phase 1 / orchestrator (Claude Code)
+- Status: ADOPTED (development use only; not for the final fit or the harness)
+- Decision: Use `~/Downloads/non-aggregated feature data sets (75 features 11.20)/round 0{1,2,3}` as the train / validation / test files for the grid search. They are per-round fit/transform files; the final fit needs one imputation table fitted on all FY2007-2011 (not yet built).
+- Alternatives considered: regenerate the round files ourselves from raw (rejected for Phase 1: checks below pass, and it costs hours).
+- Business reason: honest out-of-time numbers for both uses of the PD need files where nothing is fitted on the evaluation year.
+- Evidence (checks run 2026-11-20 in session; scripts inline in the AI-use log entry):
+  - Labels: all 835,016 rows match `data/interim/2026-11-08_panel_s5.parquet` (0 mismatches, 0 rows missing); default counts per year = D-151.
+  - No duplicate (id, fs_year); 0 row overlap between train / validation / test in every round; years train < validation < test.
+  - Imputation: rows with raw `AP_st` blank have `payables_ratio` equal to the training-window sector median in 99.7-99.9% of rows and to their own year's median in 0.0% (all 6 validation/test files).
+  - Target encoding: mean `ateco_sector_te` in validation/test = training default rate (e.g. round 3: 0.0123 vs own-year 0.0165).
+  - Method G absent: 0 of 91 rows with blank `debt_lt` and previous-year 0 are 0 (`lt_debt_to_capital` median 0.23). `roe` = profit / eqty_tot x 100 on 100% of blank-roe rows.
+  - Code location: G removal and roe recompute = teammate/project-update `6bf455a` (Desmond, 2026-11-18, notebooks/features/02_missing_values.ipynb, schema 1.3.0); train-only fit/transform = `preprocess.py` `fit_preprocessor` / `transform_with_preprocessor` (since `533c8e1`, 2026-11-02); VIF on round-1 train only = `7949207` (Chloe, 2026-11-20).
+- Source(s): assignment Appendix A (no holdout-estimated parameters); CLAUDE.md rule 5.
+- Risks / what would change our mind: schema 1.3.0 lists `roe_negative` as a model feature but it is not among the 80 VIF inputs (ask Chloe which code built the files, needed for the Phase-2 parity check). `roe` reaches -1.2e7 when equity <= 0 (D-154 #4). `tests/final_submission_build/missing_rules.py` on the branch still contains Method G.
+- Human reviewer (initials) and date: pending (KN, Chloe)
+
+### D-157 Monotone sign table for the 75 features: constrain only where economics and FY2007 data agree
+- Date / phase / agent: 2026-11-20 / final model, Phase 1 / orchestrator (Claude Code), rule by KN ("if the signs are confused keep it unconstrained")
+- Status: ADOPTED for the grid (KN review of the table pending)
+- Decision: 20 of 75 features constrained. Candidate sign = old LightGBM bundle (19 signs) or FEATURE_SPEC (8 mapped); kept only if FY2007 training data agree (decile default-rate Spearman with the expected sign and |rho| >= 0.7; flags |z| >= 2). FY2007 = round-1 train, inside every round's training window, so the check uses no evaluation year.
+- Dropped candidates (unconstrained): size (rho -0.37), st_debt_share (+0.13), lt_debt_to_capital (+0.35), goodwill_ratio (expected +, data -0.89), neg_bs_flag (z -1.0), debt_detail_missing (z -0.3), ateco_sector_te (+0.68, just under the bar).
+- Alternatives considered: copy the old bundle's 19 signs unchecked; constrain every candidate.
+- Business reason: reason codes must have the economic sign (CLAUDE.md rule 8), but a constraint that fights the data only costs accuracy.
+- Evidence: `experiments/gbm/2026-11-20_grid75/sign_table.md`, `sign_table.csv`, script `2026-11-20_01_sign_table.py`.
+- Source(s): FEATURE_SPEC expected signs; D-050/D-051; assumption for the 0.7 / z 2 thresholds.
+- Risks / what would change our mind: one year (1,260 defaults) decides; st_debt_share and lt_debt_to_capital fail partly because of the zero-denominator rule (D-154 #1, #3).
+- Human reviewer (initials) and date: pending (KN)
+
+### D-158 Phase-1 selection rule (fixed before results): AUC selects, log loss checks the level
+- Date / phase / agent: 2026-11-20 / final model, Phase 1 / orchestrator (Claude Code), rule by KN
+- Status: ADOPTED (rule); results pending (grid running)
+- Decision: For each mode (monotone, unconstrained): winner = highest mean validation AUC over rounds 1-3 (early stopping on validation AUC); settings within 0.001 AUC of the best are tied and the tie goes to the lowest mean validation log loss, then the simpler setting. Level check: PDs anchored to the training default rate (training data only), validation obs/pred should be 0.8-1.25. Monotone is the default; unconstrained only if its paired-bootstrap dAUC interval excludes 0 and none of its top-10 drivers moves > 50% against the expected sign (as D-051). Test years reported only; round-3 test = FY2011 lockbox.
+- Grid: num_leaves {7,15,31,63} x min_child_samples {100,300,1000,3000} x feature_fraction {0.5,0.8,1.0} x bagging_fraction {0.7,1.0} x lambda_l2 {0,10,50} = 288 settings x 2 modes x 3 rounds; learning_rate 0.05 fixed; 2.75 h budget, seeded random order so a partial run is a uniform sample.
+- Alternatives considered: select on log loss only (same purpose, but the ranking use is the approve/decline decision); select on test years (rejected: lockbox).
+- Business reason: approve/decline depends on ordering (AUC); pricing depends on the level, which calibration sets afterwards and log loss checks.
+- Evidence (`experiments/gbm/2026-11-20_grid75/2026-11-20_grid75_report.md`, `grid_summary.csv`, `level_check.csv`, `bootstrap_free_minus_mono.csv`, `seed_check.csv`): 110 of 288 settings completed in both modes and all rounds (uniform random sample, 2.75 h). Both modes pick the same setting: num_leaves 31, min_child_samples 3000, feature_fraction 0.5, bagging 1.0, lambda_l2 10 (tie bands 21 free / 46 mono). Mean validation AUC free 0.8529 / mono 0.8519; log loss 0.05994 / 0.06002. Paired bootstrap free - mono: dAUC +0.00134 [+0.00044, +0.00232], dLL -0.00012 [-0.00020, -0.00004]; significant only in round 3 (+0.0029). Seed/full-binning re-run: dAUC +0.00081 (free ahead 9/9), dLL -0.00011. Top-10 drivers: no sign contradiction > 50% (gate passes); outside top 10 the free model runs against sign on quick_ratio 83%, int_coverage 75%, operating_cash_flow_margin 71%. Level: validation obs/pred 1.22-1.46 for both modes (raw = training-rate anchored), so both FAIL the 0.8-1.25 check: the training rate under-predicts the 2008-2010 downturn; the final level rule (D-150 tau) is the fix. Pre-set rule outcome: UNCONSTRAINED. Orchestrator flag: the gain is small and the three wrong-signed ratios conflict with CLAUDE.md rule 8 (D-051 kept monotone for a larger gain); KN to decide. Per-round best_iter (lr 0.05, refit): free 106/174/205, mono 183/252/232.
+- Source(s): D-051, D-053, D-071; assumption for the 0.001 tie band (about the D-051 bootstrap half-width).
+- Risks / what would change our mind: a winner that fails the level check or is among the worst in the 2009 round.
+- Human reviewer (initials) and date: pending (KN)
+
+### D-159 Monotone constraint set for the final 75-feature LightGBM: full monotone recommended (lit13 withdrawn)
+- Date / phase / agent: 2026-11-21 / final model, Phase 1 / orchestrator (Claude Code)
+- Status: OPEN (recommendation = full monotone D-157, optionally freeing cur_debt_ratio; lit13 withdrawn after the quick_ratio literature check, see Correction below; KN to decide)
+- Decision (proposed): constrain only the 13 features with a direct verified sign and no documented non-monotone shape: equity_ratio, cash_ratio, wc_ratio, roa, op_margin, net_prof_margin, payables_ratio, financing_expense_ratio, ebitda_to_debt, operating_cash_flow_ratio, operating_cash_flow_to_debt, operating_cash_flow_margin, loss_flag. Free quick_ratio, cur_debt_ratio, int_coverage, cash_interest_coverage (documented non-monotone shapes), AR_ratio (R-05 Exh. 4.7), cash_to_financing_exp_ratio and tangible_asset_ratio (no verified source for the PD sign).
+- Alternatives considered: full monotone (20, D-157); unconstrained (pre-set D-158 rule outcome); mono minus the 3 violators (data-driven, rejected as selected on the conflict itself); fix zero/negative-denominator construction then constrain (D-154; post-TA).
+- Business reason: per-firm reason codes on the top drivers must carry the economic sign (CLAUDE.md rule 8; R-30 p. 3 face validity), and each constraint is itself an assumption that needs a source (R-05 p. 28 "guidelines rather than rules").
+- Evidence (`reports/features/2026-11-21_sign_table_monotone_decision.md`; `experiments/gbm/2026-11-20_grid75/ablation_summary.csv`, `shap_sign_check.csv`, `sign_evidence*.csv`): 6-fit mean validation AUC mono 0.85142, free 0.85217 (+0.00075), lit13 0.85235 (+0.00093); log loss 0.06011 / 0.05998 / 0.06003. Releasing quick_ratio alone recovers +0.00074; releasing equity_ratio / AR_ratio / wc_ratio / roa lowers AUC (constraints regularise). Real-row SHAP (20k FY2007-09 rows): free model value-vs-SHAP Spearman +0.12 for operating_cash_flow_ratio (gain rank 2) and -0.46 for roa (rank 3) vs -0.90 / -0.95 monotone; family sums keep the economic sign in the free model (-0.83 cash flow, -0.75 profitability). Every constrained ratio has the expected univariate sign in each of FY2007, 2008, 2009 (|rho| 0.66-1.00).
+- Source(s): R-01 p. 13-14, Appendix p. 34; R-05 pp. 28, 33-37, 47, Exh. 4.4, 4.7, 5.2-5.4; R-32 pdf pp. 10-13; R-33 pp. 11-14; R-60 pp. 383-393; R-61 pp. 12-13, 24-27; R-66 p. 9-11; R-48 Sec. 1; R-30 p. 3 (all VERIFIED; pages from docs/2026-11-16_feature_literature_claims.md).
+- Risks / what would change our mind: lit13 was defined after the free-vs-mono sign check (not fully blind); not separately grid-tuned; quick_ratio reason code can be reversed (explain as receivables share, R-61 pp. 26-27); differences are small relative to seed noise (about 0.0005 per round).
+- Human reviewer (initials) and date: pending (KN)
+- **Correction 2026-11-21 (orchestrator, after KN asked for the quick_ratio literature):** re-reading the local PDFs, the quick ratio has DIRECT verified support for sign "-" (R-01 p. 13; R-33 p. 11 Table 2; R-05 p. 54 "strongly negatively related to default", p. 36, p. 61 weight 7%). The non-monotone caveats are weaker and mostly about the current ratio (R-32 pdf p. 10; R-05 p. 36; R-61 pp. 26-27; R-66 p. 11). So lit13's freeing of quick_ratio is NOT literature-faithful; the "receivables effect" reading of its reversal is an inference, not a source. A literature-faithful set constrains quick_ratio (cost about 0.0007 AUC per the ablation), which makes full monotone (D-157) close to the literature-faithful choice. Ledger: report Section 3.1a.
+- **KN decision 2026-11-21: unconstrained model for the final fit and the TA test bundle** (recommendation was full monotone; trade-off documented in the report). Implemented in D-160.
+
+### D-160 Final model and TA test bundle (2026-11-21): unconstrained LightGBM on all FY2007-2011 rows, frozen 1.3.0 preprocessing, prior-shift level
+- Date / phase / agent: 2026-11-21 / Phase 2, final fit + harness / orchestrator (Claude Code)
+- Status: ADOPTED for the second TA test run (KN to review before sending)
+- Decision: preprocessing = teammate/project-update @ 7949207 (schema 1.3.0, Method G removed, VIF 75 features) fitted once on all 835,016 labelled FY2007-2011 rows; LightGBM unconstrained, D-158 setting, 210 fixed trees; level = D-072 prior shift to tau 1.4641% with D-075 floor/cap; fallback PD = tau. Runtime = Chloe's final_submission_build with the D-152 robustness fixes re-applied (warn-only checksums, missing columns imputed, last-resort fallback) plus a one-call predict(df).
+- Alternatives considered: Chloe's Platt on pooled OOT predictions (rejected, double-counts the level: D-150, D-053 alt. b); early stopping for the tree count (impossible without a validation set; 210 = round-3 best iterations 205-215).
+- Business reason: one frozen model fitted on everything the bank knows at decision time; the harness scores each applicant from its own statement only.
+- Evidence: `reports/harness/2026-11-21_harness_test_report.md`; parity with Chloe's files (75/75 validation features); harness = training pipeline to 2.8e-16 on 1,023,552 rows; 25/25 stress tests; 46.5 s full file; requirements.txt identical to the 11-16 bundle Richard ran.
+- Source(s): assignment Appendix A (R-30); D-072 (R-22 eq. 4), D-075 (R-15 para. 285 by analogy).
+- Risks / what would change our mind: calibration choice made by the orchestrator from ADOPTED D-072/D-075 (KN had not answered the calibration question; switching = one number in preprocessing.json); no out-of-sample metric exists for the final fit by design (FY2011 lockbox is now training data); D-154 construction issues remain (zero/negative denominators).
+- Human reviewer (initials) and date: pending (KN)

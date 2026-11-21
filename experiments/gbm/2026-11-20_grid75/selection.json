@@ -1,0 +1,19 @@
+{
+  "choice": "free",
+  "settings": {
+    "free": "nl31_mcs3000_ff0.5_bf1.0_l210.0",
+    "mono": "nl31_mcs3000_ff0.5_bf1.0_l210.0"
+  },
+  "best_iter": {
+    "free": [
+      106,
+      174,
+      205
+    ],
+    "mono": [
+      183,
+      252,
+      232
+    ]
+  }
+}

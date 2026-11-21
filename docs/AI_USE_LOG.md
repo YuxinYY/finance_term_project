@@ -73,3 +73,19 @@ Roger grades whether AI use was "appropriate and additive (or just a shortcut)".
 ## 2026-11-18 v3 split files and Colab feature-importance notebook
 - AI-generated (Claude Code): `src/data/2026-11-18_build_colab_splits.py`, `data/splits/2026-11-18_walkforward_v3_company_random.json`, `experiments/importance/2026-11-18_feature_importance_colab.ipynb`, the upload folder `~/Downloads/2026-11-18_turquoise_colab/` (data, README), decision entry D-155. The preprocessing itself is the team's code (Chloe/Desmond), run unchanged except Method G switched off for transformed rows. The ATECO lookup was copied from the harness bundle after a checksum match (9cc6d08...). The notebook was smoke-tested locally on 10% of firms.
 - Human verifier: pending (KN to run the notebook on Colab and check REPORT.md; Chloe/Desmond to confirm the split and preprocessing use).
+
+## 2026-11-20 Calibration slide prompt (for Claude in Chrome on the team deck)
+- AI-generated: `reports/final/2026-11-20_calibration_slide_prompt.md` (Claude Code). Theme spec read from the Google Slides API (fonts, sizes, positions, accent line #8900E1 6 pt). Numbers copied from `experiments/calibration/2026-11-08_chloe_lgbm_v1/2026-11-08_metrics_fy2009.csv`, `2026-11-08_bootstrap_vs_b_platt.csv`, `2026-11-08_params_for_production.json`, `2026-11-08_production_level_candidates.csv`, `2026-11-08_rates_by_cohort_her_window.csv`, D-074, D-150. Citation R-22 (VERIFIED).
+- Human verifier: pending (KN to check the slide numbers against the CSVs; Chloe to confirm the shipped harness uses the prior shift τ = 1.464%).
+
+## 2026-11-20 Audit of Chloe's 11.20 feature files, sign table, Phase-1 grid (Claude Code)
+- AI-generated: data checks (labels vs s5 panel, overlap, imputation-median source test via payables_ratio, Method-G test via lt_debt_to_capital, roe recompute test), git trace of teammate/project-update commits 6bf455a / 533c8e1 / 7949207, `experiments/gbm/2026-11-20_grid75/` scripts (sign table, grid, selection), decision entries D-156..D-158.
+- Human verifier: pending (KN to review the sign table and the grid report; Chloe to confirm the code that built the 11.20 files and the missing roe_negative).
+
+## 2026-11-21 Sign table with sources, conflict analysis, constraint ablation (Claude Code)
+- AI-generated: `reports/features/2026-11-21_sign_table_monotone_decision.md` (sign table with verified-source pages copied from the 11-16 claim map, conflict anatomy, SHAP real-row check, ablation, decision options), scripts `experiments/gbm/2026-11-20_grid75/2026-11-21_05..07_*.py`, D-159. Synthetic examples in the report and in chat were run and their printed output recorded.
+- Human verifier: pending (KN to open each cited page before it goes on a slide; KN to decide D-159).
+
+## 2026-11-21 Final fit and TA test bundle (Claude Code)
+- AI-generated: `experiments/final/2026-11-21_final_fit/` scripts 01-04 (feature build + parity, final training, bundle build, harness-vs-training parity), edits to the teammate runtime (`harness/2026-11-21_turquoise_submission/inference.py`, `harness.py`, `README.md`), `reports/harness/2026-11-21_stress_test.py` (adapted from 11-16), test report, D-160. Teammate code vendored unchanged from project-update @ 7949207.
+- Human verifier: pending (KN to read the README and test report before sending to the TA; Chloe to confirm the runtime edits).

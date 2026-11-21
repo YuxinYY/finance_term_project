@@ -1,0 +1,7 @@
+mode,family,members,anchor,spearman_anchor_vs_family_shap,mean_abs_family_shap
+free,cash_flow,operating_cash_flow_ratio + operating_cash_flow_to_debt + operating_cash_flow_margin + cash_interest_coverage,operating_cash_flow_ratio,-0.827,0.187
+free,profitability,roa + op_margin + net_prof_margin + ebitda_to_debt + int_coverage,roa,-0.749,0.22
+free,liquidity,quick_ratio + cur_debt_ratio + cash_ratio + wc_ratio,cur_debt_ratio,-0.476,0.11
+mono,cash_flow,operating_cash_flow_ratio + operating_cash_flow_to_debt + operating_cash_flow_margin + cash_interest_coverage,operating_cash_flow_ratio,-0.924,0.219
+mono,profitability,roa + op_margin + net_prof_margin + ebitda_to_debt + int_coverage,roa,-0.834,0.278
+mono,liquidity,quick_ratio + cur_debt_ratio + cash_ratio + wc_ratio,cur_debt_ratio,-0.765,0.134

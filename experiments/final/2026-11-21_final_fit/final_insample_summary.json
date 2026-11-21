@@ -1,0 +1,17 @@
+{
+  "rows": 835016,
+  "defaults": 11336,
+  "train_rate": 0.013575787769336156,
+  "mean_raw_pd": 0.013562726036361574,
+  "anchor_a": 0.0011065830173350702,
+  "delta": 0.07661186857560587,
+  "tau": 0.014640906163076605,
+  "mean_final_pd": 0.014509824659055268,
+  "insample_auc": 0.8836389104712918,
+  "insample_logloss_raw": 0.052639855204315765,
+  "min_pd": 0.0003,
+  "max_pd": 0.8813937396906222,
+  "share_at_floor": 0.00018562518562518563,
+  "seconds": 31.2,
+  "note": "in-sample numbers are for sanity only; out-of-sample evidence is the Phase-1 walk-forward (D-158)"
+}

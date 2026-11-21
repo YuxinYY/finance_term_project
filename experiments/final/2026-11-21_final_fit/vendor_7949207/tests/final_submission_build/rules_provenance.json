@@ -1,0 +1,7 @@
+{
+  "notebooks/features/01_flag_anomalies.ipynb": "e9d313a131db8000024a0087a8e1c224796daa3ee14495c01f9aae94b71b7d48",
+  "notebooks/features/02_missing_values.ipynb": "4b3cd38fb5b00e29cfc3553f27a69ce2b0f7e56182373ef72dcdbc25f53be2b6",
+  "src/finance_project/data_processing/preprocess.py": "01afad244e9a76b54ca388019237e848c9f19a87e0f67552964790937245935b",
+  "config/feature_schema.json": "10e76aa1a9d01171add5fa9d7a80bf6db58645d718aa3fbd7771b3208cb8b81a",
+  "data/interim/ateco_sector_english.csv": "9cc6d0847f332098d8c6f40bbb8d9e33ce6b71ab3d4f047992a553ab51b63da0"
+}
