@@ -1,0 +1,15 @@
+{
+  "variant": "mono20_nogw",
+  "description": "full monotone (20 constraints, D-157) without goodwill_ratio, 74 features (D-164)",
+  "n_features": 74,
+  "n_constraints": 20,
+  "trees": 230,
+  "anchor_a": 0.0011225599252036764,
+  "mean_raw_pd": 0.013562583345703432,
+  "mean_final_pd": 0.014506737390788001,
+  "insample_auc": 0.8777802040309897,
+  "insample_logloss_raw": 0.053290025498259085,
+  "min_pd": 0.0003,
+  "max_pd": 0.8901315271717604,
+  "seconds": 11.6
+}

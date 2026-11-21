@@ -1,0 +1,90 @@
+model,feature,intended_sign,sign_source,constrained_in_mono20,rows_in_extreme_deciles,conflicts,conflict_share_of_extreme_rows,visible_top5,visible_top5_artefact_negative_denominator,visible_top5_share_of_all_firms,mean_abs_shap_when_visible
+free (D-160),quick_ratio,-1,sign table (D-157),True,167004,163860,0.9811741036142847,42890,0,0.05136428523525298,0.19207076510820062
+free (D-160),goodwill_ratio,1,sign table (D-157),False,167004,138379,0.8285969198342554,8501,0,0.010180643245159373,0.1276887755436394
+free (D-160),debt_to_eqty,1,assumption (amount / no verified sign),False,167004,35119,0.21028837632631553,5409,5409,0.006477720187397607,0.291736097722483
+free (D-160),cash_interest_coverage,-1,sign table (D-157),True,167004,50263,0.3009688390697229,3354,0,0.0040166895005604684,0.15328037475244313
+free (D-160),cash_ratio,-1,sign table (D-157),True,167004,6313,0.03780148978467582,1428,0,0.001710146871437194,0.1827720917295657
+free (D-160),size,-1,sign table (D-157),False,167004,5771,0.03455605853752006,899,0,0.0010766260766260766,0.14534134268237314
+free (D-160),int_coverage,-1,sign table (D-157),True,167004,40296,0.24128763382912985,266,0,0.0003185567701696734,0.1447595384463423
+free (D-160),lt_debt_to_capital,1,sign table (D-157),False,167004,98532,0.5899978443630093,184,184,0.0002203550590647365,0.18237512924509247
+free (D-160),operating_cash_flow_margin,-1,sign table (D-157),True,167004,55645,0.33319561208114773,121,0,0.0001449074029719191,0.128157625869995
+free (D-160),ateco_sector_te,1,sign table (D-157),False,167004,5190,0.031077099949701804,48,0,5.748392845167039e-05,0.1253412802293168
+free (D-160),operating_cash_flow_ratio,-1,sign table (D-157),True,167004,25647,0.1535711719479773,33,0,3.952020081052339e-05,0.12468215286244301
+free (D-160),roa,-1,sign table (D-157),True,167004,18102,0.10839261335057843,18,0,2.1556473169376397e-05,0.121131355989423
+free (D-160),payables_ratio,1,sign table (D-157),True,167004,5349,0.032029172953941226,7,0,8.383072899201931e-06,0.11618398313437692
+free (D-160),wc_ratio,-1,sign table (D-157),True,167004,34841,0.20862374553902902,4,0,4.790327370972532e-06,0.09826111042968919
+free (D-160),ebitda,-1,assumption (amount / no verified sign),False,167004,22674,0.1357692031328591,4,0,4.790327370972532e-06,0.12779233499629344
+free (D-160),equity_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+free (D-160),st_debt_share,1,sign table (D-157),False,167004,0,0.0,0,0,0.0,0.0
+free (D-160),tangible_asset_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+free (D-160),cash_to_financing_exp_ratio,-1,sign table (D-157),True,167004,2918,0.01747263538597878,0,0,0.0,0.0
+free (D-160),AR_ratio,1,sign table (D-157),True,167004,431,0.0025807765083471056,0,0,0.0,0.0
+free (D-160),cur_debt_ratio,-1,sign table (D-157),True,167004,1328,0.007951905343584585,0,0,0.0,0.0
+free (D-160),op_margin,-1,sign table (D-157),True,167004,1431,0.008568657038154775,0,0,0.0,0.0
+free (D-160),net_prof_margin,-1,sign table (D-157),True,167004,185,0.001107757898014419,0,0,0.0,0.0
+free (D-160),financing_expense_ratio,1,sign table (D-157),True,167004,1464,0.008766257095638427,0,0,0.0,0.0
+free (D-160),ebitda_to_debt,-1,sign table (D-157),True,167004,4089,0.02448444348638356,0,0,0.0,0.0
+free (D-160),operating_cash_flow_to_debt,-1,sign table (D-157),True,167004,154,0.000922133601590381,0,0,0.0,0.0
+free (D-160),neg_bs_flag,1,sign table (D-157),False,4096,0,0.0,0,0,0.0,0.0
+free (D-160),debt_detail_missing,1,sign table (D-157),False,118044,990,0.008386703263189996,0,0,0.0,0.0
+free (D-160),loss_flag,1,sign table (D-157),True,288963,10633,0.03679709859047698,0,0,0.0,0.0
+free (D-160),profit,-1,assumption (amount / no verified sign),False,167004,20,0.00011975761059615339,0,0,0.0,0.0
+mono20,ebitda,-1,assumption (amount / no verified sign),False,167004,115422,0.6911331465114608,6348,0,0.007602249537733408,0.25968076155675435
+mono20,debt_to_eqty,1,assumption (amount / no verified sign),False,167004,99894,0.5981533376446073,2933,2896,0.003512507544765609,0.2682446631671015
+mono20,goodwill_ratio,1,sign table (D-157),False,167004,80818,0.48392852865799624,2150,0,0.0025748009618977363,0.11267984285936047
+mono20,profit,-1,assumption (amount / no verified sign),False,167004,18706,0.11200929319058227,695,0,0.0008323193807064775,0.22943818737805527
+mono20,size,-1,sign table (D-157),False,167004,4626,0.02769993533089028,487,0,0.0005832223574159058,0.13544105425524655
+mono20,lt_debt_to_capital,1,sign table (D-157),False,167004,89865,0.5381008838111662,357,356,0.0004275367178592985,0.1620735816795976
+mono20,ateco_sector_te,1,sign table (D-157),False,167004,9368,0.05609446480323824,45,0,5.3891182923440985e-05,0.126404757400327
+mono20,equity_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,st_debt_share,1,sign table (D-157),False,167004,10,5.9878805298076695e-05,0,0,0.0,0.0
+mono20,tangible_asset_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,cash_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,cash_to_financing_exp_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,AR_ratio,1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,payables_ratio,1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,wc_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,cur_debt_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,quick_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,roa,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,op_margin,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,net_prof_margin,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,int_coverage,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,financing_expense_ratio,1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,ebitda_to_debt,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,operating_cash_flow_margin,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,cash_interest_coverage,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,operating_cash_flow_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,operating_cash_flow_to_debt,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20,neg_bs_flag,1,sign table (D-157),False,4096,0,0.0,0,0,0.0,0.0
+mono20,debt_detail_missing,1,sign table (D-157),False,118044,1577,0.013359425299041036,0,0,0.0,0.0
+mono20,loss_flag,1,sign table (D-157),True,288963,0,0.0,0,0,0.0,0.0
+mono20_nogw,debt_to_eqty,1,assumption (amount / no verified sign),False,167004,105281,0.6304100500586812,28869,25187,0.03457299021815151,0.2944985483506384
+mono20_nogw,ebitda,-1,assumption (amount / no verified sign),False,167004,95739,0.5732736940432565,1066,0,0.0012766222443641798,0.19225300931220707
+mono20_nogw,size,-1,sign table (D-157),False,167004,6112,0.03659792579818447,620,0,0.0007425007425007425,0.1432540275736644
+mono20_nogw,profit,-1,assumption (amount / no verified sign),False,167004,9675,0.0579327441258892,374,0,0.00044789560918593175,0.21692966571087702
+mono20_nogw,lt_debt_to_capital,1,sign table (D-157),False,167004,93192,0.5580225623338363,134,112,0.00016047596692757982,0.152239781889713
+mono20_nogw,ateco_sector_te,1,sign table (D-157),False,167004,7463,0.04468755239395464,9,0,1.0778236584688198e-05,0.09544716360916652
+mono20_nogw,equity_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,st_debt_share,1,sign table (D-157),False,167004,92,0.0005508850087423056,0,0,0.0,0.0
+mono20_nogw,tangible_asset_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,cash_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,cash_to_financing_exp_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,AR_ratio,1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,payables_ratio,1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,wc_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,cur_debt_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,quick_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,roa,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,op_margin,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,net_prof_margin,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,int_coverage,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,financing_expense_ratio,1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,ebitda_to_debt,-1,sign table (D-157),True,167004,68,0.0004071758760269215,0,0,0.0,0.0
+mono20_nogw,operating_cash_flow_margin,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,cash_interest_coverage,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,operating_cash_flow_ratio,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,operating_cash_flow_to_debt,-1,sign table (D-157),True,167004,0,0.0,0,0,0.0,0.0
+mono20_nogw,neg_bs_flag,1,sign table (D-157),False,4096,0,0.0,0,0,0.0,0.0
+mono20_nogw,debt_detail_missing,1,sign table (D-157),False,118044,57,0.0004828707939412423,0,0,0.0,0.0
+mono20_nogw,loss_flag,1,sign table (D-157),True,288963,0,0.0,0,0,0.0,0.0

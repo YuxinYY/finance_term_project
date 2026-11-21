@@ -1,4 +1,4 @@
-# The submission model (mono20): full documentation, from raw data to frozen harness
+# The submission model (mono20, 74-feature version): full documentation, from raw data to frozen harness
 
 Team Turquoise (Kiet Nguyen, Desmond Peng, Chloe (Yuxin) Li). DS-GA 3001, Banca Massiccia 1-year PD model.
 Written 2026-11-21.
@@ -6,6 +6,13 @@ Written 2026-11-21.
 This is the single reference for how the submitted model was built. It follows the pipeline in order, from
 Roger's raw file to the frozen harness bundle, and records every decision, the alternatives considered, the
 evidence and the sources. It also covers what was tried and rejected along the way.
+
+> **Update 2026-11-21 (D-164): goodwill_ratio dropped.** The submitted model is **mono20_nogw**: the mono20 model
+> without goodwill_ratio. That is 74 features, the same 20 constraints, the same setting and level recipe, and 230 trees.
+> The raw `goodwill` field behaves like value added, not accounting goodwill (D-010, D-091), so the feature cannot
+> be explained under its name. Cost in the walk-forward: -0.00054 validation AUC, within noise. Where a number
+> below differs between mono20 and mono20_nogw, both are given or the 74-feature number is marked.
+> Reason-code analysis: `reports/final_model/2026-11-21_reason_codes_and_goodwill.md`.
 
 **Rules this document follows**
 - Every number is copied from a file produced by code; the file is named next to it.
@@ -23,7 +30,7 @@ evidence and the sources. It also covers what was tried and rejected along the w
 - 3 Labels: what "default in the next 12 months" means here
 - 4 How the project got here: tournament history (Oct 30 - Nov 16)
 - 5 Data cleaning: anomaly flag and missing values
-- 6 Features: from 80 candidates to 75
+- 6 Features: from 80 candidates to 75, then 74 in the model
 - 7 Monotone sign table: which 20 features are constrained and why
 - 8 Development: walk-forward grid, monotone vs unconstrained, ablation
 - 9 Level calibration: from raw scores to PDs
@@ -45,16 +52,16 @@ evidence and the sources. It also covers what was tried and rejected along the w
 | Item | Value | Where |
 |---|---|---|
 | Model | LightGBM gradient-boosted trees, binary log-loss objective, **20 monotone constraints** | Sections 7, 10 |
-| Trees / leaves | 240 trees, up to 31 leaves (mean 30.6) | `reports/final_model/2026-11-21_mono20_summary.json` |
-| Hyperparameters | learning rate 0.05, num_leaves 31, min_child_samples 3000, feature_fraction 0.5, no bagging, lambda_l2 10, monotone method "intermediate" | `experiments/final/2026-11-21_final_fit/variants/mono20/params.json` |
-| Features | 75: 32 financial ratios and amounts, 19 flags, industry target encoding, 4 legal-form and 19 region dummies | Section 6 |
+| Trees / leaves | **230 trees** (mono20: 240), up to 31 leaves (mean 30.5) | `reports/final_model/2026-11-21_mono20_nogw_summary.json` |
+| Hyperparameters | learning rate 0.05, num_leaves 31, min_child_samples 3000, feature_fraction 0.5, no bagging, lambda_l2 10, monotone method "intermediate" | `experiments/final/2026-11-21_final_fit/variants/mono20_nogw/params.json` |
+| Features | **74**: 31 financial ratios and amounts, 19 flags, industry target encoding, 4 legal-form and 19 region dummies (goodwill_ratio dropped, D-164) | Section 6 |
 | Training data | all labelled FY2007-2011 firm-years: **835,016 rows, 11,336 defaults (1.3576%)** | D-151 |
 | Label | default between 1 Jun of year t+1 and 31 May of year t+2, for a statement of year t | D-151 |
 | Level | prior shift to **tau = 1.4641%**, PD floor 0.03%, cap 99% | D-072, D-073, D-075, D-150 |
-| Out-of-sample evidence (development, same setting) | validation AUC 0.8519 (mean of FY2008-10), test AUC 0.8469 / 0.8394 / 0.8561 on FY2009 / 2010 / 2011 | Section 8 |
+| Out-of-sample evidence (development, same setting) | mono20: validation AUC 0.8519 (mean of FY2008-10), test AUC 0.8469 / 0.8394 / 0.8561 on FY2009 / 2010 / 2011. 74-feature version: validation 0.85087, test mean 0.84675 (2 seeds) | Section 8, `experiments/gbm/2026-11-20_grid75/drop_goodwill/summary.csv` |
 | Cost of the constraints | about 0.001 AUC vs unconstrained (0.00075 ablation; 0.00134 grid bootstrap) | Section 8 |
-| In-sample (sanity only) | AUC 0.8784; mean PD 1.4505%; PD from 0.03% to 89.7% | Section 11 |
-| Harness | one call `predict(df)` → n×1 PDs; 1,023,552 rows in 48 s; equals the training pipeline to 2.2e-16; 25/25 stress tests | Section 13 |
+| In-sample (sanity only) | AUC 0.8778 (mono20 0.8784); mean PD 1.4507%; PD from 0.03% to 89.0% | Section 11 |
+| Harness | one call `predict(df)` → n×1 PDs; 1,023,552 rows in 30 s; equals the training pipeline to 1.7e-16; 25/25 stress tests | Section 13 |
 | Why monotone (D-163) | every constrained reason code follows credit logic; the unconstrained model reverses the quick ratio, against R-01 p. 13, R-33 p. 11, R-05 p. 54 | Section 12 |
 
 ---
@@ -220,7 +227,7 @@ frozen in `artifacts/preprocessing.json` (`medians`). The harness only looks the
 
 ---
 
-## 6. Features: from 80 candidates to 75
+## 6. Features: from 80 candidates to 75, then 74 in the model
 
 Code: `feature_rules.make_period_features` (schema 1.3.0) and `preprocess.fit_preprocessor`.
 
@@ -265,7 +272,8 @@ Operating cash flow (`cf_operations`) is profit + depreciation and amortisation 
 
 ### 6.4 Features the model never uses
 14 of the 75 features are never chosen for a split in mono20, so their SHAP is 0
-(`2026-11-21_mono20_summary.json`):
+(`2026-11-21_mono20_summary.json`). In the 74-feature submission model it is 15 (the same list plus city_Basilicata;
+`2026-11-21_mono20_nogw_summary.json`):
 - 9 zero_* flags (zero_ar, zero_asst_current, zero_cf_operations, zero_debt_st, zero_ebitda, zero_prof_operations,
   zero_profit, zero_total_debt, zero_wc_net)
 - neg_bs_flag
@@ -273,6 +281,17 @@ Operating cash flow (`cf_operations`) is profit + depreciation and amortisation 
 - city_Molise, city_Unknown, city_Valle d'Aosta
 
 They cost nothing at prediction time and were kept to preserve the frozen feature contract.
+
+### 6.5 goodwill_ratio removed from the model (D-164)
+- **The field is not goodwill.** The raw field `goodwill` is not accounting goodwill: it behaves like value added
+  (EBITDA ≤ goodwill on 99.99% of rows, median €420,706; goodwill − EBITDA behaves like personnel cost on four
+  checks; D-010, D-091).
+- **So it cannot be explained under its name.** Its candidate sign (+, more intangibles = more risk) was
+  contradicted by the data (−0.89, D-157), as value added would predict. Our own feature library had rejected it
+  for the same reason.
+- **How it was removed.** The team code still computes it; the final model's `feature_columns` no longer include
+  it, so the model has 74 inputs.
+- **Cost:** −0.00054 validation AUC, within noise (Section 8.7).
 
 ---
 
@@ -398,10 +417,22 @@ constraints act as regularisation and improve AUC.
 - mono19 (cur_debt_ratio released): +0.0001, which is noise.
 - mono_m3: its released features were chosen on validation, so its score is biased.
 
+### 8.7 Dropping goodwill_ratio (D-164)
+Same protocol as the ablation (3 rounds × 2 seeds; `experiments/gbm/2026-11-20_grid75/drop_goodwill/`):
+
+| | Validation AUC | Validation log loss | Test AUC |
+|---|---|---|---|
+| mono20 (75) | 0.85142 | 0.06011 | 0.84674 |
+| without goodwill_ratio (74) | 0.85087 | 0.06015 | 0.84675 |
+
+Paired bootstrap ΔAUC per round: −0.00053 [−0.00190, +0.00075], +0.00002 [−0.00123, +0.00122],
+−0.00047 [−0.00152, +0.00045]. Every interval includes zero.
+
 ### 8.6 Tree count for the final fit
 - No validation set exists once all years are training data, so early stopping is impossible.
 - **Rule:** the mean of round-3 best iterations for this configuration over the refit and seed runs (232, 214, 245,
-  260), rounded to 10 → **240 trees**.
+  260), rounded to 10 → **240 trees**. For the 74-feature submission model, the same rule (243, 216) gives
+  **230 trees**.
 - The unconstrained model got 210 by the same rule.
 - Source: `2026-11-21_06_train_variants.py` docstring.
 
@@ -447,10 +478,13 @@ Scripts: `experiments/final/2026-11-21_final_fit/2026-11-21_01_build_features.py
    (`parity_round03.csv`). So the development numbers in Section 8 describe the same code that built the final
    model.
 4. **Model.** LightGBM with the parameters in Section 0 plus the 20-feature constraint vector. Also: max_bin 255,
-   binning sample 10^7 (full-data bins), seed 42, deterministic, row-wise. 240 trees, no early stopping.
+   binning sample 10^7 (full-data bins), seed 42, deterministic, row-wise. No early stopping.
+   - mono20: 75 features, 240 trees (`2026-11-21_06_train_variants.py`).
+   - **Submission (D-164): 74 features (goodwill_ratio dropped), 230 trees** (`2026-11-21_10_train_mono20_nogw.py`;
+     tree rule: mean round-3 best iteration 243, 216).
 5. **Level.** `a` solved by root-finding so the mean in-sample PD equals 1.3576%; delta from tau; floor and cap.
 6. **Packaging.** Model file, params, manifest with SHA-256 checksums, README, and a zip
-   (`harness/2026-11-21_variants/2026-11-21_Turquoise_harness_mono20.zip`).
+   (`harness/2026-11-21_variants/2026-11-21_Turquoise_harness_mono20_nogw.zip`; mono20's own zip is kept alongside).
 
 **Software:** trained with lightgbm 4.7.0 / pandas 2.3.3. The harness uses the pinned lightgbm 4.6.0 / pandas
 3.0.1 / numpy 2.1.3 / scipy 1.16.3 and scores identically.
@@ -459,82 +493,85 @@ Scripts: `experiments/final/2026-11-21_final_fit/2026-11-21_01_build_features.py
 
 ## 11. What the final model looks like
 
-All numbers in this section: `experiments/final/2026-11-21_final_fit/2026-11-21_08_mono20_profile.py` →
-`reports/final_model/2026-11-21_mono20_*.csv` and `2026-11-21_mono20_summary.json`. They are in-sample, all 835,016
-rows, using exact TreeSHAP.
+Submission model **mono20_nogw** (74 features, D-164). All numbers in this section come from
+`experiments/final/2026-11-21_final_fit/2026-11-21_08_mono20_profile.py mono20_nogw` →
+`reports/final_model/2026-11-21_mono20_nogw_*.csv` and `2026-11-21_mono20_nogw_summary.json`. They are in-sample,
+all 835,016 rows, using exact TreeSHAP. The same files exist for mono20 (`2026-11-21_mono20_*`); the numbers
+differ only slightly.
 
 ### 11.1 PD distribution
 
 | Percentile | 0% | 1% | 10% | 25% | 50% | 75% | 90% | 99% | 99.9% | 100% |
 |---|---|---|---|---|---|---|---|---|---|---|
-| PD | 0.030% | 0.036% | 0.086% | 0.19% | **0.57%** | 1.32% | 2.79% | 15.9% | 66.3% | 89.7% |
+| PD | 0.030% | 0.037% | 0.088% | 0.20% | **0.57%** | 1.33% | 2.74% | 16.4% | 65.7% | 89.0% |
 
-- Mean PD 1.4505%.
-- 0.47% of rows sit at the floor.
+- Mean PD 1.4507%.
+- 0.40% of rows sit at the floor.
 - The median firm's PD (0.57%) is well below the mean because risk is concentrated in a small group.
 
 ### 11.2 Ranking power in-sample (PD deciles)
-Source: `2026-11-21_mono20_grade_table_insample.csv`.
+Source: `2026-11-21_mono20_nogw_grade_table_insample.csv`.
 
 | PD decile | PD range | Mean PD | Observed default rate | Share of all defaults |
 |---|---|---|---|---|
 | 1 (safest) | 0.03% - 0.09% | 0.06% | 0.02% | 0.1% |
-| 5 | 0.38% - 0.57% | 0.47% | 0.31% | 2.3% |
-| 8 | 1.11% - 1.62% | 1.34% | 1.11% | 8.2% |
-| 9 | 1.62% - 2.79% | 2.10% | 1.99% | 14.6% |
-| 10 (riskiest) | 2.79% - 89.7% | 8.30% | 8.56% | **63.0%** |
+| 5 | 0.39% - 0.57% | 0.48% | 0.31% | 2.3% |
+| 8 | 1.12% - 1.61% | 1.34% | 1.12% | 8.2% |
+| 9 | 1.61% - 2.74% | 2.07% | 2.02% | 14.9% |
+| 10 (riskiest) | 2.74% - 89.0% | 8.29% | 8.54% | **62.9%** |
 
 - The riskiest 10% of firms hold 63% of defaults.
 - Mean PD sits above the observed rate in deciles 1-8 because tau (1.464%) is set above the training rate
   (1.358%). This is the deliberate level hedge.
 
 ### 11.3 Level by year (in-sample)
-Source: `2026-11-21_mono20_level_by_year_insample.csv`.
+Source: `2026-11-21_mono20_nogw_level_by_year_insample.csv`.
 
 | fs_year | Observed | Mean PD |
 |---|---|---|
-| 2007 | 0.87% | 1.36% |
+| 2007 | 0.87% | 1.37% |
 | 2008 | 1.21% | 1.54% |
 | 2009 | 1.58% | 1.56% |
 | 2010 | 1.65% | 1.37% |
 | 2011 | 1.39% | 1.41% |
 
 - The model has no macro input, so year-to-year swings in the default rate are not tracked.
-- The financial ratios move a little: mean PD is 1.36% in 2007 and 1.54-1.56% in 2008-09.
 - The level is a single point-in-time hedge (Section 9). This is a known limitation (Section 16).
 
 ### 11.4 Global drivers
-Source: `2026-11-21_mono20_shap_global.csv`. Mean |SHAP| is in log-odds.
+Source: `2026-11-21_mono20_nogw_shap_global.csv`. Mean |SHAP| is in log-odds.
 
 | Rank | Feature | Mean \|SHAP\| | Constraint | Value-vs-SHAP rank correlation |
 |---|---|---|---|---|
-| 1 | tangible_asset_ratio | 0.313 | −1 | −0.94 |
-| 2 | equity_ratio | 0.292 | −1 | −0.94 |
-| 3 | AR_ratio | 0.179 | +1 | +0.94 |
-| 4 | operating_cash_flow_to_debt | 0.146 | −1 | −0.94 |
-| 5 | cur_asst_ratio | 0.134 | free | +0.94 |
-| 6 | ateco_sector_te | 0.115 | free | +0.80 |
-| 7 | payables_ratio | 0.114 | +1 | +0.91 |
-| 8 | roa | 0.113 | −1 | −0.94 |
-| 9 | st_debt_share | 0.097 | free | +0.77 |
-| 10 | financing_expense_ratio | 0.086 | +1 | +0.87 |
-| 11 | operating_cash_flow_ratio | 0.082 | −1 | −0.89 |
-| 12 | net_prof_margin | 0.077 | −1 | −0.86 |
-| 13 | int_coverage | 0.070 | −1 | −0.79 |
-| 14 | cash_ratio | 0.070 | −1 | −0.93 |
-| 15 | size | 0.065 | free | −0.89 |
+| 1 | tangible_asset_ratio | 0.317 | −1 | −0.94 |
+| 2 | equity_ratio | 0.260 | −1 | −0.92 |
+| 3 | AR_ratio | 0.182 | +1 | +0.94 |
+| 4 | cur_asst_ratio | 0.135 | free | +0.95 |
+| 5 | ateco_sector_te | 0.121 | free | +0.80 |
+| 6 | payables_ratio | 0.112 | +1 | +0.92 |
+| 7 | st_debt_share | 0.099 | free | +0.70 |
+| 8 | net_prof_margin | 0.091 | −1 | −0.86 |
+| 9 | financing_expense_ratio | 0.090 | +1 | +0.89 |
+| 10 | operating_cash_flow_to_debt | 0.089 | −1 | −0.94 |
+| 11 | roa | 0.087 | −1 | −0.93 |
+| 12 | operating_cash_flow_ratio | 0.080 | −1 | −0.90 |
+| 13 | profit (amount) | 0.073 | free | −0.82 |
+| 14 | int_coverage | 0.072 | −1 | −0.83 |
+| 15 | size | 0.071 | free | −0.89 |
 
-- Eight of the top 10 drivers are constrained, and every constrained feature moves in its expected direction.
-- The free drivers in the top 10 (cur_asst_ratio, industry, st_debt_share) also move in economically readable
+- Seven of the top 10 drivers are constrained, and every constrained feature moves in its expected direction.
+- The free drivers in the top 10 (cur_asst_ratio, industry, st_debt_share) move in economically readable
   directions.
+- 15 of the 74 features are never used in a split (9 zero_* flags, neg_bs_flag, legal_SRS, and the Basilicata,
+  Molise, Unknown and Valle d'Aosta region dummies).
 
-**By family** (`2026-11-21_mono20_shap_family.csv`, share of total |SHAP|):
+**By family** (`2026-11-21_mono20_nogw_shap_family.csv`, share of total |SHAP|):
 
 | Family | Share |
 |---|---|
-| leverage / capital structure | 33% |
+| leverage / capital structure | 32% |
 | coverage / cash flow | 19% |
-| liquidity / activity | 18% |
+| liquidity / activity | 19% |
 | profitability | 15% |
 | region | 5% |
 | industry | 4% |
@@ -542,26 +579,36 @@ Source: `2026-11-21_mono20_shap_global.csv`. Mean |SHAP| is in log-odds.
 | size | 2% |
 | data-quality flags | 1% |
 
-Leverage, coverage and liquidity carry about 70% of the explanation. For comparison, RiskCalc France ranks debt coverage as its most important category (R-33 p. 14). Our ranking differs (leverage first), which is worth one sentence on a slide.
+Leverage, coverage and liquidity carry about 70% of the explanation. For comparison, RiskCalc France ranks debt
+coverage as its most important category (R-33 p. 14). Our ranking differs (leverage first), which is worth one
+sentence on a slide.
 
 ### 11.5 Reason codes for individual firms
-Source: `2026-11-21_mono20_firm_examples.csv`. Top 5 drivers for firms at four points of the PD distribution.
+Source: `2026-11-21_mono20_nogw_firm_examples.csv`. Top 5 drivers for firms at four points of the PD distribution.
 
 | Firm (PD percentile) | PD | Top drivers (+ raises PD, − lowers PD) |
 |---|---|---|
-| 10th | 0.09% | tangible assets 93% of total (−0.42), equity 43% (−0.33), current assets 2% of total (−0.27), low-risk industry (−0.13), negative working capital (+0.12) |
-| 50th | 0.57% | tangible assets 77% (−0.38), higher-risk industry (+0.31), AR 1.35× sales (+0.22), current assets 23% (−0.18), equity 8% (+0.16) |
-| 90th | 2.79% | no tangible assets (+0.46), AR 75× sales (+0.41), all assets current (+0.38), negative cash flow to debt (+0.32), equity 99% (−0.25) |
-| 99th | 15.9% | cash flow −30% of assets (+1.12), negative equity (+0.93), ROA −48% (+0.71), EBITDA −€0.8M (−0.36), negative cash flow to debt (+0.31) |
+| 10th | 0.09% | receivables 3% of sales (−0.31), equity 23% (−0.26), legal form SpA (−0.23), asset turnover 1.9 (−0.17), large firm (−0.15) |
+| 50th | 0.57% | operating cash flow −3.6% of assets (+0.31), tangible assets 88% (−0.29), current assets 11% (−0.26), equity 40% (−0.23), negative cash flow to debt (+0.19) |
+| 90th | 2.74% | receivables 1,247× sales (+0.43), no tangible assets (+0.43), higher-risk industry (+0.27), no payables (−0.19), EBITDA −€2,313 (−0.18) |
+| 99th | 16.4% | negative equity, −6.5% of assets (+1.45), ROA −6.5% (+0.45), debt-to-equity −16.4, i.e. negative equity (+0.38), short-term debt share 16% (−0.26), operating cash flow −2.9% (+0.26) |
 
-Note the 99th-percentile firm: raw EBITDA (an amount, unconstrained) gets a negative SHAP even though it is very
-negative. Unconstrained amount features can still produce counter-intuitive reason codes. Present reason codes for
-the constrained ratios only.
+Two display problems are visible even in these four firms:
+- **90th:** raw EBITDA (an amount, unconstrained) is negative yet lowers the PD.
+- **99th:** debt-to-equity is negative only because equity is negative. The model correctly raises the PD, but the
+  label misleads.
+
+How often these happen is counted in `reports/final_model/2026-11-21_reason_codes_and_goodwill.md`:
+- Genuine wrong-way codes in the top 5 for 0.7% of firms.
+- Negative-equity display artefacts for another 3.0%.
+- **Zero on the 20 constrained features.**
+
+The display rule there: show constrained ratios, translate negative-equity ratios, and do not show raw amounts.
 
 ### 11.6 Agreement with the unconstrained model
-- Spearman correlation of PDs: 0.988.
-- Mean absolute PD difference: 0.22 percentage points.
-- 66% of firms get a PD within ±20% of the unconstrained model's.
+- Spearman correlation of PDs: 0.986.
+- Mean absolute PD difference: 0.25 percentage points.
+- 63% of firms get a PD within ±20% of the unconstrained model's.
 - Ranking is nearly the same; the differences are in individual firms' explanations and in the tails.
 
 ---
@@ -580,7 +627,7 @@ The full record is `reports/features/2026-11-21_quick_ratio_monotone_verdict.md`
 3. **"Only 2 features disagree" understates the problem.** Ten constrained features have at least 16% of their
    curve moving the wrong way in the free model; three have more than 70%.
 4. **A monotone constraint does not require linearity.** It flattens non-monotone regions instead of reversing them.
-5. **Decision D-163 (KN, 2026-11-21): submit mono20.**
+5. **Decision D-163 (KN, 2026-11-21): submit mono20.** Amended by D-164: goodwill_ratio dropped, 74 features.
    - Cost: about 0.001 AUC. The level is the same.
    - Benefit: correctly signed reason codes for every constrained ratio.
    - **Disclosure:** this overrides the pre-set D-158 rule. That rule picked the free model because it only checked
@@ -590,8 +637,9 @@ The full record is `reports/features/2026-11-21_quick_ratio_monotone_verdict.md`
 
 ## 13. The harness
 
-Bundle: `harness/2026-11-21_variants/mono20/`, zip
-`harness/2026-11-21_variants/2026-11-21_Turquoise_harness_mono20.zip`.
+Bundle (submission, D-164): `harness/2026-11-21_variants/mono20_nogw/`, zip
+`harness/2026-11-21_variants/2026-11-21_Turquoise_harness_mono20_nogw.zip`. The 75-feature mono20 bundle is kept
+alongside (`harness/2026-11-21_variants/mono20/`). The runtime code is identical; only the model and parameters differ.
 
 ### 13.1 Interface
 - `python3 harness.py --input_csv in.csv --output_csv out.csv`, or `from harness import predict; predict(df)`.
@@ -606,7 +654,7 @@ Bundle: `harness/2026-11-21_variants/mono20/`, zip
 6. **Frozen** industry encoding; unseen sections get the overall rate.
 7. Legal-form and region dummies; unseen categories get all zeros.
 8. Restore the original row order.
-9. LightGBM (240 trees, 1 thread), then the frozen calibration.
+9. LightGBM (230 trees, 1 thread), then the frozen calibration.
 10. If a row's features are not finite, it gets the fallback PD (tau).
 11. If anything unexpected fails, every row gets tau and the error goes to stderr. One PD per row is always returned.
 
@@ -619,8 +667,10 @@ Bundle: `harness/2026-11-21_variants/mono20/`, zip
 
 ### 13.4 Tests (`reports/harness/2026-11-21_harness_test_report.md`)
 Clean virtual environment with the pinned requirements, Python 3.13.7:
-- **Full file:** 1,023,552 PDs, 0 fallbacks, 48.2 s.
-- **Harness vs training pipeline:** maximum difference 2.2e-16.
+- **Full file:** 1,023,552 PDs, 0 fallbacks, 29.8 s (mono20: 48.2 s).
+- **Harness vs training pipeline:** maximum difference 1.7e-16 (mono20: 2.2e-16;
+  `variants/mono20_nogw/parity_harness_vs_training.json`).
+- Stress output: `experiments/final/2026-11-21_final_fit/variants/mono20_nogw/stress_test_output.txt`.
 - **25 stress tests, all passed.** They cover:
   - shuffled rows, reversed columns, a single row;
   - row independence (0 of 300 rows change when other rows are removed);
@@ -630,13 +680,13 @@ Clean virtual environment with the pinned requirements, Python 3.13.7:
 - The main bundle was also run on Python 3.11.14 (identical output) and from a path containing spaces.
 
 ### 13.5 Computational complexity
-- For n rows, p = 75 features, T = 240 trees of depth L ≤ 30:
+- For n rows, p = 74 features, T = 230 trees of depth L ≤ 30:
   - preprocessing O(n·p) plus one O(n log n) sort;
   - scoring O(n·T·L);
   - memory O(n·p).
-- Measured: about 48 s for 1,023,552 rows on an Apple M1 laptop, roughly linear in n.
-- **Fix needed before submission:** the mono20 README's complexity paragraph still says "T = 210 trees" (copied from
-  the unconstrained bundle). The variant header in that README says 240, but the paragraph should be corrected.
+- Measured: about 30 s for 1,023,552 rows on an Apple M1 laptop, roughly linear in n.
+- The mono20_nogw README states p = 74 and T = 230 correctly.
+- The 75-feature mono20 README still says "T = 210 trees"; it is not the submission bundle.
 
 ---
 
@@ -650,7 +700,7 @@ Clean virtual environment with the pinned requirements, Python 3.13.7:
 | VIF screen | FY2007 (inside every training window) | fixed feature list | `vif_selected_features.json` |
 | Sign table | FY2007 | fixed constraint vector | D-157 |
 | Hyperparameters | validation years FY2008-10 | fixed | D-158; test years reported only |
-| Tree count | round-3 best iterations (validation FY2010) | fixed 240 | Section 8.6 |
+| Tree count | round-3 best iterations (validation FY2010) | fixed 230 (mono20: 240) | Sections 8.6, 10 |
 | Level a, delta, tau | training rows; label history up to May 2013 | frozen constants | D-070 (what the bank knows when it sets the level) |
 | Method G (previous-year fill) | — | **removed** | D-152, D-156 |
 
@@ -667,6 +717,7 @@ Clean virtual environment with the pinned requirements, Python 3.13.7:
 
 | Idea | Reason | Decision |
 |---|---|---|
+| goodwill_ratio as a model input | The raw field is value added, not goodwill (D-010, D-091), so it cannot be explained under its name; dropping costs −0.00054 AUC (noise) | D-164 |
 | Unconstrained LightGBM (GB-02 in round 1; the D-160 model in the final round) | Better by 0.001-0.007 AUC, but uses ratios against their economic sign (wc_ratio, quick_ratio) | D-051, D-163 |
 | lit13 (constrain only the 13 features with direct sources) | Frees the quick ratio, which has direct literature support for "−" | D-159 correction |
 | mono_m3 (release the 3 worst violators) | Chosen on validation, so biased; frees the quick ratio | D-159 |
@@ -696,7 +747,8 @@ Clean virtual environment with the pinned requirements, Python 3.13.7:
 | Feature construction fixes: zero-denominator rule, negative denominators, AR_ratio when sales ≤ 0, roe | Proposed, not in the frozen model | D-154 |
 | Label window used by the holdout; validity of 2013 default dates | Asked Roger/TA (email Q1, Q2) | D-002a, D-009 |
 | Holdout period (sets the tau horizon) | Asked (email Q3) | D-073 |
-| Switch the TA / submission bundle from the unconstrained model to mono20 | Pending | D-163 |
+| Switch the TA / submission bundle from the unconstrained model to mono20_nogw | Pending | D-163, D-164 |
+| Reason-code display rule: constrained ratios only, negative-equity translation, no raw amounts | Recommended, not yet implemented in any output | `reports/final_model/2026-11-21_reason_codes_and_goodwill.md` |
 | v3 split proposal (firm-random early stopping) | Proposal, not used for mono20 | D-155 |
 
 ---
@@ -710,8 +762,10 @@ Clean virtual environment with the pinned requirements, Python 3.13.7:
 3. **No cycle input.** Year-level swings are not tracked (Section 11.3).
 4. **Extreme tails from the zero-denominator rule** (D-154). Ratio features can hold euro amounts. LightGBM only
    uses the order of values, but some extreme firms are placed arbitrarily (quick-ratio audit, Section 2).
-5. **Unconstrained amount features** (ebitda, profit, COGS, exp_financing) can give counter-intuitive reason codes
-   (Section 11.5). Show reason codes for constrained ratios only.
+5. **Unconstrained features can give counter-intuitive reason codes.** In the submission model, 0.7% of firms
+   (5,769) have a genuine wrong-way code in their top 5 (mostly raw EBITDA, size, profit). Another 3.0% see
+   debt-to-equity flagged only because negative equity makes the ratio negative. There are zero on the 20
+   constrained features. Display rule and counts: `reports/final_model/2026-11-21_reason_codes_and_goodwill.md`.
 6. **Sign table rests on one year** (FY2007, 1,260 defaults; D-157).
 7. **Development-to-final parity is exact on validation rows**, but the final model was not separately re-tuned on
    all years (tree count by rule).
@@ -732,10 +786,13 @@ Clean virtual environment with the pinned requirements, Python 3.13.7:
 | Calibration constants | `experiments/calibration/2026-11-08_chloe_lgbm_v1/2026-11-08_r1_fit_and_calibrate.py` | `2026-11-08_params_for_production.json` |
 | Final features + parity | `experiments/final/2026-11-21_final_fit/2026-11-21_01_build_features.py parity` then `final` | `parity_round03.csv`, `final_train_features.parquet`, `final_preprocessor.joblib` |
 | Unconstrained final model (reference) | `2026-11-21_02_train_final.py`, `03_build_bundle.py` | `final_lightgbm.txt`, `final_params.json`, main bundle |
-| **mono20** | `2026-11-21_06_train_variants.py` | `variants/mono20/`, `harness/2026-11-21_variants/mono20/`, zip |
+| mono20 (75 features) | `2026-11-21_06_train_variants.py` | `variants/mono20/`, `harness/2026-11-21_variants/mono20/`, zip |
+| Goodwill drop test | `experiments/gbm/2026-11-20_grid75/2026-11-21_11_drop_goodwill.py` | `drop_goodwill/` |
+| **mono20_nogw (submission)** | `2026-11-21_10_train_mono20_nogw.py` | `variants/mono20_nogw/`, `harness/2026-11-21_variants/mono20_nogw/`, zip |
 | Harness parity and stress tests | `2026-11-21_04_parity_harness_vs_training.py`, `reports/harness/2026-11-21_stress_test.py` | `parity_harness_vs_training.json`, test report |
 | Development report | `2026-11-21_07_development_results.py` | `reports/final_model/2026-11-21_development_results.md` |
-| mono20 profile | `2026-11-21_08_mono20_profile.py` | `reports/final_model/2026-11-21_mono20_*` |
+| Model profile | `2026-11-21_08_mono20_profile.py [mono20 \| mono20_nogw]` | `reports/final_model/2026-11-21_<variant>_*` |
+| Reason-code conflicts | `2026-11-21_09_reason_code_conflicts.py` | `reports/final_model/2026-11-21_reason_code_conflicts_*` |
 | Quick-ratio audit, constraint table | `experiments/gbm/2026-11-20_grid75/2026-11-21_09_*.py`, `2026-11-21_10_*.py` | `quick_ratio_audit/` |
 
 ---
@@ -765,7 +822,8 @@ Clean virtual environment with the pinned requirements, Python 3.13.7:
 | D-160 | Unconstrained final model (superseded as the submission by D-163) |
 | D-161 | mono20, lit13 and mono19 fitted and bundled |
 | D-162 | Quick-ratio / cash-flow audit; literature correction |
-| **D-163** | **Submit mono20** |
+| D-163 | Submit mono20 |
+| **D-164** | **Drop goodwill_ratio → submit mono20_nogw (74 features)** |
 
 ---
 
@@ -774,9 +832,10 @@ Clean virtual environment with the pinned requirements, Python 3.13.7:
 | What | Path |
 |---|---|
 | **This document** | `reports/final_model/2026-11-21_mono20_full_documentation.md` |
-| Submission bundle | `harness/2026-11-21_variants/mono20/`, zip `harness/2026-11-21_variants/2026-11-21_Turquoise_harness_mono20.zip` |
-| Model + parameters | `experiments/final/2026-11-21_final_fit/variants/mono20/lightgbm.txt`, `params.json`, `insample_summary.json` |
-| mono20 profile | `reports/final_model/2026-11-21_mono20_{summary.json, shap_global.csv, shap_family.csv, grade_table_insample.csv, level_by_year_insample.csv, firm_examples.csv}` |
+| Submission bundle | `harness/2026-11-21_variants/mono20_nogw/`, zip `harness/2026-11-21_variants/2026-11-21_Turquoise_harness_mono20_nogw.zip` |
+| Reason codes and goodwill report | `reports/final_model/2026-11-21_reason_codes_and_goodwill.md` |
+| Model + parameters | `experiments/final/2026-11-21_final_fit/variants/mono20_nogw/lightgbm.txt`, `params.json`, `insample_summary.json` (mono20: `variants/mono20/`) |
+| Model profile | `reports/final_model/2026-11-21_mono20_nogw_*` and `2026-11-21_mono20_{summary.json, shap_global.csv, shap_family.csv, grade_table_insample.csv, level_by_year_insample.csv, firm_examples.csv}` |
 | Development results | `reports/final_model/2026-11-21_development_results.md` |
 | Monotone and quick-ratio record | `reports/features/2026-11-21_quick_ratio_monotone_verdict.md` |
 | Sign table and literature conflicts | `reports/features/2026-11-21_sign_table_monotone_decision.md`, `docs/2026-11-16_feature_literature_claims.md` |

@@ -33,7 +33,7 @@ params = json.loads(PARAMS.read_text())
 c = params["calibration"]
 feats = transform_with_preprocessor(raw.drop(columns=["def_date"]), raw.drop(columns=["def_date"]), art)
 booster = lgb.Booster(model_file=str(MODEL))
-p = booster.predict(feats[params["feature_columns"]], num_iteration=params["best_iteration"])
+p = booster.predict(feats[params["feature_columns"]].astype(float), num_iteration=params["best_iteration"])
 pd_train = np.clip(expit(c["anchor_a"] + c["slope_b"] * logit(np.clip(p, c["epsilon"], 1 - c["epsilon"])) + c["delta"]),
                    c["floor"], c["cap"])
 ref = feats[["id", "fs_year"]].assign(pd_training_pipeline=pd_train)

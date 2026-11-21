@@ -1,0 +1,8 @@
+{
+  "rows": 1023552,
+  "rows_scored_by_training_pipeline": 1023552,
+  "max_abs_diff": 1.6653345369377348e-16,
+  "rows_diff_gt_1e12": 0,
+  "rows_diff_gt_1e9": 0,
+  "mean_pd_harness": 0.015629301201385195
+}

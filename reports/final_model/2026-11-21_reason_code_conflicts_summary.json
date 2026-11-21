@@ -1,0 +1,32 @@
+{
+  "mono20": {
+    "firms": 835016,
+    "firms_with_visible_conflict_top5": 12837,
+    "share_top5": 0.0153733581152936,
+    "firms_with_visible_conflict_top3": 913,
+    "share_top3": 0.0010933922224244804,
+    "firms_with_genuine_visible_conflict_top5": 9755,
+    "share_genuine_top5": 0.011682410875959262,
+    "firms_with_visible_conflict_on_mono20_constrained_features": 0
+  },
+  "mono20_nogw": {
+    "firms": 835016,
+    "firms_with_visible_conflict_top5": 30703,
+    "share_top5": 0.03676935531774241,
+    "firms_with_visible_conflict_top3": 10681,
+    "share_top3": 0.012791371662339405,
+    "firms_with_genuine_visible_conflict_top5": 5769,
+    "share_genuine_top5": 0.006908849650785135,
+    "firms_with_visible_conflict_on_mono20_constrained_features": 0
+  },
+  "free (D-160)": {
+    "firms": 835016,
+    "firms_with_visible_conflict_top5": 62666,
+    "share_top5": 0.07504766375734118,
+    "firms_with_visible_conflict_top3": 18853,
+    "share_top3": 0.022578010481236286,
+    "firms_with_genuine_visible_conflict_top5": 57141,
+    "share_genuine_top5": 0.06843102407618537,
+    "firms_with_visible_conflict_on_mono20_constrained_features": 47768
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "team": "Turquoise",
+  "built": "2026-11-21",
+  "model": "LightGBM, full monotone (20 constraints, D-157) without goodwill_ratio, 74 features (D-164), 230 trees, fit on all labelled FY2007-2011 rows (835,016)",
+  "level": "prior shift to tau = 0.014641 (D-072), floor 0.0003, cap 0.99",
+  "source_code": "teammate/project-update @ 7949207 (schema 1.3.0) vendored in experiments/final/2026-11-21_final_fit",
+  "bundle_sha256": {
+    "harness.py": "a97fb1f095299735194b790ab15a023482c00dba4c9021136441785a2543dbf8",
+    "inference.py": "0f600ac1b4ceaf6674d311034184017c17a916d3a90bd74f8d9c97c568ed5c10",
+    "missing_rules.py": "38f13420e19172c736a62a845010961371d619d68caf98813e3ffc2c6e3c315b",
+    "anomaly_rules.py": "c06a962d4c04a1ea79ab9f427bca61d72199d961afc6eec98bfc2e61676d861f",
+    "feature_rules.py": "0402b4063cd9f3e133604f52f08ca15f6c29572007dbbd3c6e8751eed8fe5ee6",
+    "bundle_paths.py": "c3ec8fad04ac029aff5161abdceded01775c5a69f89fbf5688acb3c330df1b1b",
+    "README.md": "be398b47ea448919da23d91e41a17667570ae51fc2b056ff5f6dadf74351b23a",
+    "requirements.txt": "0f9aa6fa0b1dc67ba2f42c16812d4016ccdebcbea26d76661480e5b33ac678b8",
+    "config/feature_schema.json": "10e76aa1a9d01171add5fa9d7a80bf6db58645d718aa3fbd7771b3208cb8b81a",
+    "data/interim/ateco_sector_english.csv": "9cc6d0847f332098d8c6f40bbb8d9e33ce6b71ab3d4f047992a553ab51b63da0",
+    "artifacts/lightgbm.txt": "6dced775687a064c38918bd1aa75973a665a20d3c5571c647605507b66d50f5f",
+    "artifacts/preprocessing.json": "252a00a62be82bbdf1b57d07e6aa4bbb80ac7f182494ffcf27d335b163b49d94"
+  },
+  "feature_count": 74,
+  "schema_version": "1.3.0",
+  "invalid_feature_policy": "frozen fallback PD (tau) for any row whose features are not finite"
+}

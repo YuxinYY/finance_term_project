@@ -1,4 +1,4 @@
-"""Profile of the submission model mono20 (D-161/D-163): global SHAP, family sums, PD distribution, in-sample
+"""Profile of a final model variant (default mono20, D-161/D-163; usage: script.py [variant]): global SHAP, family sums, PD distribution, in-sample
 grade table, example reason codes, tree statistics, and agreement with the unconstrained D-160 model.
 
 Data: all 835,016 FY2007-2011 training rows (in-sample: describes the model, not out-of-sample quality).
@@ -18,10 +18,12 @@ from sklearn.metrics import roc_auc_score
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 OUT = REPO / "reports/final_model"
-P = json.loads((HERE / "variants/mono20/params.json").read_text())
+import sys
+VAR = sys.argv[1] if len(sys.argv) > 1 else "mono20"  # e.g. mono20_nogw (D-164)
+P = json.loads((HERE / f"variants/{VAR}/params.json").read_text())
 feats = P["feature_columns"]
 cal = P["calibration"]
-booster = lgb.Booster(model_file=str(HERE / "variants/mono20/lightgbm.txt"))
+booster = lgb.Booster(model_file=str(HERE / f"variants/{VAR}/lightgbm.txt"))
 free = lgb.Booster(model_file=str(HERE / "final_lightgbm.txt"))
 free_cal = json.loads((HERE / "final_params.json").read_text())["calibration"]
 sign = pd.read_csv(REPO / "experiments/gbm/2026-11-20_grid75/sign_table.csv").set_index("feature")
@@ -37,7 +39,8 @@ def to_pd(raw, c):
 
 raw = booster.predict(df[feats])
 pdv = to_pd(raw, cal)
-pd_free = to_pd(free.predict(df[feats]), free_cal)
+free_feats = json.loads((HERE / "final_params.json").read_text())["feature_columns"]
+pd_free = to_pd(free.predict(df[free_feats]), free_cal)
 summary = {"rows": len(df), "defaults": int(y.sum()), "train_rate": float(y.mean()),
            "trees": booster.num_trees(), "mean_raw_pd": float(raw.mean()), "mean_final_pd": float(pdv.mean()),
            "insample_auc": float(roc_auc_score(y, raw)), "pd_percentiles": {}}
@@ -67,7 +70,7 @@ g["constrained"] = [int(sign.loc[f, "constraint"]) if f in sign.index else 0 for
 g["value_vs_shap_spearman"] = [spearmanr(df[f], sh[f])[0] if sh[f].std() > 0 else np.nan for f in feats]
 g["splits"] = [int(splits.get(booster.feature_name()[i], 0)) for i in range(len(feats))]
 g = g.sort_values("rank")
-g.to_csv(OUT / "2026-11-21_mono20_shap_global.csv", index=False)
+g.to_csv(OUT / f"2026-11-21_{VAR}_shap_global.csv", index=False)
 
 fam = {
     "leverage / capital structure": ["equity_ratio", "debt_to_eqty", "st_debt_share", "lt_debt_to_capital", "bank_debt_conc",
@@ -92,7 +95,7 @@ for name, members in fam.items():
     rows.append({"family": name, "n_features": len(m), "mean_abs_family_shap": float(s.abs().mean()),
                  "share_of_total_abs_shap": float(sh[m].abs().sum().sum() / sh.abs().sum().sum())})
 pd.DataFrame(rows).sort_values("mean_abs_family_shap", ascending=False).to_csv(
-    OUT / "2026-11-21_mono20_shap_family.csv", index=False)
+    OUT / f"2026-11-21_{VAR}_shap_family.csv", index=False)
 
 # in-sample grade table (PD deciles) and per-year level
 d = pd.DataFrame({"fs_year": df.fs_year, "y": y, "pd": pdv})
@@ -100,9 +103,9 @@ d["pd_decile"] = pd.qcut(d.pd.rank(method="first"), 10, labels=False) + 1
 gt = d.groupby("pd_decile").agg(n=("y", "size"), pd_low=("pd", "min"), pd_high=("pd", "max"),
                                 mean_pd=("pd", "mean"), observed_dr=("y", "mean"), defaults=("y", "sum"))
 gt["share_of_defaults"] = gt.defaults / gt.defaults.sum()
-gt.to_csv(OUT / "2026-11-21_mono20_grade_table_insample.csv")
+gt.to_csv(OUT / f"2026-11-21_{VAR}_grade_table_insample.csv")
 d.groupby("fs_year").agg(n=("y", "size"), observed_dr=("y", "mean"), mean_pd=("pd", "mean")).to_csv(
-    OUT / "2026-11-21_mono20_level_by_year_insample.csv")
+    OUT / f"2026-11-21_{VAR}_level_by_year_insample.csv")
 
 # example reason codes: firms at the 10th, 50th, 90th, 99th PD percentile
 ex = []
@@ -113,12 +116,12 @@ for q in [.10, .50, .90, .99]:
         ex.append({"pd_percentile": q, "pd": pdv[i], "label": int(y[i]), "rank": r, "feature": f,
                    "feature_value": float(df[f].iloc[i]), "shap_logodds": float(v),
                    "direction": "raises PD" if v > 0 else "lowers PD"})
-pd.DataFrame(ex).to_csv(OUT / "2026-11-21_mono20_firm_examples.csv", index=False)
+pd.DataFrame(ex).to_csv(OUT / f"2026-11-21_{VAR}_firm_examples.csv", index=False)
 
-(OUT / "2026-11-21_mono20_summary.json").write_text(json.dumps(summary, indent=2, default=float) + "\n")
+(OUT / f"2026-11-21_{VAR}_summary.json").write_text(json.dumps(summary, indent=2, default=float) + "\n")
 print(json.dumps(summary, indent=2, default=float))
 print(g.head(25).round(4).to_string(index=False))
-print(pd.read_csv(OUT / "2026-11-21_mono20_shap_family.csv").round(4).to_string(index=False))
+print(pd.read_csv(OUT / f"2026-11-21_{VAR}_shap_family.csv").round(4).to_string(index=False))
 print(gt.round(5).to_string())
-print(pd.read_csv(OUT / "2026-11-21_mono20_level_by_year_insample.csv").round(5).to_string(index=False))
+print(pd.read_csv(OUT / f"2026-11-21_{VAR}_level_by_year_insample.csv").round(5).to_string(index=False))
 print(pd.DataFrame(ex).round(4).to_string(index=False))
