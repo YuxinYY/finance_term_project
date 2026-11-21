@@ -1,5 +1,6 @@
 {
   "selection_version": 1,
+  "manual_exclusions": ["goodwill_ratio"],
   "method": "iterative_within_group_vif",
   "threshold": 10.0,
   "metadata_columns": [
@@ -98,7 +99,6 @@
     "lt_debt_to_capital",
     "bank_debt_conc",
     "tangible_asset_ratio",
-    "goodwill_ratio",
     "cash_ratio",
     "cash_to_financing_exp_ratio",
     "cur_asst_ratio",
@@ -168,6 +168,7 @@
     "city_Veneto"
   ],
   "dropped_features": [
+    "goodwill_ratio",
     "rev_operating",
     "prof_operations",
     "zero_asst_tot",

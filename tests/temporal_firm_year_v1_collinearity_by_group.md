@@ -1,4 +1,32 @@
-# By-group collinearity review: `temporal_firm_year_v1`, round 1
+# By-group collinearity review: current round 1 selection
+
+## Current selection: reconstructed diagnostics
+
+The current `vif_selected_features.json` selection was reconstructed on all **144,251 round 1 training rows**, using the saved full transformed training features, the feature-group definitions recorded in the selection file, and the current iterative selector. The reconstructed exclusions match the original saved selection. Results below are recomputed diagnostics, since the original elimination CSV is not available.
+
+Within each group, the selector removes one feature with the highest VIF and recalculates until all retained VIFs are below 10. Constant or entirely missing columns are removed in a precheck. The process selects on round 1 training data only; the same selected feature list is applied to subsequent rounds.
+
+| Stage | Group | Feature removed | VIF at removal | Reason |
+|---|---|---|---:|---|
+| Precheck | All features | `zero_asst_tot` | — | Constant (all zeros) |
+| 1 | Business and structural | `legal_SRL` | 756.48 | VIF ≥ 10 |
+| 2 | Business and structural | `city_Lombardia` | 13.17 | VIF ≥ 10 after first removal |
+| 1 | Profitability and growth | `rev_operating` | 10,459,140,000 (approx.) | VIF ≥ 10 |
+| 2 | Profitability and growth | `prof_operations` | 11.36 | VIF ≥ 10 after first removal |
+
+| Feature group | Highest VIF among survivors |
+|---|---:|
+| Business and structural | 1.31 |
+| Leverage and capital structure | 3.30 |
+| Liquidity and activity | 2.67 |
+| Profitability and growth | 1.94 |
+| Coverage and cash flow | 2.22 |
+
+These maxima are for the **original VIF-selected set**, before the subsequent manual exclusion of `goodwill_ratio`. The original selection retained 75 of 80 features; the manual exclusion leaves **74**. The diagnostic is within-group, so it does not guarantee every cross-group relationship or later-round VIF is below 10. Some flags are ungrouped and were not assessed against a group. VIF selection is not refitted on rounds 2 or 3.
+
+## Historical v1 review
+
+The following section is preserved for context only. It used an earlier feature set and method and does **not** describe the current selection or its final VIF values.
 
 ## Scope and method
 

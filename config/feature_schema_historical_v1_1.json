@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.1.0",
+  "candidate_note": "Historical schema augmented with unimplemented RiskCalc-inspired candidates; not the active preprocessing contract. Ratios require denominator and missing-value policies before implementation.",
+  "riskcalc_candidate_definitions": {
+    "net_income_to_assets": {"formula": "profit / asst_tot", "reference": "Section IV, pp. 32-33"},
+    "net_income_less_extraordinary_to_assets": {"formula": "(profit - inc_extraord) / asst_tot", "reference": "Section IV, p. 33", "note": "Approximation: inc_extraord is income, not necessarily net extraordinary items; tax effects may differ."},
+    "return_on_equity": {"formula": "profit / eqty_tot", "reference": "Section IV, p. 33", "note": "Negative or near-zero equity can make this ratio misleading."},
+    "liabilities_to_assets": {"formula": "(asst_tot - eqty_tot) / asst_tot", "reference": "Section IV, p. 34", "note": "Accounting-identity proxy for liabilities; depends on consistent reported assets and equity."},
+    "total_debt_to_assets": {"formula": "(debt_st + debt_lt) / asst_tot", "reference": "Section IV, p. 34", "note": "Debt totals are a dataset-specific proxy and may include non-financial liabilities."},
+    "liabilities_to_tangible_assets": {"formula": "(asst_tot - eqty_tot) / (asst_tot - asst_intang_fixed)", "reference": "Section IV, p. 34", "note": "Approximation; goodwill and other intangibles may need separate treatment."},
+    "short_to_long_term_debt": {"formula": "debt_st / debt_lt", "reference": "Section IV, p. 36"},
+    "receivables_to_cogs": {"formula": "AR / COGS", "reference": "Section IV, p. 37"},
+    "payables_to_cogs": {"formula": "AP_st / COGS", "reference": "Section IV, p. 37", "note": "Short-term payables proxy; total payables would include AP_lt."}
+  },
+  "debt_detail_columns": [
+    "debt_bank_st",
+    "debt_bank_lt",
+    "debt_fin_st",
+    "debt_fin_lt",
+    "AP_st",
+    "AP_lt"
+  ],
+  "anomaly_flags": [
+    "neg_bs_flag"
+  ],
+  "impute_columns": [
+    "asst_intang_fixed",
+    "asst_tang_fixed",
+    "asst_fixed_fin",
+    "asst_current",
+    "AR",
+    "cash_and_equiv",
+    "goodwill",
+    "eqty_tot",
+    "liab_lt",
+    "liab_lt_emp",
+    "debt_bank_st",
+    "debt_bank_lt",
+    "debt_fin_st",
+    "debt_fin_lt",
+    "AP_st",
+    "AP_lt",
+    "debt_st",
+    "debt_lt",
+    "rev_operating",
+    "COGS",
+    "prof_operations",
+    "inc_financing",
+    "exp_financing",
+    "prof_financing",
+    "inc_extraord",
+    "taxes",
+    "profit",
+    "ebitda",
+    "cf_operations"
+  ],
+  "raw_required": [
+    "id",
+    "fs_year",
+    "HQ_city",
+    "legal_struct",
+    "ateco_sector",
+    "asst_tot",
+    "wc_net",
+    "margin_fin"
+  ],
+  "derived_categorical_features": [
+    "ateco_industry_group"
+  ],
+  "period_numeric_features": [
+    "size",
+    "equity_ratio",
+    "st_debt_share",
+    "lt_debt_to_capital",
+    "bank_debt_conc",
+    "tangible_asset_ratio",
+    "goodwill_ratio",
+    "cash_ratio",
+    "cash_to_financing_exp_ratio",
+    "cur_asst_ratio",
+    "AR_ratio",
+    "change_in_ar_turnover",
+    "payables_ratio",
+    "wc_ratio",
+    "cur_debt_ratio",
+    "quick_ratio",
+    "asset_turnover",
+    "roa",
+    "op_margin",
+    "net_prof_margin",
+    "tax_ratio",
+    "int_coverage",
+    "financing_expense_ratio",
+    "financing_income_ratio",
+    "operating_cash_flow_ratio",
+    "ebitda_to_debt",
+    "net_income_to_assets",
+    "net_income_less_extraordinary_to_assets",
+    "return_on_equity",
+    "liabilities_to_assets",
+    "total_debt_to_assets",
+    "liabilities_to_tangible_assets",
+    "short_to_long_term_debt",
+    "receivables_to_cogs",
+    "payables_to_cogs"
+  ],
+  "period_binary_features": [
+    "neg_bs_flag",
+    "debt_detail_missing",
+    "loss_flag",
+    "zero_asst_tot",
+    "zero_total_debt",
+    "zero_debt_st",
+    "zero_debt_lt",
+    "zero_bank_debt",
+    "zero_cash",
+    "zero_asst_current",
+    "zero_ar",
+    "zero_rev_operating",
+    "zero_AP_st",
+    "zero_wc_net",
+    "zero_ebitda",
+    "zero_prof_operations",
+    "zero_profit",
+    "zero_cf_operations",
+    "zero_exp_financing"
+  ],
+  "feature_groups": {
+    "business_structural": [
+      "ateco_sector_te",
+      "legal_*",
+      "city_*",
+      "size"
+    ],
+    "leverage_capital_structure": [
+      "equity_ratio",
+      "st_debt_share",
+      "lt_debt_to_capital",
+      "bank_debt_conc",
+      "cur_asst_ratio",
+      "tangible_asset_ratio",
+      "goodwill_ratio",
+      "liabilities_to_assets",
+      "total_debt_to_assets",
+      "liabilities_to_tangible_assets",
+      "neg_bs_flag"
+    ],
+    "liquidity_activity": [
+      "cash_ratio",
+      "AR_ratio",
+      "change_in_ar_turnover",
+      "payables_ratio",
+      "wc_ratio",
+      "cur_debt_ratio",
+      "quick_ratio",
+      "asset_turnover",
+      "short_to_long_term_debt",
+      "receivables_to_cogs",
+      "payables_to_cogs"
+    ],
+    "profitability_growth": [
+      "roa",
+      "op_margin",
+      "net_prof_margin",
+      "tax_ratio",
+      "net_income_to_assets",
+      "net_income_less_extraordinary_to_assets",
+      "return_on_equity"
+    ],
+    "coverage_cash_flow": [
+      "int_coverage",
+      "financing_expense_ratio",
+      "cash_to_financing_exp_ratio",
+      "ebitda_to_debt",
+      "financing_income_ratio",
+      "operating_cash_flow_ratio"
+    ]
+  },
+  "mode_features": {
+    "decayed_history": [
+      "history_records",
+      "no_prior_observation"
+    ],
+    "firm_year": []
+  },
+  "dynamic_feature_prefixes": [
+    "legal_",
+    "city_"
+  ]
+}
