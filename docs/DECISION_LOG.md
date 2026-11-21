@@ -2144,3 +2144,26 @@ All numbers come from `experiments/gam/GAM-0x/{metrics.md,metrics_calibrated.md,
 - Source(s): D-157, D-158, D-159, D-160.
 - Risks / what would change our mind: mono19's 310 trees come from 2 seed runs only; lit13 is withdrawn as a recommendation (D-159 correction).
 - Human reviewer (initials) and date: pending (KN)
+
+### D-162 Quick ratio / cash-flow ratio audit: what the monotone constraint buys, and a literature correction
+- Date / phase / agent: 2026-11-21 / Phase 2 / orchestrator (Claude Code), at KN's request
+- Status: ADOPTED (findings and literature correction); model choice D-160 vs D-161 remains OPEN (KN)
+- Decision: (1) Record that the monotone constraint materially changes the explanation for one feature, quick_ratio (unconstrained value-vs-SHAP +0.38, reversed; mono20 -0.66), and only cosmetically for operating_cash_flow_ratio (correct cliff at negative cash flow, slight top-end drift of about 0.05 log-odds). (2) Correct the literature map: R-01 p. 13 / p. 34 support cash-flow ratios as inputs, not their sign; the sign of operating_cash_flow_ratio rests on analogy to R-33 p. 12 (debt coverage) plus our data. (3) Add the direct quick-ratio statements (R-01 p. 13; R-33 p. 11 Table 2; R-05 p. 54) and R-05 p. 54's rated-firm paradox as the sourced explanation of the reversal. (4) Downgrade the earlier "operating_cash_flow_ratio reason code is as likely to say raises as lowers" reading (sign-table report) to low severity.
+- Alternatives considered: keep the SUPPORTED label on R-01 (rejected: no direction stated on either page); treat operating_cash_flow_ratio as the main sign conflict (rejected: decile view shows the economically important cliff is correct).
+- Business reason: reason codes given to credit officers must have a defensible direction; claims on slides must cite text that says what we claim (CLAUDE.md rules 2, 8).
+- Evidence: `experiments/gbm/2026-11-20_grid75/2026-11-21_09_quick_ratio_ocf_audit.py` -> `quick_ratio_audit/*.csv`, `summary.json` (835,016 FY2007-2011 rows): quick-ratio decile default rate 1.35 / 1.77 / 2.13 / 2.09 / 1.57 / 1.33 / 1.24 / 0.73 / 0.59 / 0.77 %, rank correlation -0.81 (each year -0.67 to -0.81); bottom decile 43% ATECO 68 and 31.5% ATECO 41; top 1% median debt_st/assets 0.001. Ablation (`ablation_summary.csv`): releasing quick_ratio alone +0.00074 AUC vs full monotone, unconstrained +0.00075. Report: `reports/features/2026-11-21_quick_ratio_monotone_verdict.md`.
+- Source(s): R-01 p. 13; R-33 p. 11, p. 12; R-05 p. 15, p. 33, p. 54 (all VERIFIED; quotes checked against the PDF text on 2026-11-21).
+- Risks / what would change our mind: sector readings (why real estate defaults less; nature of debt_st = 0 firms) are untested; SHAP is in-sample; the raw quick ratio is uncapped and the zero-denominator rule mixes ratios with euro amounts (possible future fix: cap or set to missing when debt_st <= 0 or a component is negative; not in the frozen model).
+- Human reviewer (initials) and date: pending (KN)
+
+### D-163 Submit the full-monotone model (mono20) instead of the unconstrained D-160 model
+- Date / phase / agent: 2026-11-21 / Phase 2 / KN decision, recorded by orchestrator (Claude Code)
+- Status: ADOPTED (KN, 2026-11-21, after the D-162 audit); supersedes D-160 as the submission model. Switching the TA/submission bundle to `harness/2026-11-21_variants/mono20/` is a separate step, pending.
+- Decision: submit mono20 (20 monotone constraints per D-157, 240 trees, D-160 frozen preprocessing and prior-shift level recipe).
+- Alternatives considered: D-160 unconstrained (more accurate by about 0.001 AUC); lit13 (withdrawn, frees quick_ratio against direct literature); mono19 (cur_debt_ratio released, +0.0001, noise); mono_m3 (selected on validation, biased).
+- Business reason: ordering cost about 0.001 AUC (not visible for approve/decline); same PD level (pricing unchanged, mean in-sample PD 1.451% both); every constrained reason code follows credit logic (CLAUDE.md rule 8); quick_ratio's sign is stated directly by R-01 p. 13, R-33 p. 11, R-05 p. 54.
+- Evidence: `reports/features/2026-11-21_quick_ratio_monotone_verdict.md` Sections 4, 8, 9. Free minus mono: grid bootstrap dAUC +0.00134 [+0.00044, +0.00232] (round 3 only significant), dLL -0.00012; ablation +0.00075, of which releasing quick_ratio alone +0.00074. Free model: quick_ratio value-vs-SHAP +0.38; 10 constrained features with >= 16% wrong-way movement (`quick_ratio_audit/constraint_table.csv`). mono20 harness: 1,023,552 rows, 0 fallbacks, parity 2.2e-16, 25/25 stress tests.
+- Deviation disclosed: the pre-set D-158 rule (unconstrained if the bootstrap excludes 0 and no top-10 driver > 50% against sign) selected the free model; the quick_ratio conflict sits outside the top 10. This override is a judgment on explainability made after seeing results, not an accuracy-based selection.
+- Source(s): R-01 p. 13; R-33 p. 11; R-05 p. 54 (VERIFIED).
+- Risks / what would change our mind: holdout AUC may be about 0.001-0.003 lower than the free model would have scored (round-3 gap 0.0029); goodwill_ratio and lt_debt_to_capital stay off their candidate sign (unconstrained by D-157 design).
+- Human reviewer (initials) and date: KN 2026-11-21 (decision); report review pending

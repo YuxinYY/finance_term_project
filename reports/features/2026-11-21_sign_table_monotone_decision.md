@@ -115,7 +115,7 @@ R-66 is 115 Colombian retail bankruptcies (claim map, "Who the sources studied")
 | cash_interest_coverage | cf_operations / exp_financing | Same, with cash earnings | - | R-01 Appendix p. 34, p. 13 (cash flow / interest is a v3.1 input) | SUPPORTED | Same structure as int_coverage (interest denominator); zero-interest artefact | -0.95 / -0.93 / -0.87 | 22% (31) | **-** |
 | financing_expense_ratio | exp_financing / asst_tot | Interest burden = cost of debt x leverage | + | R-60 pp. 385-386, 391, Table 3 p. 392 (interest/sales separates Italian defaulters most sharply); R-33 p. 11-12, Fig. 5 | SUPPORTED (sales denominator in sources) | Flattening at top (R-33) | +0.93 / +0.70 / +0.66 | 10% (16) | **+** |
 | ebitda_to_debt | ebitda / (debt_st + debt_lt) | Years of operating earnings to repay debt (inverted) | - | R-33 Table 3 p. 11, p. 12, Fig. 5, Table 4 p. 14 (debt coverage, largest weight 19.2%) | SUPPORTED (formula differs) | No (convex) | -1.00 / -1.00 / -1.00 | 12% (29) | **-** |
-| operating_cash_flow_ratio | cf_operations / asst_tot | Cash earnings per euro of assets | - | R-01 Appendix p. 34, p. 13 (adding a cash-flow ratio improved v3.1); R-33 Table 3 p. 11 (profit + D&A numerator) | SUPPORTED | No | -0.94 / -0.94 / -0.91 | 26% (2) | **-** |
+| operating_cash_flow_ratio | cf_operations / asst_tot | Cash earnings per euro of assets | - | R-01 Appendix p. 34, p. 13 (adding a cash-flow ratio improved v3.1); R-33 Table 3 p. 11 (profit + D&A numerator) | **ANALOGY** (corrected 2026-11-21, D-162: no source states the sign for cash flow / assets; nearest direct statement is R-33 p. 12 on debt coverage) | No | -0.94 / -0.94 / -0.91 | 26% (2) | **-** |
 | operating_cash_flow_to_debt | cf_operations / (debt_st + debt_lt) | Cash earnings per euro of debt | - | R-33 Table 3 p. 11 (close variant); R-01 Appendix p. 34 | SUPPORTED | No | -0.98 / -0.93 / -0.95 | 10% (4) | **-** |
 | operating_cash_flow_margin | cf_operations / rev_operating | Cash earnings per euro of sales | - | R-01 Appendix p. 34, p. 13 (family) | SUPPORTED (family) | No; negative-revenue issue | -0.87 / -0.93 / -0.88 | **71%** (32) | **-** |
 
@@ -291,6 +291,8 @@ expected direction (- for a "higher is safer" ratio).
 **On real firms the conflict reaches the unconstrained model's #2 and #3 drivers**, which partial dependence
 understated (26% and 19%). For a firm whose operating cash flow is strong, the unconstrained model's
 operating_cash_flow_ratio reason code is as likely to say "raises your PD" as "lowers it".
+
+> **Correction 2026-11-21 (D-162):** the sentence above overstates it. On the final unconstrained model the decile view (`experiments/gbm/2026-11-20_grid75/quick_ratio_audit/ocf_shap_deciles.csv`) shows a correct cliff (+0.35 for cash-burning firms, decile 1) and a nearly flat stretch above it with a slight wrong-way drift (-0.062 at decile 4 to -0.008 at decile 10, about 5% relative PD). The near-zero rank correlation comes from the flat 90% of rows swamping the jump. Severity: low. See `reports/features/2026-11-21_quick_ratio_monotone_verdict.md` Section 4.
 
 **But the economics survive at family level.** Summing SHAP over each family of near-twins (`shap_family_check.csv`, same script):
 

@@ -89,3 +89,11 @@ Roger grades whether AI use was "appropriate and additive (or just a shortcut)".
 ## 2026-11-21 Final fit and TA test bundle (Claude Code)
 - AI-generated: `experiments/final/2026-11-21_final_fit/` scripts 01-04 (feature build + parity, final training, bundle build, harness-vs-training parity), edits to the teammate runtime (`harness/2026-11-21_turquoise_submission/inference.py`, `harness.py`, `README.md`), `reports/harness/2026-11-21_stress_test.py` (adapted from 11-16), test report, D-160. Teammate code vendored unchanged from project-update @ 7949207.
 - Human verifier: pending (KN to read the README and test report before sending to the TA; Chloe to confirm the runtime edits).
+
+## 2026-11-21 Quick ratio / cash-flow ratio audit and literature correction (Claude Code)
+- AI-generated: `experiments/gbm/2026-11-20_grid75/2026-11-21_09_quick_ratio_ocf_audit.py`, `2026-11-21_10_constraint_table_and_demo.py` and their outputs `quick_ratio_audit/`, full-record report `reports/features/2026-11-21_quick_ratio_monotone_verdict.md`, D-162, D-163 (recording KN's choice of mono20), corrections to `docs/2026-11-16_feature_literature_claims.md` and `reports/features/2026-11-21_sign_table_monotone_decision.md`. Quotes were extracted from the local PDFs (R-01, R-05, R-33) with pypdf and matched to the cited pages. KN caught that no source states the sign for operating cash flow / assets; the earlier AI-written SUPPORTED label was wrong and is corrected.
+- Human verifier: pending (KN to open R-01 p. 13, R-33 pp. 11-12, R-05 p. 54 before the quotes go on a slide).
+
+## 2026-11-21 mono20 full documentation (Claude Code)
+- AI-generated: `reports/final_model/2026-11-21_mono20_full_documentation.md` (end-to-end record from raw data to the frozen mono20 harness, assembled from DECISION_LOG D-001..D-163, the development, calibration, harness and audit reports, and the vendored team code), profile script `experiments/final/2026-11-21_final_fit/2026-11-21_08_mono20_profile.py` and its outputs `reports/final_model/2026-11-21_mono20_*`. Every number was copied from a named file; the profile numbers were produced by running the script.
+- Human verifier: pending (KN; Chloe and Desmond to check Sections 5-6, which describe their preprocessing code).
